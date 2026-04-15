@@ -139,8 +139,15 @@ export function initPresence() {
     // update the eye button count
     const badge = document.getElementById('stats-btn-count');
     if (badge) badge.textContent = _onlineCount;
+    // update the footer visitor count
+    const footCount = document.getElementById('visitor-count');
+    if (footCount) footCount.textContent = _onlineCount;
     // check and update peak
     if (_onlineCount > 0) updatePeakOnline(_onlineCount);
+  }, (err) => {
+    console.error("Presence read error:", err);
+    const footCount = document.getElementById('visitor-count');
+    if (footCount) footCount.textContent = "?";
   });
 
   // Listen for force-refresh signals — guarded so only one reload ever fires
@@ -2336,7 +2343,9 @@ export function initAuthUI(onUserChange) {
             }
           });
         });
-
+          });
+        }, (err) => {
+          list.innerHTML = `<div style="font-size:12px;color:#ef4444;padding:8px 0;text-align:center;">Realtime DB Permission Denied.<br>Please update your Realtime Database rules.<br>${err.message}</div>`;
         });
 
       } catch (e) {

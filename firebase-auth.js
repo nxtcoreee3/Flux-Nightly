@@ -98,8 +98,15 @@ export function initPresence() {
       uid: (user && !user.isAnonymous) ? user.uid : null,
       username: null, // filled in below after profile loads
       currentlyPlaying: null,
+      sessionId: sessionId,
     };
   };
+
+  // Always listen to session-specific refresh
+  onValue(ref(rtdb, `forceRefresh/${sessionId}`), (snap) => {
+    if (!snap.exists()) return;
+    _handleRefresh(snap.val()?.triggeredAt);
+  });
 
   onValue(connectedRef, async (snap) => {
     if (snap.val() === true) {
@@ -127,7 +134,7 @@ export function initPresence() {
       if (!user || user.isAnonymous) return;
       const pSnap = await getDoc(doc(db, 'profiles', user.uid));
       const username = pSnap.exists() ? pSnap.data().username : null;
-      set(presenceRef, { online: true, timestamp: serverTimestamp(), uid: user.uid, username, currentlyPlaying: currentlyPlaying || null });
+      set(presenceRef, { online: true, timestamp: serverTimestamp(), uid: user.uid, username, currentlyPlaying: currentlyPlaying || null, sessionId });
     } catch {}
   };
 
@@ -157,10 +164,12 @@ export function initPresence() {
 
   const _handleRefresh = (triggeredAt) => {
     if (!triggeredAt) return;
-    if (triggeredAt === _lastSeenRefresh) return; // already handled this exact signal
+    if (triggeredAt === _lastSeenRefresh) return; // already handled exactly this
     _lastSeenRefresh = triggeredAt;
-    const age = Date.now() - new Date(triggeredAt).getTime();
-    if (age < 10000 && !_reloadScheduled) {
+    
+    // As long as the trigger is relatively recent (fallback against clock skew)
+    const age = Math.abs(Date.now() - new Date(triggeredAt).getTime());
+    if (age < 120000 && !_reloadScheduled) { // 2 minute tolerance for clock skew
       _reloadScheduled = true;
       setTimeout(() => location.reload(), 800);
     }
@@ -191,7 +200,10 @@ export async function forceRefreshUser(targetUid) {
     await set(ref(rtdb, `forceRefresh/${targetUid}`), {
       triggeredAt: new Date().toISOString(),
       by: user.uid,
+      rand: Math.random()
     });
+    // Cleanup so it doesn't stay there forever
+    setTimeout(() => set(ref(rtdb, `forceRefresh/${targetUid}`), null), 15000);
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 }
@@ -204,7 +216,9 @@ export async function forceRefreshAll() {
     await set(ref(rtdb, 'forceRefreshAll'), {
       triggeredAt: new Date().toISOString(),
       by: user.uid,
+      rand: Math.random()
     });
+    setTimeout(() => set(ref(rtdb, 'forceRefreshAll'), null), 15000);
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 }
@@ -2312,19 +2326,23 @@ export function initAuthUI(onUserChange) {
           list.appendChild(item);
         });
 
-        // Render anonymous sessions
-        if (anonCount > 0) {
+        // Render anonymous sessions individually
+        anonymous.forEach((s, i) => {
           const anonItem = document.createElement('div');
-          anonItem.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 10px;background:#f9fafb;border-radius:10px;border:1px solid rgba(0,0,0,0.06);opacity:0.6;';
+          anonItem.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 10px;background:#f9fafb;border-radius:10px;border:1px solid rgba(0,0,0,0.06);opacity:0.8;';
           anonItem.innerHTML = `
             <span style="width:8px;height:8px;border-radius:50%;background:#9ca3af;flex-shrink:0;"></span>
-            <div style="flex:1;">
-              <div style="font-size:13px;font-weight:600;color:#6b7280;">${anonCount} anonymous session${anonCount !== 1 ? 's' : ''}</div>
-              <div style="font-size:11px;color:#9ca3af;">Guests / not signed in</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:600;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Anonymous ${i + 1}</div>
+              <div style="font-size:11px;color:#9ca3af;">Guest (sid: ${s.sessionId ? s.sessionId.slice(0,6) : '?'})</div>
             </div>
+            <button class="mod-force-refresh-btn" data-uid="${s.sessionId}" data-name="Guest"
+              style="padding:4px 10px;background:#9ca3af;color:white;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:11px;flex-shrink:0;">
+              🔄
+            </button>
           `;
           list.appendChild(anonItem);
-        }
+        });
 
         // Wire force-refresh buttons
         list.querySelectorAll('.mod-force-refresh-btn').forEach(btn => {

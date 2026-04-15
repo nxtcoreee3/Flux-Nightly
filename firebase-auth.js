@@ -105,7 +105,7 @@ export function initPresence() {
   // Always listen to session-specific refresh
   onValue(ref(rtdb, `forceRefresh/${sessionId}`), (snap) => {
     if (!snap.exists()) return;
-    _handleRefresh(snap.val()?.triggeredAt);
+    _handleRefresh(snap.val()?.triggeredAt, 'session');
   });
 
   onValue(connectedRef, async (snap) => {
@@ -157,21 +157,20 @@ export function initPresence() {
     if (footCount) footCount.textContent = "?";
   });
 
-  // Listen for force-refresh signals — guarded so only one reload ever fires
-  let _lastSeenRefresh = null;
+  let _lastSeenRefresh = {};
   let _refreshListenerAttached = false;
   let _reloadScheduled = false;
 
-  const _handleRefresh = (triggeredAt) => {
+  const _handleRefresh = (triggeredAt, key) => {
     if (!triggeredAt) return;
     
     // Use sessionStorage to remember this trigger ID across page reloads
-    const stored = sessionStorage.getItem('_fluxLastRefresh');
+    const stored = sessionStorage.getItem(`_fluxRefresh_${key}`);
     if (stored === triggeredAt.toString()) return;
-    if (triggeredAt === _lastSeenRefresh) return; // already handled exactly this
+    if (triggeredAt === _lastSeenRefresh[key]) return; // already handled exactly this
     
-    _lastSeenRefresh = triggeredAt;
-    sessionStorage.setItem('_fluxLastRefresh', triggeredAt.toString());
+    _lastSeenRefresh[key] = triggeredAt;
+    sessionStorage.setItem(`_fluxRefresh_${key}`, triggeredAt.toString());
     
     // Trigger is guaranteed fresh because we delete it from DB after 15 seconds
     if (!_reloadScheduled) {
@@ -186,14 +185,14 @@ export function initPresence() {
     _refreshListenerAttached = true;
     onValue(ref(rtdb, `forceRefresh/${user.uid}`), (snap) => {
       if (!snap.exists()) return;
-      _handleRefresh(snap.val()?.triggeredAt);
+      _handleRefresh(snap.val()?.triggeredAt, 'user');
     });
   });
 
   // Global refresh — affects everyone including guests
   onValue(ref(rtdb, 'forceRefreshAll'), (snap) => {
     if (!snap.exists()) return;
-    _handleRefresh(snap.val()?.triggeredAt);
+    _handleRefresh(snap.val()?.triggeredAt, 'global');
   });
 }
 

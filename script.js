@@ -1476,8 +1476,9 @@ function openFullscreen(url, title) {
       <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);flex:1;">${title}</span>
       <button id="fs-newtab" style="display:none;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;backdrop-filter:blur(4px);">↗ Open in New Tab</button>
     </div>
-    <iframe id="fs-iframe" src="${url}" style="flex:1;border:0;width:100%;height:100%;" allow="autoplay; fullscreen" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
-    <div id="fs-embed-warn" style="display:none;position:absolute;inset:0;z-index:3;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(0,0,0,0.85);">
+    <div id="fs-loading-bg" style="position:absolute;inset:0;background:#fff url('assets/loading.gif') center center / 250px no-repeat;z-index:1;"></div>
+    <iframe id="fs-iframe" src="${url}" style="flex:1;border:0;width:100%;height:100%;opacity:0;transition:opacity 0.4s ease;position:relative;z-index:2;" allow="autoplay; fullscreen" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
+    <div id="fs-embed-warn" style="display:none;position:absolute;inset:0;z-index:3;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(0,0,0,0.85);">
       <span style="font-size:32px;">🚫</span>
       <span style="color:white;font-size:15px;font-weight:600;">This game can't be embedded.</span>
       <button id="fs-fallback-btn" style="background:#3a7dff;color:white;border:none;border-radius:10px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;">↗ Open in New Tab</button>
@@ -1498,11 +1499,18 @@ function openFullscreen(url, title) {
   fs.querySelector('#fs-fallback-btn').addEventListener('click', () => window.open(url, '_blank', 'noopener'));
   // Detect embed failure
   let fsLoaded = false;
-  fsIframe.addEventListener('load', () => { fsLoaded = true; }, { once: true });
+  fsIframe.addEventListener('load', () => { 
+    fsLoaded = true; 
+    fsIframe.style.opacity = '1'; 
+    const lbg = fs.querySelector('#fs-loading-bg');
+    if (lbg) lbg.style.display = 'none';
+  }, { once: true });
   setTimeout(() => {
     if (!fsLoaded) {
       fsWarn.style.display = 'flex';
       fsNewTab.style.display = '';
+      const lbg = fs.querySelector('#fs-loading-bg');
+      if (lbg) lbg.style.display = 'none';
     }
   }, 2200);
   const escHandler = (e) => { if (e.key === 'Escape') { fs.remove(); window.removeEventListener('keydown', escHandler); } };
@@ -1546,8 +1554,21 @@ function openPlayModal(url, title) {
     embedWarning?.classList.add('hidden');
     if (fsBtn) fsBtn.style.display = '';
     iframe.src = url;
+    iframe.style.opacity = '0';
+    iframe.style.transition = 'opacity 0.4s ease';
+    if (iframe.parentElement) {
+      iframe.parentElement.style.background = "#fff url('assets/loading.gif') center center / 250px no-repeat";
+    }
+
     let loaded = false;
-    iframe.addEventListener('load', () => { loaded=true; embedWarning?.classList.add('hidden'); }, { once:true });
+    iframe.addEventListener('load', () => { 
+      loaded=true; 
+      embedWarning?.classList.add('hidden'); 
+      iframe.style.opacity = '1';
+      if (iframe.parentElement) {
+        iframe.parentElement.style.background = ""; // remove loading gif once loaded
+      }
+    }, { once:true });
     setTimeout(() => {
       if (!loaded) {
         embedWarning?.classList.remove('hidden');

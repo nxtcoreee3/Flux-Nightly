@@ -575,14 +575,13 @@ export function initUpdateNotification() {
 
   async function checkForUpdate() {
     try {
-      // Fetch version.json with cache-busting
-      const res = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
+      // Fetch latest commit from GitHub to be completely automatic
+      const res = await fetch('https://api.github.com/repos/nxtcoreee3/Flux/commits?per_page=1', { cache: 'no-store' });
       if (!res.ok) return;
       const data = await res.json();
-      const latestBuild = data.build;
-      const latestVersion = data.version || '';
-      if (!latestBuild) return;
-
+      if (!data || !data[0]) return;
+      
+      const latestBuild = data[0].sha.slice(0, 6);
       const storedBuild = localStorage.getItem(STORAGE_KEY);
 
       if (!storedBuild) {
@@ -593,56 +592,53 @@ export function initUpdateNotification() {
 
       if (storedBuild !== latestBuild && !_notifShown) {
         _notifShown = true;
-        showUpdateBanner(latestBuild, latestVersion, storedBuild);
+        showUpdatePopup(latestBuild, storedBuild);
       }
     } catch {}
   }
 
-  function showUpdateBanner(build, version, oldBuild) {
-    const existing = document.getElementById('flux-update-banner');
+  function showUpdatePopup(newBuild, oldBuild) {
+    const existing = document.getElementById('flux-update-popup');
     if (existing) existing.remove();
 
-    const banner = document.createElement('div');
-    banner.id = 'flux-update-banner';
-    banner.style.cssText = `
-      position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
-      z-index:9999;display:flex;align-items:center;gap:14px;
-      background:var(--panel,#fff);
-      border:1px solid var(--glass-border,rgba(0,0,0,0.08));
-      border-radius:16px;padding:14px 18px;
-      box-shadow:0 12px 40px rgba(0,0,0,0.15);
-      max-width:440px;width:calc(100vw - 48px);
-      transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    const popup = document.createElement('div');
+    popup.id = 'flux-update-popup';
+    popup.style.cssText = `
+      position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999999;
+      display:flex;justify-content:center;align-items:center;backdrop-filter:blur(4px);
+      opacity:0;transition:opacity 0.3s ease;
     `;
-    banner.innerHTML = `
-      <span style="font-size:22px;flex-shrink:0;">🚀</span>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:14px;font-weight:700;color:var(--text,#111);">New update available!</div>
-        <div style="font-size:12px;color:var(--muted,#6b7280);margin-top:2px;">
-          Version: <code style="background:rgba(58,125,255,0.1);color:var(--accent,#3a7dff);padding:1px 5px;border-radius:4px;font-size:11px;">#${oldBuild}</code> → <code style="background:rgba(58,125,255,0.1);color:var(--accent,#3a7dff);padding:1px 5px;border-radius:4px;font-size:11px;">#${build}</code>
+    popup.innerHTML = `
+      <div style="background:var(--panel,#fff);padding:24px;border-radius:16px;max-width:340px;width:90%;box-shadow:0 10px 25px rgba(0,0,0,0.2);text-align:center;transform:translateY(20px);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);">
+        <div style="font-size:36px;margin-bottom:12px;">🚀</div>
+        <h2 style="margin:0 0 8px;font-size:18px;font-weight:700;color:var(--text,#111827);">New Update Available!</h2>
+        <p style="margin:0 0 16px;font-size:13px;color:var(--muted,#4b5563);line-height:1.5;">
+          You are currently using version <strong>#${oldBuild}</strong>, but the latest version is <strong>#${newBuild}</strong>.<br><br>Please update to ensure everything runs smoothly!
+        </p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button id="update-dismiss-btn" style="padding:10px 16px;border:none;background:var(--bg,#f3f4f6);color:var(--muted,#4b5563);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Decline</button>
+          <button id="update-refresh-btn" style="padding:10px 16px;border:none;background:var(--accent,#3a7dff);color:#fff;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;flex:1;">Update Site</button>
         </div>
       </div>
-      <div style="display:flex;gap:8px;flex-shrink:0;">
-        <button id="update-refresh-btn" style="padding:8px 14px;background:var(--accent,#3a7dff);color:white;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">Refresh</button>
-        <button id="update-dismiss-btn" style="background:none;border:none;color:var(--muted,#9ca3af);cursor:pointer;font-size:18px;padding:0 2px;line-height:1;">✕</button>
-      </div>
     `;
-    document.body.appendChild(banner);
+    document.body.appendChild(popup);
 
-    // Slide up
+    // Fade in
     requestAnimationFrame(() => {
-      banner.style.transform = 'translateX(-50%) translateY(0)';
+      popup.style.opacity = '1';
+      popup.firstElementChild.style.transform = 'translateY(0)';
     });
 
     document.getElementById('update-refresh-btn').addEventListener('click', () => {
-      localStorage.setItem(STORAGE_KEY, build);
-      window.location.reload();
+      localStorage.setItem(STORAGE_KEY, newBuild);
+      window.location.reload(true);
     });
 
     document.getElementById('update-dismiss-btn').addEventListener('click', () => {
-      banner.style.transform = 'translateX(-50%) translateY(80px)';
-      setTimeout(() => banner.remove(), 400);
-      localStorage.setItem(STORAGE_KEY, build); // User declined this version, don't show until next version
+      popup.style.opacity = '0';
+      popup.firstElementChild.style.transform = 'translateY(20px)';
+      setTimeout(() => popup.remove(), 300);
+      localStorage.setItem(STORAGE_KEY, newBuild); // User declined this version, don't show until next version
     });
   }
 
@@ -1028,7 +1024,7 @@ export function initNotifications() {
 async function loadNotifications(uid) {
   const list = document.getElementById('notif-list');
   if (!list) return;
-  list.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:13px;">Loading...</div>';
+  list.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:13px;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>';
 
   try {
     const { collection: col, query: q, where: w, limit: lim, getDocs: gd } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
@@ -1717,7 +1713,7 @@ export function initAuthUI(onUserChange) {
       <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">👥 Online Users</div>
       <div style="margin-bottom:4px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <span id="mod-online-summary" style="font-size:12px;color:#6b7280;">Loading...</span>
+          <span id="mod-online-summary" style="font-size:12px;color:#6b7280;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></span>
           <div style="display:flex;gap:6px;">
             <button id="mod-refresh-all-btn" style="padding:5px 12px;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px;">🔄 Refresh All</button>
             <button id="mod-reload-users-btn" style="padding:5px 10px;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px;">↺ Reload List</button>
@@ -1773,7 +1769,7 @@ export function initAuthUI(onUserChange) {
       <!-- ── SERVER CONTROL ── -->
       <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Server Control</div>
       <div style="margin-bottom:12px;">
-        <div id="mod-current-status" style="font-size:13px;font-weight:600;color:#111827;padding:10px 12px;background:#f9fafb;border-radius:8px;border:1px solid rgba(0,0,0,0.07);margin-bottom:10px;">Loading...</div>
+        <div id="mod-current-status" style="font-size:13px;font-weight:600;color:#111827;padding:10px 12px;background:#f9fafb;border-radius:8px;border:1px solid rgba(0,0,0,0.07);margin-bottom:10px;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>
         <select id="mod-duration" style="width:100%;padding:10px 12px;border:1px solid rgba(0,0,0,0.1);border-radius:10px;font-size:13px;color:#111827;background:#fff;outline:none;cursor:pointer;margin-bottom:8px;">
           <option value="0">⛔ No limit — restore manually</option>
           <option value="1">⏱ 1 minute</option>
@@ -2273,7 +2269,7 @@ export function initAuthUI(onUserChange) {
 
       if (_modPresenceUnsub) _modPresenceUnsub();
 
-      list.innerHTML = '<div style="font-size:12px;color:#9ca3af;padding:8px 0;">Loading...</div>';
+      list.innerHTML = '<div style="font-size:12px;color:#9ca3af;padding:8px 0;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>';
 
 
         _modPresenceUnsub = onValue(ref(rtdb, 'presence'), (presSnap) => {

@@ -164,12 +164,17 @@ export function initPresence() {
 
   const _handleRefresh = (triggeredAt) => {
     if (!triggeredAt) return;
-    if (triggeredAt === _lastSeenRefresh) return; // already handled exactly this
-    _lastSeenRefresh = triggeredAt;
     
-    // As long as the trigger is relatively recent (fallback against clock skew)
-    const age = Math.abs(Date.now() - new Date(triggeredAt).getTime());
-    if (age < 120000 && !_reloadScheduled) { // 2 minute tolerance for clock skew
+    // Use sessionStorage to remember this trigger ID across page reloads
+    const stored = sessionStorage.getItem('_fluxLastRefresh');
+    if (stored === triggeredAt.toString()) return;
+    if (triggeredAt === _lastSeenRefresh) return; // already handled exactly this
+    
+    _lastSeenRefresh = triggeredAt;
+    sessionStorage.setItem('_fluxLastRefresh', triggeredAt.toString());
+    
+    // Trigger is guaranteed fresh because we delete it from DB after 15 seconds
+    if (!_reloadScheduled) {
       _reloadScheduled = true;
       setTimeout(() => location.reload(), 800);
     }
@@ -198,12 +203,12 @@ export async function forceRefreshUser(targetUid) {
   if (!user || user.uid !== 'zEy6TO5ligf2um4rssIZs9C9X7f2') return { ok: false, error: 'Admin only.' };
   try {
     await set(ref(rtdb, `forceRefresh/${targetUid}`), {
-      triggeredAt: new Date().toISOString(),
+      triggeredAt: new Date().getTime(),
       by: user.uid,
       rand: Math.random()
     });
-    // Cleanup so it doesn't stay there forever
-    setTimeout(() => set(ref(rtdb, `forceRefresh/${targetUid}`), null), 15000);
+    // Cleanup so it doesn't stay there forever (shorter timeout so it cleans before reload)
+    setTimeout(() => set(ref(rtdb, `forceRefresh/${targetUid}`), null), 200);
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 }
@@ -214,11 +219,11 @@ export async function forceRefreshAll() {
   try {
     // Write to a global refresh node — all clients listen to this too (see initPresence)
     await set(ref(rtdb, 'forceRefreshAll'), {
-      triggeredAt: new Date().toISOString(),
+      triggeredAt: new Date().getTime(),
       by: user.uid,
       rand: Math.random()
     });
-    setTimeout(() => set(ref(rtdb, 'forceRefreshAll'), null), 15000);
+    setTimeout(() => set(ref(rtdb, 'forceRefreshAll'), null), 200);
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 }

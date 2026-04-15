@@ -2343,10 +2343,10 @@ export function initAuthUI(onUserChange) {
             }
           });
         });
-          });
-        }, (err) => {
-          list.innerHTML = `<div style="font-size:12px;color:#ef4444;padding:8px 0;text-align:center;">Realtime DB Permission Denied.<br>Please update your Realtime Database rules.<br>${err.message}</div>`;
-        });
+
+      }, (err) => {
+        list.innerHTML = `<div style="font-size:12px;color:#ef4444;padding:8px 0;text-align:center;">Realtime DB Permission Denied.<br>Please update your Realtime Database rules.<br>${err.message}</div>`;
+      });
 
       } catch (e) {
         list.innerHTML = '<div style="font-size:12px;color:#ef4444;padding:8px 0;">Failed to load presence data.</div>';

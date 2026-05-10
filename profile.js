@@ -6,7 +6,7 @@ import {
   renderBadges, assignRole, removeRole, PREDEFINED_ROLES,
   setUserRank, getUserRank, getContrastColor,
   initAuthUI, initServerStatus, initCookieConsent,
-  initBroadcast, initChaos, initJumpscare, initPresence
+  initBroadcast, initChaos, initJumpscare, initPresence, syncProfileAvatar
 } from './firebase-auth.js';
 
 // Firebase imports (reuse same app)
@@ -97,8 +97,31 @@ async function loadProfilePage() {
 
 function renderProfile(profile, { isOwn, isAdmin, isFollowing, canSeeContent, currentUser }) {
   const avatarHTML = profile.avatarURL
-    ? `<img class="profile-avatar" src="${profile.avatarURL}" alt="${profile.displayName}">`
-    : `<div class="profile-avatar-placeholder">${(profile.displayName || profile.username || '?')[0].toUpperCase()}</div>`;
+    ? `<div class="avatar-container ${isOwn ? 'editable' : ''}" style="position:relative;width:fit-content;margin:0 auto;">
+         <img class="profile-avatar" id="main-avatar" src="${profile.avatarURL}" alt="${profile.displayName}" style="${isOwn ? 'cursor:pointer;transition:all 0.3s;' : ''}">
+         ${isOwn ? '<div class="avatar-edit-hint" style="position:absolute;inset:0;background:rgba(0,0,0,0.4);border-radius:50%;display:flex;items-center;justify-content:center;color:#fff;font-size:12px;opacity:0;transition:opacity 0.2s;pointer-events:none;display:flex;align-items:center;justify-content:center;font-weight:700;">CHANGE</div>' : ''}
+       </div>`
+    : `<div class="profile-avatar-placeholder ${isOwn ? 'editable' : ''}" id="main-avatar" style="${isOwn ? 'cursor:pointer;position:relative;' : ''}">
+         ${(profile.displayName || profile.username || '?')[0].toUpperCase()}
+         ${isOwn ? '<div class="avatar-edit-hint" style="position:absolute;inset:0;background:rgba(0,0,0,0.4);border-radius:50%;display:flex;items-center;justify-content:center;color:#fff;font-size:12px;opacity:0;transition:opacity 0.2s;pointer-events:none;display:flex;align-items:center;justify-content:center;font-weight:700;">CHANGE</div>' : ''}
+       </div>`;
+
+  // Inject animation styles
+  if (!document.getElementById('flux-premium-styles')) {
+    const style = document.createElement('style');
+    style.id = 'flux-premium-styles';
+    style.textContent = `
+      @keyframes modalAppear {
+        from { opacity: 0; transform: scale(0.9) translateY(20px); }
+        to { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      .avatar-container:hover .profile-avatar { transform: scale(1.05); }
+      .avatar-container:hover .avatar-edit-hint { opacity: 1 !important; }
+      .avatar-option:hover { transform: translateY(-4px); border-color: var(--accent) !important; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+      .profile-avatar-placeholder:hover .avatar-edit-hint { opacity: 1 !important; }
+    `;
+    document.head.appendChild(style);
+  }
 
   const joinDate = profile.joinedAt
     ? new Date(profile.joinedAt).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
@@ -292,11 +315,11 @@ function renderProfile(profile, { isOwn, isAdmin, isFollowing, canSeeContent, cu
         ${joinDate ? `<p style="font-size:12px;color:var(--muted);margin:0 0 16px;">Joined ${joinDate}</p>` : ''}
 
         <div class="profile-stats">
-          <div class="profile-stat">
+          <div class="profile-stat" id="stat-followers" style="cursor:pointer;" title="View followers">
             <span class="profile-stat-num">${followersCount}</span>
             <span class="profile-stat-label">Followers</span>
           </div>
-          <div class="profile-stat">
+          <div class="profile-stat" id="stat-following" style="cursor:pointer;" title="View following">
             <span class="profile-stat-num">${followingCount}</span>
             <span class="profile-stat-label">Following</span>
           </div>
@@ -399,6 +422,11 @@ function bindEvents(profile, { isOwn, isAdmin, isFollowing, currentUser }) {
     });
   });
 
+  // Avatar Click (If Own)
+  document.getElementById('main-avatar')?.addEventListener('click', () => {
+    if (isOwn) showAvatarSelectionModal(profile);
+  });
+
   // Role remove chip
   document.querySelectorAll('.role-remove-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
@@ -418,6 +446,79 @@ function bindEvents(profile, { isOwn, isAdmin, isFollowing, currentUser }) {
     await assignRole(profile.uid, { id, label, emoji, color });
     location.reload();
   });
+
+  // Followers / following clickable stats
+  document.getElementById('stat-followers')?.addEventListener('click', () => {
+    showFollowListModal('Followers', profile.followers || []);
+  });
+  document.getElementById('stat-following')?.addEventListener('click', () => {
+    showFollowListModal('Following', profile.following || []);
+  });
+}
+
+async function showFollowListModal(title, uids) {
+  const existing = document.getElementById('follow-list-modal');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'follow-list-modal';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:700;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);backdrop-filter:blur(6px);padding:20px;box-sizing:border-box;';
+  overlay.innerHTML = `
+    <div style="background:var(--panel);border-radius:20px;width:100%;max-width:400px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,0.25);position:relative;">
+      <div style="padding:20px 20px 16px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);">${title} <span style="font-size:16px;color:var(--muted);font-family:'DM Sans',sans-serif;">${uids.length}</span></span>
+        <button id="follow-list-close" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);">✕</button>
+      </div>
+      <div id="follow-list-body" style="overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:4px;">
+        <div style="padding:20px;text-align:center;color:var(--muted);font-size:13px;">Loading...</div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  overlay.querySelector('#follow-list-close').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+  const body = overlay.querySelector('#follow-list-body');
+
+  if (!uids.length) {
+    body.innerHTML = `<div style="padding:32px;text-align:center;color:var(--muted);font-size:13px;">No ${title.toLowerCase()} yet.</div>`;
+    return;
+  }
+
+  // Load profiles for each uid
+  const profiles = await Promise.all(uids.slice(0, 50).map(uid => getProfile(uid).catch(() => null)));
+  body.innerHTML = '';
+
+  profiles.filter(Boolean).forEach(p => {
+    const item = document.createElement('a');
+    item.href = `profile.html?user=${p.username}`;
+    item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;text-decoration:none;transition:background 0.1s;';
+    item.addEventListener('mouseenter', () => item.style.background = 'var(--bg)');
+    item.addEventListener('mouseleave', () => item.style.background = '');
+
+    const avatarHTML = p.avatarURL
+      ? `<img src="${p.avatarURL}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid var(--glass-border);">`
+      : `<div style="width:40px;height:40px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;flex-shrink:0;">${(p.displayName||p.username||'?')[0].toUpperCase()}</div>`;
+
+    item.innerHTML = `
+      ${avatarHTML}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.displayName || p.username}</div>
+        <div style="font-size:12px;color:var(--muted);">@${p.username} · ${(p.followers||[]).length} followers</div>
+      </div>
+      ${renderBadges(p.badges || [], p.roles || [])}
+    `;
+    body.appendChild(item);
+  });
+
+  if (uids.length > 50) {
+    const note = document.createElement('div');
+    note.style.cssText = 'padding:8px;text-align:center;font-size:11px;color:var(--muted);';
+    note.textContent = `Showing 50 of ${uids.length}`;
+    body.appendChild(note);
+  }
 }
 
 function showEditModal(profile) {
@@ -442,6 +543,16 @@ function showEditModal(profile) {
         <div>
           <label class="field-label">Display Name</label>
           <input id="edit-displayname" class="input-field" type="text" value="${profile.displayName || ''}" maxlength="30">
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:10px;border:1px solid var(--glass-border);">
+           <div style="display:flex;align-items:center;gap:12px;">
+             <img src="${profile.avatarURL || 'assets/default-avatar.png'}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:1px solid var(--glass-border);">
+             <div>
+               <div style="font-size:13px;font-weight:600;color:var(--text);">Avatar</div>
+               <div style="font-size:11px;color:var(--muted);">${profile.avatarSource === 'google' ? 'Synced from Google' : 'Flux Custom'}</div>
+             </div>
+           </div>
+           <button id="edit-change-avatar-btn" type="button" style="padding:6px 14px;background:var(--accent);color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px;">Change</button>
         </div>
         <div>
           <label class="field-label">Bio</label>
@@ -578,6 +689,324 @@ function showEditModal(profile) {
     overlay.remove();
     location.reload();
   });
+
+  document.getElementById('edit-change-avatar-btn')?.addEventListener('click', () => {
+    showAvatarSelectionModal(profile);
+  });
+}
+
+function showAvatarSelectionModal(profile) {
+  const existing = document.getElementById('avatar-modal-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'avatar-modal-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:700;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);';
+  
+  const avatars = [1,2,3,4,5,6,7,8,9,10,11,12].map(n => `profile pictures/Profile${n}.png`);
+  
+  overlay.innerHTML = `
+    <div style="background:var(--panel,#fff);border-radius:20px;padding:28px;width:100%;max-width:380px;box-shadow:0 30px 80px rgba(0,0,0,0.2);position:relative;animation: modalAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);">
+      <button id="avatar-close" style="position:absolute;top:14px;right:14px;background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);">✕</button>
+      <h3 style="font-family:'Bebas Neue',sans-serif;font-size:26px;margin:0 0 4px;color:var(--text);text-align:center;">Change Avatar</h3>
+      <p style="font-size:12px;color:var(--muted);text-align:center;margin:0 0 20px;">Choose a premade icon or upload your own</p>
+      
+      <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:12px;margin-bottom:20px;">
+        ${avatars.map(url => `
+          <div class="avatar-option" data-url="${url}" style="aspect-ratio:1;border-radius:14px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all 0.2s;background:#f3f4f6;">
+            <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <label style="display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;background:var(--accent);color:white;border-radius:12px;font-weight:700;cursor:pointer;font-size:14px;transition:transform 0.1s;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'">
+          📤 Upload Custom
+          <input type="file" id="avatar-upload-input" accept="image/*" style="display:none;">
+        </label>
+        
+        <button id="avatar-sync-google" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;background:transparent;border:1px solid var(--glass-border);color:var(--text);border-radius:12px;font-weight:600;cursor:pointer;font-size:13px;transition:background 0.2s;" onmouseover="this.style.background='var(--glass-border)'" onmouseout="this.style.background='transparent'">
+          <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Sync from Google
+        </button>
+      </div>
+
+      <details id="flux-avatar-details" style="margin-top:12px;border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;">
+        <summary style="list-style:none;cursor:pointer;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(0,0,0,0.02);font-weight:800;color:var(--text);font-size:13px;">
+          <span style="display:flex;align-items:center;gap:8px;">
+            ✨ Flux Avatar
+            <span style="display:inline-flex;align-items:center;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;font-size:9px;font-weight:900;padding:2px 7px;border-radius:20px;letter-spacing:0.8px;text-transform:uppercase;">Beta</span>
+          </span>
+          <span style="color:var(--muted);font-weight:900;">▾</span>
+        </summary>
+        <div style="padding:12px;">
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px;">
+            <div style="width:74px;height:74px;border-radius:50%;background:var(--bg);border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;">
+              <img id="flux-avatar-preview" alt="Flux avatar preview" style="width:74px;height:74px;object-fit:cover;display:block;">
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:12px;font-weight:800;color:var(--text);margin-bottom:4px;">Create your own little avatar</div>
+              <div style="font-size:11px;color:var(--muted);line-height:1.3;">This is a lightweight Bitmoji-style avatar you can use across Flux.</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <label style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:900;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;">Skin</span>
+              <input id="fluxav-skin" type="color" value="#f1c27d" style="height:34px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;padding:2px;cursor:pointer;">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:900;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;">Hair</span>
+              <input id="fluxav-hair" type="color" value="#111827" style="height:34px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;padding:2px;cursor:pointer;">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:900;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;">Shirt</span>
+              <input id="fluxav-shirt" type="color" value="#3a7dff" style="height:34px;border-radius:10px;border:1px solid var(--glass-border);background:transparent;padding:2px;cursor:pointer;">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:900;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;">Hair Style</span>
+              <select id="fluxav-hair-style" style="height:34px;border-radius:10px;border:1px solid var(--glass-border);background:var(--bg);color:var(--text);padding:0 10px;font-weight:800;">
+                <option value="short">Short</option>
+                <option value="long">Long</option>
+                <option value="bun">Bun</option>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:900;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;">Eyes</span>
+              <select id="fluxav-eyes" style="height:34px;border-radius:10px;border:1px solid var(--glass-border);background:var(--bg);color:var(--text);padding:0 10px;font-weight:800;">
+                <option value="normal">Normal</option>
+                <option value="happy">Happy</option>
+              </select>
+            </label>
+            <label style="display:flex;flex-direction:column;gap:4px;">
+              <span style="font-size:10px;font-weight:900;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;">Mouth</span>
+              <select id="fluxav-mouth" style="height:34px;border-radius:10px;border:1px solid var(--glass-border);background:var(--bg);color:var(--text);padding:0 10px;font-weight:800;">
+                <option value="smile">Smile</option>
+                <option value="neutral">Neutral</option>
+              </select>
+            </label>
+            <label style="grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--glass-border);background:rgba(0,0,0,0.02);cursor:pointer;">
+              <span style="display:flex;flex-direction:column;gap:2px;">
+                <span style="font-size:12px;font-weight:900;color:var(--text);">Glasses</span>
+                <span style="font-size:10px;color:var(--muted);">Optional accessory</span>
+              </span>
+              <input id="fluxav-glasses" type="checkbox">
+            </label>
+          </div>
+
+          <button id="fluxav-use" style="margin-top:10px;width:100%;padding:10px 12px;border:none;border-radius:12px;background:var(--accent);color:white;font-weight:900;cursor:pointer;">Use Flux Avatar</button>
+          <button id="fluxav-reset" style="margin-top:8px;width:100%;padding:10px 12px;border:1px solid var(--glass-border);border-radius:12px;background:transparent;color:var(--text);font-weight:800;cursor:pointer;">Reset</button>
+        </div>
+      </details>
+
+      <div id="avatar-loader" style="display:none;position:absolute;inset:0;background:rgba(255,255,255,0.8);border-radius:20px;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:5;">
+        <img src="assets/loading.gif" style="width:60px;">
+        <span style="font-size:13px;color:var(--text);font-weight:600;">Updating...</span>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const close = () => overlay.remove();
+  document.getElementById('avatar-close').addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+
+  const setAvatar = async (url, source) => {
+    document.getElementById('avatar-loader').style.display = 'flex';
+    try {
+      await updateProfile(profile.uid, { avatarURL: url, avatarSource: source });
+      location.reload();
+    } catch (err) {
+      alert("Failed to update avatar: " + err.message);
+      document.getElementById('avatar-loader').style.display = 'none';
+    }
+  };
+
+  // Premade Icons
+  overlay.querySelectorAll('.avatar-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      opt.style.borderColor = 'var(--accent)';
+      setAvatar(opt.dataset.url, 'premade');
+    });
+  });
+
+  // Custom Upload
+  document.getElementById('avatar-upload-input').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert("File too large! Max 2MB."); return; }
+
+    const reader = new FileReader();
+    reader.onload = (re) => setAvatar(re.target.result, 'flux');
+    reader.readAsDataURL(file);
+  });
+
+  // Google Sync
+  document.getElementById('avatar-sync-google').addEventListener('click', async () => {
+     document.getElementById('avatar-loader').style.display = 'flex';
+     const updated = await syncProfileAvatar(true); // force = true
+     if (updated) location.reload();
+     else {
+       alert("No change detected from Google Profile.");
+       document.getElementById('avatar-loader').style.display = 'none';
+     }
+  });
+
+  // Flux Avatar (Beta) — lightweight SVG avatar builder
+  const buildFluxAvatarSvg = (o) => {
+    const skin = o.skin || '#f1c27d';
+    const hair = o.hair || '#111827';
+    const shirt = o.shirt || '#3a7dff';
+    const hairStyle = o.hairStyle || 'short';
+    const eyes = o.eyes || 'normal';
+    const mouth = o.mouth || 'smile';
+    const glasses = !!o.glasses;
+
+    const hairTop = hairStyle === 'short'
+      ? `<path d="M30 54c2-18 16-30 34-30s32 12 34 30c-8-10-18-14-34-14S38 44 30 54z" fill="${hair}"/>`
+      : hairStyle === 'long'
+        ? `<path d="M28 56c2-22 16-34 36-34s34 12 36 34c0 0-5-10-12-14v40c0 8-6 14-14 14H54c-8 0-14-6-14-14V42c-7 4-12 14-12 14z" fill="${hair}"/>`
+        : `<path d="M30 58c2-22 16-36 34-36s32 14 34 36c-6-8-14-12-22-14l6-10c2-4-2-10-8-10h-20c-6 0-10 6-8 10l6 10c-8 2-16 6-22 14z" fill="${hair}"/>`;
+
+    const eyeMarks = eyes === 'happy'
+      ? `<path d="M48 58c4 4 8 4 12 0" stroke="#111827" stroke-width="4" stroke-linecap="round" fill="none"/>
+         <path d="M68 58c4 4 8 4 12 0" stroke="#111827" stroke-width="4" stroke-linecap="round" fill="none"/>`
+      : `<circle cx="54" cy="58" r="4.2" fill="#111827"/><circle cx="74" cy="58" r="4.2" fill="#111827"/>`;
+
+    const mouthMark = mouth === 'neutral'
+      ? `<path d="M56 74h16" stroke="#111827" stroke-width="4" stroke-linecap="round" fill="none"/>`
+      : `<path d="M54 72c4 6 16 6 20 0" stroke="#111827" stroke-width="4" stroke-linecap="round" fill="none"/>`;
+
+    const glassesMark = glasses
+      ? `<g opacity="0.92">
+           <rect x="44" y="52" width="18" height="14" rx="6" fill="none" stroke="#111827" stroke-width="3"/>
+           <rect x="66" y="52" width="18" height="14" rx="6" fill="none" stroke="#111827" stroke-width="3"/>
+           <path d="M62 59h4" stroke="#111827" stroke-width="3" stroke-linecap="round"/>
+         </g>`
+      : '';
+
+    return `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+        <defs>
+          <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.12"/>
+          </filter>
+        </defs>
+        <g filter="url(#s)">
+          <path d="M32 118c0-18 14-30 32-30s32 12 32 30" fill="${shirt}"/>
+          <circle cx="64" cy="58" r="34" fill="${skin}"/>
+          ${hairTop}
+          ${glassesMark}
+          ${eyeMarks}
+          ${mouthMark}
+          <path d="M42 62c-6-2-10-8-10-14" stroke="rgba(17,24,39,0.25)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <path d="M86 62c6-2 10-8 10-14" stroke="rgba(17,24,39,0.25)" stroke-width="3" stroke-linecap="round" fill="none"/>
+        </g>
+      </svg>
+    `.trim();
+  };
+
+  const els = {
+    preview: document.getElementById('flux-avatar-preview'),
+    skin: document.getElementById('fluxav-skin'),
+    hair: document.getElementById('fluxav-hair'),
+    shirt: document.getElementById('fluxav-shirt'),
+    hairStyle: document.getElementById('fluxav-hair-style'),
+    eyes: document.getElementById('fluxav-eyes'),
+    mouth: document.getElementById('fluxav-mouth'),
+    glasses: document.getElementById('fluxav-glasses'),
+    use: document.getElementById('fluxav-use'),
+    reset: document.getElementById('fluxav-reset'),
+    details: document.getElementById('flux-avatar-details')
+  };
+
+  const defaults = {
+    skin: '#f1c27d',
+    hair: '#111827',
+    shirt: '#3a7dff',
+    hairStyle: 'short',
+    eyes: 'normal',
+    mouth: 'smile',
+    glasses: false
+  };
+
+  const applyToUI = (o) => {
+    if (!els.skin) return;
+    els.skin.value = o.skin || defaults.skin;
+    els.hair.value = o.hair || defaults.hair;
+    els.shirt.value = o.shirt || defaults.shirt;
+    els.hairStyle.value = o.hairStyle || defaults.hairStyle;
+    els.eyes.value = o.eyes || defaults.eyes;
+    els.mouth.value = o.mouth || defaults.mouth;
+    els.glasses.checked = !!o.glasses;
+  };
+
+  const readFromUI = () => ({
+    skin: els.skin?.value || defaults.skin,
+    hair: els.hair?.value || defaults.hair,
+    shirt: els.shirt?.value || defaults.shirt,
+    hairStyle: els.hairStyle?.value || defaults.hairStyle,
+    eyes: els.eyes?.value || defaults.eyes,
+    mouth: els.mouth?.value || defaults.mouth,
+    glasses: !!els.glasses?.checked
+  });
+
+  const renderPreview = () => {
+    if (!els.preview) return;
+    const opts = readFromUI();
+    const svg = buildFluxAvatarSvg(opts);
+    const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    els.preview.src = url;
+    return { opts, url };
+  };
+
+  // Init builder with saved settings (if any)
+  try {
+    if (profile?.fluxAvatar) {
+      applyToUI({ ...defaults, ...profile.fluxAvatar });
+      if (els.details) els.details.open = true;
+    } else {
+      applyToUI(defaults);
+    }
+  } catch {
+    applyToUI(defaults);
+  }
+  renderPreview();
+
+  const onChange = () => renderPreview();
+  [els.skin, els.hair, els.shirt, els.hairStyle, els.eyes, els.mouth, els.glasses].forEach(el => {
+    el?.addEventListener('input', onChange);
+    el?.addEventListener('change', onChange);
+  });
+
+  els.reset?.addEventListener('click', () => {
+    applyToUI(defaults);
+    renderPreview();
+  });
+
+  els.use?.addEventListener('click', async () => {
+    const btn = els.use;
+    if (!btn) return;
+    const prev = btn.textContent;
+    btn.textContent = 'Saving…';
+    btn.disabled = true;
+    document.getElementById('avatar-loader').style.display = 'flex';
+    try {
+      const { opts, url } = renderPreview() || {};
+      await updateProfile(profile.uid, {
+        avatarURL: url,
+        avatarSource: 'flux-avatar',
+        fluxAvatar: opts || defaults
+      });
+      location.reload();
+    } catch (err) {
+      alert("Failed to update avatar: " + (err?.message || err));
+      document.getElementById('avatar-loader').style.display = 'none';
+      btn.textContent = prev;
+      btn.disabled = false;
+    }
+  });
 }
 
 function renderNotFound(msg) {
@@ -589,3 +1018,6 @@ function renderNotFound(msg) {
     </div>
   `;
 }
+
+
+setTimeout(() => { if(window.hideGlobalLoader) window.hideGlobalLoader(); }, 600);

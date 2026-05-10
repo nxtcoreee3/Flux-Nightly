@@ -18,8 +18,8 @@
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Flux — Play Unblocked</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>Flux</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/thumbnail.png">
@@ -40,6 +40,25 @@
   </style>
 </head>
 <body>
+  <div id="global-page-loader" style="position:fixed;inset:0;background:#ffffff;z-index:9999999;display:flex;justify-content:center;align-items:center;transition:opacity 0.4s ease;pointer-events:none;">
+    <img src="assets/loading.gif" style="width:250px;height:auto;" alt="Loading...">
+  </div>
+  <script>
+    // Fast Boot: hide the white loader quickly (best effort)
+    (function(){
+      const hide = () => {
+        try { if (localStorage.getItem('flux_fast_boot') !== '1') return; } catch(e){ return; }
+        const el = document.getElementById('global-page-loader');
+        if (!el) return;
+        el.style.opacity = '0';
+        setTimeout(() => { try { el.remove(); } catch(e){} }, 420);
+      };
+      setTimeout(hide, 80);
+      requestAnimationFrame(hide);
+      window.addEventListener('pageshow', hide, { once: true });
+    })();
+  </script>
+
   <header class="topbar">
     <div class="brand">
       <a href="index.html" class="logo"><img src="assets/logo.png" alt="Flux" style="height:32px;vertical-align:middle;margin-right:6px;"> FLUX</a>
@@ -70,13 +89,24 @@
         <p>Curated game portal — quick to launch, clean UI, works well on any device.</p>
         <div class="hero-actions">
           <a href="games.html" class="btn-large">Browse Games</a>
-          <a href="donate.html" class="btn-ghost">Support</a>
+          <div style="display:flex;align-items:center;">
+            <script type='text/javascript' src='https://storage.ko-fi.com/cdn/widget/Widget_2.js'></script>
+            <script type='text/javascript'>kofiwidget2.init('Support me on Ko-fi', '#ffb812', 'R6R41RAS47');kofiwidget2.draw();</script>
+          </div>
         </div>
       </div>
-      <div class="hero-visual" aria-hidden="true">
-        <div class="tile tile-1"></div>
-        <div class="tile tile-2"></div>
-        <div class="tile tile-3"></div>
+      <!-- Commits Panel -->
+      <div class="hero-commits" id="hero-commits">
+        <div class="commits-header">
+          <span id="commits-total-label" style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;">Commits</span>
+          <span id="commits-live-dot" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);">
+            <span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;animation:pulse-dot 2s infinite;"></span>Live
+          </span>
+        </div>
+        <div id="commits-list" style="display:flex;flex-direction:column;gap:6px;">
+          <div style="padding:16px 0;text-align:center;color:var(--muted);font-size:12px;">Loading commits...</div>
+        </div>
+        <a href="https://github.com/nxtcoreee3/flux/commits/main" target="_blank" rel="noopener" style="display:block;margin-top:10px;font-size:11px;color:var(--muted);text-decoration:none;text-align:right;">View all on GitHub →</a>
       </div>
     </section>
 
@@ -125,8 +155,9 @@
     <div class="modal-backdrop" data-close></div>
     <aside class="modal-panel" role="dialog" aria-modal="true" aria-label="Play game">
       <header class="modal-header">
-        <div id="modal-title">Loading...</div>
+        <div id="modal-title"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>
         <div class="modal-tools">
+          <div id="modal-kill-btn-wrap"></div>
           <button id="open-tab" class="tool-btn">Open in new tab</button>
           <button id="close-modal" class="tool-btn" aria-label="Close">✕</button>
         </div>
@@ -135,8 +166,14 @@
         <div id="iframe-wrap" class="iframe-wrap">
           <iframe id="game-iframe" src="" frameborder="0" allow="autoplay; fullscreen" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
         </div>
-        <div id="embed-warning" class="embed-warning hidden">
-          This site prevents embedding. <a id="open-fallback" href="#" target="_blank" rel="noopener">Open in a new tab</a>
+        <div id="embed-warning" class="embed-warning hidden" style="text-align:center;">
+          <div style="font-size:24px;margin-bottom:8px;">🕒</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">Taking a while to load?</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">This site might be blocking embedding or just slow.</div>
+          <div style="display:flex;gap:8px;justify-content:center;">
+            <button id="keep-waiting" style="padding:6px 12px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">Keep Waiting</button>
+            <a href="social.html" style="padding:6px 12px;background:rgba(0,0,0,0.05);color:var(--text);border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">Report to Admin</a>
+          </div>
         </div>
       </div>
     </aside>

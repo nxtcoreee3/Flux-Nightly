@@ -13,7 +13,7 @@ const GAMES = [
     url: 'https://nxtcoreee3.github.io/Drive-Mad/',
     desc: 'High speed driving challenge'
   },
-   {
+  {
     id: 'stickman-hook',
     title: 'Stickman Hook',
     thumb: 'assets/Stickman-Hook.png',
@@ -132,145 +132,152 @@ const GAMES = [
     url: 'https://eaglercraft.app/web/',
     desc: 'Play a browser-based Minecraft-style game with survival, building, and multiplayer. (Hosted by EaglercraftX)'
   },
-{
-  id: 'elastic-man',
-  title: 'Elastic Man',
-  thumb: 'assets/elastic-man.png',
-  url: 'https://nxtcoreee3.github.io/Elastic-Man/',
-  desc: 'Stretch and squish a face with realistic physics in this weirdly satisfying game.'
-},
-{
-  id: 'space-waves',
-  title: 'Space Waves',
-  thumb: 'assets/space-waves.png',
-  url: 'https://nxtcoreee3.github.io/Space-Waves/',
-  desc: 'Control an arrow and dodge obstacles through fast-paced levels.'
-},
-{
-  id: 'jetpack-joyride',
-  title: 'Jetpack Joyride',
-  thumb: 'assets/jetpack-joyride.png',
-  url: 'https://nxtcoreee3.github.io/Jetpack-Joyride/',
-  desc: 'Fly with a jetpack, dodge lasers and missiles, and see how far you can go.'
-},
-{
-  id: 'crossy-road',
-  title: 'Crossy Road',
-  thumb: 'assets/crossy-road.png',
-  url: 'https://nxtcoreee3.github.io/Crossy-Road/',
-  desc: 'Hop across roads, rivers, and tracks while avoiding traffic and obstacles.'
-},
-{
-  id: 'stacktris',
-  title: 'Stacktris',
-  thumb: 'assets/stacktris.png',
-  url: 'https://nxtcoreee3.github.io/Stacktris/',
-  desc: 'Stack spinning blocks carefully and build the tallest tower without it falling.',
-},
-{
-  id: 'guess-their-answer',
-  title: 'Guess Their Answer',
-  thumb: 'assets/guess-their-answer.png',
-  url: 'https://nxtcoreee3.github.io/Guess-Their-Answer/',
-  desc: 'Answer fun questions by guessing the most popular responses to beat your opponents.'
-},
-{
-  id: 'block-blast',
-  title: 'Block Blast',
-  thumb: 'assets/block-blast.png',
-  url: 'https://nxtcoreee3.github.io/Block-Blast/',
-  desc: 'Place blocks, clear lines, and keep the board from filling up.'
-},
-{
-  id: 'candy-crush',
-  title: 'Candy Crush',
-  thumb: 'assets/candy-crush.png',
-  url: 'https://nxtcoreee3.github.io/Candy-Crush/',
-  desc: 'Match candies to complete levels and earn high scores.'
-},
-{
-  id: 'capybara-clicker',
-  title: 'Capybara Clicker',
-  thumb: 'assets/capybara-clicker.png',
-  url: 'https://nxtcoreee3.github.io/Capybara-Clicker/',
-  desc: 'Click to collect capybaras and upgrade your cute farm.'
-},
-{
-  id: 'cleanup-io',
-  title: 'Cleanup.io',
-  thumb: 'assets/cleanup-io.png',
-  url: 'https://nxtcoreee3.github.io/Cleanup.io/',
-  desc: 'Collect trash, clean the area, and compete with other players.'
-},
-{
-  id: 'ducklings-io',
-  title: 'Ducklings.io',
-  thumb: 'assets/ducklings-io.png',
-  url: 'https://nxtcoreee3.github.io/Ducklings.io/',
-  desc: 'Lead your ducklings, grow your flock, and dominate the pond.'
-},
-{
-  id: 'monster-tracks',
-  title: 'Monster Tracks',
-  thumb: 'assets/monster-tracks.png',
-  url: 'https://nxtcoreee3.github.io/Monster-Tracks/',
-  desc: 'Drive monster trucks through crazy tracks and perform insane stunts.'
-},
   {
-  id: 'basket-random',
-  title: 'Basket Random',
-  thumb: 'assets/basket-random.png',
-  url: 'https://nxtcoreee3.github.io/Basket-Random/',
-  desc: 'Play chaotic basketball with random physics and score before your opponent.'
-},
+    id: 'elastic-man',
+    title: 'Elastic Man',
+    thumb: 'assets/elastic-man.png',
+    url: 'https://nxtcoreee3.github.io/Elastic-Man/',
+    desc: 'Stretch and squish a face with realistic physics in this weirdly satisfying game.'
+  },
+  {
+    id: 'space-waves',
+    title: 'Space Waves',
+    thumb: 'assets/space-waves.png',
+    url: 'https://nxtcoreee3.github.io/Space-Waves/',
+    desc: 'Control an arrow and dodge obstacles through fast-paced levels.'
+  },
+  {
+    id: 'jetpack-joyride',
+    title: 'Jetpack Joyride',
+    thumb: 'assets/jetpack-joyride.png',
+    url: 'https://nxtcoreee3.github.io/Jetpack-Joyride/',
+    desc: 'Fly with a jetpack, dodge lasers and missiles, and see how far you can go.'
+  },
+  {
+    id: 'crossy-road',
+    title: 'Crossy Road',
+    thumb: 'assets/crossy-road.png',
+    url: 'https://nxtcoreee3.github.io/Crossy-Road/',
+    desc: 'Hop across roads, rivers, and tracks while avoiding traffic and obstacles.'
+  },
+  {
+    id: 'stacktris',
+    title: 'Stacktris',
+    thumb: 'assets/stacktris.png',
+    url: 'https://nxtcoreee3.github.io/Stacktris/',
+    desc: 'Stack spinning blocks carefully and build the tallest tower without it falling.',
+  },
+  {
+    id: 'guess-their-answer',
+    title: 'Guess Their Answer',
+    thumb: 'assets/guess-their-answer.png',
+    url: 'https://nxtcoreee3.github.io/Guess-Their-Answer/',
+    desc: 'Answer fun questions by guessing the most popular responses to beat your opponents.'
+  },
+  {
+    id: 'block-blast',
+    title: 'Block Blast',
+    thumb: 'assets/block-blast.png',
+    url: 'https://nxtcoreee3.github.io/Block-Blast/',
+    desc: 'Place blocks, clear lines, and keep the board from filling up.'
+  },
+  {
+    id: 'candy-crush',
+    title: 'Candy Crush',
+    thumb: 'assets/candy-crush.png',
+    url: 'https://nxtcoreee3.github.io/Candy-Crush/',
+    desc: 'Match candies to complete levels and earn high scores.'
+  },
+  {
+    id: 'capybara-clicker',
+    title: 'Capybara Clicker',
+    thumb: 'assets/capybara-clicker.png',
+    url: 'https://nxtcoreee3.github.io/Capybara-Clicker/',
+    desc: 'Click to collect capybaras and upgrade your cute farm.'
+  },
+  {
+    id: 'cleanup-io',
+    title: 'Cleanup.io',
+    thumb: 'assets/cleanup-io.png',
+    url: 'https://nxtcoreee3.github.io/Cleanup.io/',
+    desc: 'Collect trash, clean the area, and compete with other players.'
+  },
+  {
+    id: 'ducklings-io',
+    title: 'Ducklings.io',
+    thumb: 'assets/ducklings-io.png',
+    url: 'https://nxtcoreee3.github.io/Ducklings.io/',
+    desc: 'Lead your ducklings, grow your flock, and dominate the pond.'
+  },
+  {
+    id: 'monster-tracks',
+    title: 'Monster Tracks',
+    thumb: 'assets/monster-tracks.png',
+    url: 'https://nxtcoreee3.github.io/Monster-Tracks/',
+    desc: 'Drive monster trucks through crazy tracks and perform insane stunts.'
+  },
+  {
+    id: 'basket-random',
+    title: 'Basket Random',
+    thumb: 'assets/basket-random.png',
+    url: 'https://nxtcoreee3.github.io/Basket-Random/',
+    desc: 'Play chaotic basketball with random physics and score before your opponent.'
+  },
+  {
+    id: 'clash-of-vikings',
+    title: 'Clash of Vikings',
+    thumb: 'assets/clash-of-vikings.png',
+    url: 'https://nxtcoreee3.github.io/Clash-of-Vikings/',
+    desc: 'Build your deck, deploy units, and destroy enemy towers in fast-paced battles.'
+  },
+  {
+    id: 'bowmasters',
+    title: 'Bowmasters',
+    thumb: 'assets/bowmasters.png',
+    url: 'https://nxtcoreee3.github.io/Bowmasters/',
+    desc: 'Aim carefully, throw weapons, and defeat your opponent in turn-based duels.'
+  },
+  {
+    id: 'state-io',
+    title: 'State.io',
+    thumb: 'assets/state-io.png',
+    url: 'https://nxtcoreee3.github.io/State.io/',
+    desc: 'Send troops, capture territories, and conquer the map using smart strategy.'
+  },
+  {
+    id: 'hole-io',
+    title: 'Hole.io',
+    thumb: 'assets/hole-io.png',
+    url: 'https://nxtcoreee3.github.io/Hole.io/',
+    desc: 'Control a black hole, swallow everything, and grow bigger than your rivals.'
+  },
+  {
+    id: 'talking-tom-cat',
+    title: 'Talking Tom Cat',
+    thumb: 'assets/talking-tom-cat.png',
+    url: 'https://gamejolt.net/?token=pUpjLeSCuADJLGguZw4X5LbU6NxbLv',
+    desc: 'Play the original Talking Tom game through an emulator and interact with the classic pet. (Hosted by GameJolt)'
+  },
+  {
+    id: 'subway-surfers-mexico',
+    title: 'Subway Surfers Mexico',
+    thumb: 'assets/subway-surfers-mexico.png',
+    url: 'https://nxtcoreee3.github.io/Subway-Surfers-Mexico/',
+    desc: 'Run through tracks, dodge trains, and collect coins in this Mexico-themed endless runner.'
+  },
+  {
+    id: 'subway-surfers-houston',
+    title: 'Subway Surfers Houston',
+    thumb: 'assets/subway-surfers-houston.png',
+    url: 'https://nxtcoreee3.github.io/Subway-Surfers-Houston/',
+    desc: 'Run through tracks, dodge trains, and collect coins in this Houston-themed endless runner.'
+  },
 {
-  id: 'clash-of-vikings',
-  title: 'Clash of Vikings',
-  thumb: 'assets/clash-of-vikings.png',
-  url: 'https://nxtcoreee3.github.io/Clash-of-Vikings/',
-  desc: 'Build your deck, deploy units, and destroy enemy towers in fast-paced battles.'
-},
-{
-  id: 'bowmasters',
-  title: 'Bowmasters',
-  thumb: 'assets/bowmasters.png',
-  url: 'https://nxtcoreee3.github.io/Bowmasters/',
-  desc: 'Aim carefully, throw weapons, and defeat your opponent in turn-based duels.'
-},
-{
-  id: 'state-io',
-  title: 'State.io',
-  thumb: 'assets/state-io.png',
-  url: 'https://nxtcoreee3.github.io/State.io/',
-  desc: 'Send troops, capture territories, and conquer the map using smart strategy.'
-},
-{
-  id: 'hole-io',
-  title: 'Hole.io',
-  thumb: 'assets/hole-io.png',
-  url: 'https://nxtcoreee3.github.io/Hole.io/',
-  desc: 'Control a black hole, swallow everything, and grow bigger than your rivals.'
-},
-{
-  id: 'talking-tom-cat',
-  title: 'Talking Tom Cat',
-  thumb: 'assets/talking-tom-cat.png',
-  url: 'https://gamejolt.net/?token=pUpjLeSCuADJLGguZw4X5LbU6NxbLv',
-  desc: 'Play the original Talking Tom game through an emulator and interact with the classic pet. (Hosted by GameJolt)'
-},
-{
-  id: 'subway-surfers-mexico',
-  title: 'Subway Surfers Mexico',
-  thumb: 'assets/subway-surfers-mexico.png',
-  url: 'https://nxtcoreee3.github.io/Subway-Surfers-Mexico/',
-  desc: 'Run through tracks, dodge trains, and collect coins in this Mexico-themed endless runner.'
-},
-{
-  id: 'subway-surfers-houston',
-  title: 'Subway Surfers Houston',
-  thumb: 'assets/subway-surfers-houston.png',
-  url: 'https://nxtcoreee3.github.io/Subway-Surfers-Houston/',
-  desc: 'Run through tracks, dodge trains, and collect coins in this Houston-themed endless runner.'
+  id: 'eggy-car',
+  title: 'Eggy Car',
+  thumb: 'assets/eggy-car.png',
+  url: 'https://nxtcoreee3.github.io/EggyCar/',
+  desc: 'Drive carefully over hills while keeping a fragile egg from falling.'
 }
 ];
 
@@ -323,7 +330,7 @@ document.addEventListener('click', (e) => {
 });
 
 /* YEAR footers */
-['year','year2','year3','year4','year5'].forEach(id => {
+['year', 'year2', 'year3', 'year4', 'year5'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.textContent = new Date().getFullYear();
 });
@@ -332,7 +339,7 @@ document.addEventListener('click', (e) => {
 const DARK_KEY = 'flux_dark';
 
 // Apply beta immediately from localStorage to avoid flash
-(function() {
+(function () {
   if (localStorage.getItem('flux_beta') === '1') {
     document.documentElement.classList.add('beta');
   }
@@ -361,7 +368,7 @@ function showToast(message, type = 'info') {
     document.body.appendChild(container);
   }
   const colors = { info: '#3a7dff', success: '#22c55e', error: '#ef4444', warning: '#f59e0b' };
-  const icons  = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
+  const icons = { info: 'ℹ️', success: '✅', error: '❌', warning: '⚠️' };
 
   const toast = document.createElement('div');
   toast.style.cssText = `
@@ -373,9 +380,9 @@ function showToast(message, type = 'info') {
   `;
   toast.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
   container.appendChild(toast);
-  requestAnimationFrame(() => { toast.style.opacity='1'; toast.style.transform='translateY(0)'; });
+  requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateY(0)'; });
   setTimeout(() => {
-    toast.style.opacity='0'; toast.style.transform='translateY(8px)';
+    toast.style.opacity = '0'; toast.style.transform = 'translateY(8px)';
     setTimeout(() => toast.remove(), 200);
   }, 3000);
 }
@@ -464,10 +471,10 @@ function createCard(game) {
   const compatBadge = compat === 'ipad'
     ? '<span class="compat-badge" data-tip="📱 Touchscreen compatible — works great on iPad and touch devices">📱 iPad</span>'
     : compat === 'pc'
-    ? '<span class="compat-badge" data-tip="🖥️ Requires a keyboard — best played on PC or laptop">🖥️ PC Only</span>'
-    : compat === 'both'
-    ? '<span class="compat-badge" data-tip="✅ Works on both — touchscreen friendly and also works with a keyboard">✅ iPad & PC</span>'
-    : '';
+      ? '<span class="compat-badge" data-tip="🖥️ Requires a keyboard — best played on PC or laptop">🖥️ PC Only</span>'
+      : compat === 'both'
+        ? '<span class="compat-badge" data-tip="✅ Works on both — touchscreen friendly and also works with a keyboard">✅ iPad & PC</span>'
+        : '';
 
   const ratingHTML = avgRating
     ? `<span style="font-size:11px;color:#f59e0b;font-weight:700;">★ ${avgRating} <span style="color:var(--muted);font-weight:400;">(${stats.ratingCount})</span></span>`
@@ -509,9 +516,9 @@ function createCard(game) {
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         ${isModLocked && !isOwnerView
-          ? `<button class="modlock-info-btn" style="padding:7px 14px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;">Get Info</button>`
-          : `<button class="play-btn" data-url="${game.url}" data-title="${game.title}">${isLocked ? `🔒 ${finalPrice} pts` : 'Play'}</button>`
-        }
+      ? `<button class="modlock-info-btn" style="padding:7px 14px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;">Get Info</button>`
+      : `<button class="play-btn" data-url="${game.url}" data-title="${game.title}">${isLocked ? `🔒 ${finalPrice} pts` : 'Play'}</button>`
+    }
       </div>
     </div>
   `;
@@ -577,7 +584,7 @@ function showRatingModal(game) {
       <h3 style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);margin:0 0 6px;">${game.title}</h3>
       <p style="font-size:13px;color:var(--muted);margin:0 0 16px;">How would you rate this game?</p>
       <div id="star-row" style="display:flex;justify-content:center;gap:8px;margin-bottom:16px;">
-        ${[1,2,3,4,5].map(s => `<button class="star-btn" data-star="${s}" style="background:none;border:none;font-size:32px;cursor:pointer;transition:transform 0.1s;color:${s <= userRating ? '#f59e0b' : '#d1d5db'};">★</button>`).join('')}
+        ${[1, 2, 3, 4, 5].map(s => `<button class="star-btn" data-star="${s}" style="background:none;border:none;font-size:32px;cursor:pointer;transition:transform 0.1s;color:${s <= userRating ? '#f59e0b' : '#d1d5db'};">★</button>`).join('')}
       </div>
       <p id="rating-msg" style="font-size:12px;color:var(--muted);margin:0;min-height:18px;"></p>
     </div>
@@ -632,9 +639,9 @@ function showReportModal(game) {
       <h3 style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);margin:0 0 6px;">Report ${game.title}</h3>
       <p style="font-size:13px;color:var(--muted);margin:0 0 14px;">What's wrong with this game?</p>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-        ${['Game is broken / won\'t load','Game crashes my browser','Content is inappropriate','Other'].map(r =>
-          `<button class="report-reason-btn" data-reason="${r}" style="padding:10px 14px;text-align:left;border:1px solid var(--glass-border);border-radius:10px;background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;transition:border-color 0.15s;">${r}</button>`
-        ).join('')}
+        ${['Game is broken / won\'t load', 'Game crashes my browser', 'Content is inappropriate', 'Other'].map(r =>
+    `<button class="report-reason-btn" data-reason="${r}" style="padding:10px 14px;text-align:left;border:1px solid var(--glass-border);border-radius:10px;background:var(--bg);color:var(--text);font-size:13px;cursor:pointer;transition:border-color 0.15s;">${r}</button>`
+  ).join('')}
       </div>
       <p id="report-msg" style="font-size:12px;text-align:center;margin:0;min-height:18px;"></p>
     </div>
@@ -729,8 +736,8 @@ function applyFilters() {
   const query = (quickSearch?.value || '').toLowerCase().trim();
   const sort = sortSelect?.value || 'featured';
   let list = [...GAMES];
-  if (query) list = list.filter(g => g.title.toLowerCase().includes(query) || (g.desc||'').toLowerCase().includes(query));
-  if (sort === 'alpha') list.sort((a,b) => a.title.localeCompare(b.title));
+  if (query) list = list.filter(g => g.title.toLowerCase().includes(query) || (g.desc || '').toLowerCase().includes(query));
+  if (sort === 'alpha') list.sort((a, b) => a.title.localeCompare(b.title));
   else if (sort === 'recent') list = list.slice().reverse();
   renderGames(list);
 }
@@ -738,7 +745,7 @@ function applyFilters() {
 if (quickSearch) quickSearch.addEventListener('input', debounce(applyFilters, 160));
 if (sortSelect) sortSelect.addEventListener('change', applyFilters);
 
-function debounce(fn, wait=120) {
+function debounce(fn, wait = 120) {
   let t;
   return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); };
 }
@@ -764,7 +771,7 @@ async function initAds() {
       localStorage.setItem('flux_no_ads', '1');
       return;
     }
-  } catch {}
+  } catch { }
 
   // Render the banner
   const slot = document.getElementById('flux-ad-banner');
@@ -830,9 +837,9 @@ function showNoAdsModal() {
         </div>
         <div style="font-size:12px;color:#9ca3af;margin-bottom:20px;">One-time purchase. Permanent, no expiry.</div>
         ${hasEnough
-          ? `<button id="no-ads-buy" style="width:100%;padding:13px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px;">Remove Ads Forever</button>`
-          : `<button id="no-ads-earn" style="width:100%;padding:13px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px;">💡 How to earn more points</button>`
-        }
+        ? `<button id="no-ads-buy" style="width:100%;padding:13px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px;">Remove Ads Forever</button>`
+        : `<button id="no-ads-earn" style="width:100%;padding:13px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border:none;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;margin-bottom:8px;">💡 How to earn more points</button>`
+      }
         <button id="no-ads-cancel" style="width:100%;padding:11px;background:#f3f4f6;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;color:#6b7280;">Cancel</button>
         <p id="no-ads-msg" style="font-size:12px;margin:10px 0 0;display:none;"></p>
       </div>`;
@@ -842,7 +849,7 @@ function showNoAdsModal() {
     <div style="background:#fff;border-radius:20px;padding:28px 24px;width:100%;max-width:340px;box-shadow:0 30px 80px rgba(0,0,0,0.2);position:relative;">
       <button id="no-ads-close-x" style="position:absolute;top:12px;right:12px;background:none;border:none;font-size:18px;cursor:pointer;color:#9ca3af;">✕</button>
       <div id="no-ads-body">
-        <div style="text-align:center;padding:20px 0;color:#9ca3af;font-size:13px;">Loading...</div>
+        <div style="text-align:center;padding:20px 0;color:#9ca3af;font-size:13px;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>
       </div>
     </div>
   `;
@@ -860,7 +867,7 @@ function showNoAdsModal() {
         const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
         const snap = await gd(fd(getFirestore(getApp()), 'profiles', window._currentUserUid));
         if (snap.exists()) balance = snap.data().points || 0;
-      } catch {}
+      } catch { }
     }
 
     document.getElementById('no-ads-body').innerHTML = renderContent(balance);
@@ -906,45 +913,65 @@ function showNoAdsModal() {
 }
 
 /* ===================== INIT ===================== */
-document.addEventListener('DOMContentLoaded', () => {
+function bootFlux() {
   initCookieConsent();
   initDarkMode();
   initUpdateNotification();
-  initFirestoreHealthCheck();
-  initIncidentBanner();
-  initStatsButton();
-  initPresence();
-  initServerStatus();
-  initBroadcast();
-  initChaos();
-  initJumpscare();
-  trackDailyVisitor();
-  injectBuildNumber();
-  showSocialBanner();
-  initAIPicker();
-  initMobileWarning();
-  initAds();
+  if (window.hideGlobalLoader) window.hideGlobalLoader();
+
+  const fastBoot = (() => { try { return localStorage.getItem('flux_fast_boot') === '1'; } catch { return false; } })();
+  const defer = (fn, timeout = 800) => {
+    try {
+      if ('requestIdleCallback' in window) return requestIdleCallback(fn, { timeout });
+    } catch {}
+    return setTimeout(fn, 0);
+  };
+
+  // Render immediately so the page never feels empty
+  if (document.getElementById('game-grid') || document.getElementById('games-grid')) {
+    renderGames(GAMES);
+  }
 
   if (document.getElementById('quick-search')) {
     document.getElementById('quick-search').addEventListener('input', debounce(applyFilters, 120));
   }
 
-  initAuthUI(async (user) => {
+  // Non-critical boot work (delay more aggressively in Fast Boot)
+  const base = fastBoot ? 2200 : 1200;
+  defer(() => initFirestoreHealthCheck(), base);
+  defer(() => initIncidentBanner(), base);
+  defer(() => initStatsButton(), base);
+  defer(() => initPresence(), base);
+  defer(() => initServerStatus(), base + 200);
+  defer(() => initBroadcast(), base + 200);
+  defer(() => initChaos(), base + 400);
+  defer(() => initJumpscare(), base + 400);
+  defer(() => trackDailyVisitor(), base + 600);
+  defer(() => injectBuildNumber(), base + 800);
+  defer(() => showSocialBanner(), base + 900);
+  defer(() => initAIPicker(), base + 1000);
+  defer(() => initMobileWarning(), base + 1100);
+  defer(() => initAds(), base + 1400);
+
+  const initAuth = () => initAuthUI(async (user) => {
     window._currentUserUid = user?.uid || null;
     window._fluxIsOwner = user?.uid === 'zEy6TO5ligf2um4rssIZs9C9X7f2';
     await refreshFavsCache();
     if (user && !user.isAnonymous) {
-      trackLoginStreak();
-      trackTimeOnSite();
+      defer(() => trackLoginStreak(), base);
+      defer(() => trackTimeOnSite(), base);
+
       // Re-check no-ads status now that we're signed in
       if (!_adsDisabled) {
-        const noAds = await checkNoAds();
-        if (noAds) {
-          _adsDisabled = true;
-          localStorage.setItem('flux_no_ads', '1');
-          const slot = document.getElementById('flux-ad-banner');
-          if (slot) slot.innerHTML = '';
-        }
+        try {
+          const noAds = await checkNoAds();
+          if (noAds) {
+            _adsDisabled = true;
+            localStorage.setItem('flux_no_ads', '1');
+            const slot = document.getElementById('flux-ad-banner');
+            if (slot) slot.innerHTML = '';
+          }
+        } catch {}
       }
       if (!sessionStorage.getItem('flux_welcomed')) {
         showToast(`Welcome back! 👋`, 'success');
@@ -953,30 +980,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Render immediately so grid always shows
-  if (document.getElementById('game-grid') || document.getElementById('games-grid')) {
-    renderGames(GAMES);
-  }
+  // Fast Boot: defer Firebase/auth work so first paint is instant
+  if (fastBoot) defer(() => initAuth(), base + 400);
+  else initAuth();
 
   // Load cloud data in background then re-render with full info
-  loadCloudFavs().then(async cloud => {
-    if (cloud !== null) { _favsCache = cloud; saveLocalFavs(cloud); }
-    try {
-      const [stats, hotGame, pricing, unlocked] = await Promise.all([
-        fetchAllGameStats(), fetchHotGame(), fetchGamePricing(), getUnlockedGames()
-      ]);
-      _allGameStats = stats || {};
-      if (hotGame) _hotGameId = hotGame.id;
-      GAMES.forEach(g => { _newGameCache[g.id] = _allGameStats[g.id]?.firstSeen || null; });
-      Object.assign(_gamePricing, pricing || {});
-      window._fluxGamePricing = _gamePricing;
-      _unlockedGames = unlocked || [];
-    } catch { /* Firebase down — grid already showing */ }
-    if (document.getElementById('game-grid') || document.getElementById('games-grid')) {
-      renderGames(GAMES);
-    }
-  }).catch(() => {});
-});
+  defer(() => {
+    loadCloudFavs().then(async cloud => {
+      if (cloud !== null) { _favsCache = cloud; saveLocalFavs(cloud); }
+      try {
+        const [stats, hotGame, pricing, unlocked] = await Promise.all([
+          fetchAllGameStats(), fetchHotGame(), fetchGamePricing(), getUnlockedGames()
+        ]);
+        _allGameStats = stats || {};
+        if (hotGame) _hotGameId = hotGame.id;
+        GAMES.forEach(g => { _newGameCache[g.id] = _allGameStats[g.id]?.firstSeen || null; });
+        Object.assign(_gamePricing, pricing || {});
+        window._fluxGamePricing = _gamePricing;
+        _unlockedGames = unlocked || [];
+      } catch { /* Firebase down — grid already showing */ }
+      if (document.getElementById('game-grid') || document.getElementById('games-grid')) {
+        renderGames(GAMES);
+      }
+    }).catch(() => { });
+  }, base + 600);
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bootFlux);
+else bootFlux();
 
 /* ===================== MOBILE WARNING ===================== */
 function initMobileWarning() {
@@ -1139,7 +1170,7 @@ function initMobileWarning() {
       const key = deviceModel.replace(/\s+/g, '_');
       const snap = await getDoc(docRef(firestore, 'mobileBlacklist', key));
       if (snap.exists()) return; // blacklisted — don't show
-    } catch {}
+    } catch { }
     showWarning();
   })();
 }
@@ -1436,18 +1467,244 @@ function showSocialBanner() {
 }
 
 /* ===================== BUILD SHA ===================== */
-async function injectBuildNumber() {
+/* ===================== COMMITS PANEL + BUILD NUMBER ===================== */
+
+// Maps changed files → page links users can navigate to
+const FILE_TO_PAGE = {
+  'social.js':        { label: 'Social', url: 'social.html' },
+  'social.html':      { label: 'Social', url: 'social.html' },
+  'messages.js':      { label: 'Messages', url: 'messages.html' },
+  'messages.html':    { label: 'Messages', url: 'messages.html' },
+  'profile.js':       { label: 'Profiles', url: 'profile.html' },
+  'profile.html':     { label: 'Profiles', url: 'profile.html' },
+  'games.html':       { label: 'Games', url: 'games.html' },
+  'script.js':        { label: 'Home', url: 'index.html' },
+  'index.html':       { label: 'Home', url: 'index.html' },
+  'settings.html':    { label: 'Settings', url: 'settings.html' },
+  'status.html':      { label: 'Status', url: 'status.html' },
+  'firebase-auth.js': { label: 'Core', url: null },
+  'style.css':        { label: 'Design', url: null },
+};
+
+const COMMITS_CACHE_KEY = 'flux_commits_cache';
+const COMMITS_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const COMMITS_PER_PAGE = 3;
+const COMMITS_TOTAL_KEY = 'flux_commits_total';
+const COMMITS_TOTAL_TS_KEY = 'flux_commits_total_ts';
+const COMMITS_TOTAL_TTL = 60 * 60 * 1000; // 1 hour
+
+function timeAgoShort(isoDate) {
+  const diff = Date.now() - new Date(isoDate).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
+async function fetchCommitsFromAtom() {
   try {
-    const res = await fetch('https://api.github.com/repos/nxtcoreee3/Flux/commits/main', {
+    const res = await fetch(`https://github.com/nxtcoreee3/Flux/commits/main.atom`, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const xmlText = await res.text();
+    const xml = new DOMParser().parseFromString(xmlText, 'application/xml');
+    const entries = Array.from(xml.querySelectorAll('entry')).slice(0, COMMITS_PER_PAGE);
+    return entries.map((entry) => {
+      const id = entry.querySelector('id')?.textContent || '';
+      const title = entry.querySelector('title')?.textContent || '';
+      const updated = entry.querySelector('updated')?.textContent || '';
+      const sha = (id.match(/commit\/([0-9a-f]{7,40})/i)?.[1] || '').toLowerCase();
+      return {
+        sha,
+        html_url: `https://github.com/nxtcoreee3/Flux/commit/${sha}`,
+        commit: { message: title, committer: { date: updated }, author: { date: updated } }
+      };
+    }).filter(c => c.sha);
+  } catch { return []; }
+}
+
+async function fetchCommits(force = false) {
+  try {
+    const res = await fetch(`https://api.github.com/repos/nxtcoreee3/Flux/commits?per_page=${COMMITS_PER_PAGE}&sha=main`, {
+      headers: { 'Accept': 'application/vnd.github.v3+json' },
+      cache: 'no-store'
+    });
+    if (!res.ok) throw new Error('GitHub API error');
+    return await res.json();
+  } catch (e) {
+    // Fallback to atom feed if rate-limited
+    const atom = await fetchCommitsFromAtom();
+    if (atom.length) return atom;
+    throw e;
+  }
+}
+
+function parseLastPageFromLinkHeader(link) {
+  if (!link) return null;
+  const parts = String(link).split(',');
+  const lastPart = parts.find(p => /rel=\"last\"/.test(p));
+  if (!lastPart) return null;
+  const m = lastPart.match(/[\?&]page=(\d+)/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+async function fetchCommitTotal(force = false) {
+  const cached = parseInt(localStorage.getItem(COMMITS_TOTAL_KEY) || '0', 10) || 0;
+  
+  try {
+    const res = await fetch('https://api.github.com/repos/nxtcoreee3/Flux/commits?per_page=1&sha=main', {
+      headers: { 'Accept': 'application/vnd.github.v3+json' },
+      cache: 'no-store'
+    });
+    if (!res.ok) return cached || 0;
+    const link = res.headers.get('Link') || '';
+    const lastPage = parseLastPageFromLinkHeader(link);
+    const total = lastPage || cached || 0;
+    if (total) {
+      localStorage.setItem(COMMITS_TOTAL_KEY, String(total));
+      localStorage.setItem(COMMITS_TOTAL_TS_KEY, String(Date.now()));
+    }
+    return total;
+  } catch {
+
+    return cached || 0;
+  }
+}
+
+async function getCommitFiles(sha) {
+  try {
+    const res = await fetch(`https://api.github.com/repos/nxtcoreee3/Flux/commits/${sha}`, {
       headers: { 'Accept': 'application/vnd.github.v3+json' }
     });
-    if (!res.ok) return;
+    if (!res.ok) return [];
     const data = await res.json();
-    const sha = data.sha?.slice(0, 7);
-    if (!sha) return;
+    return (data.files || []).map(f => f.filename.split('/').pop());
+  } catch { return []; }
+}
+
+async function getAICommitDescription(commitMsg, files) {
+  // Check local cache first
+  const cacheKey = `flux_commit_ai_${commitMsg.slice(0, 30)}`;
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) return JSON.parse(cached);
+
+  try {
+    // Fast, local "AI-like" summary (no external API keys required)
+    const msg = String(commitMsg || '').split('\n')[0].trim();
+    const lower = msg.toLowerCase();
+    const names = (files || []).join(' ').toLowerCase();
+
+    const describe = () => {
+      if (/messages\.js|messages\.html|dm|direct message|conversations/.test(names + ' ' + lower)) return 'Messaging: improved chats and reliability.';
+      if (/social\.js|social\.html|\bglobal chat\b/.test(names + ' ' + lower)) return 'Social: improved chat and social features.';
+      if (/profile\.js|profile\.html|follow|followers/.test(names + ' ' + lower)) return 'Profiles: improved follows and profile pages.';
+      if (/games\.html|\bgames?\b|play/.test(names + ' ' + lower)) return 'Games: improved browsing and performance.';
+      if (/style\.css|\bui\b|css|design/.test(names + ' ' + lower)) return 'UI: improved design and polish.';
+      if (/\bfix\b|bug|broken/.test(lower)) return 'Fixed bugs and improved stability.';
+      if (/\badd\b|\bnew\b/.test(lower)) return 'Added improvements and new features.';
+      return 'Improved performance and polish.';
+    };
+
+    const desc = describe();
+    localStorage.setItem(cacheKey, JSON.stringify(desc));
+    return desc;
+  } catch { return null; }
+}
+
+function getPageLinkFromFiles(files) {
+  for (const file of files) {
+    const match = FILE_TO_PAGE[file];
+    if (match) return match;
+  }
+  return null;
+}
+
+async function renderCommitsPanel(commits) {
+  const list = document.getElementById('commits-list');
+  if (!list) return;
+
+  const totalLabel = document.getElementById('commits-total-label');
+  const commitTotal = await fetchCommitTotal(false);
+  if (totalLabel && commitTotal) totalLabel.textContent = `${commitTotal} Commits`;
+
+  // Mark commits newer than last seen
+  const lastSeenSha = localStorage.getItem('flux_last_seen_commit');
+  const latestSha = commits[0]?.sha;
+
+  list.innerHTML = '';
+
+  for (let i = 0; i < commits.length; i++) {
+    const c = commits[i];
+    const sha = c.sha.slice(0, 7);
+    const msg = (c.commit?.message || '').split('\n')[0];
+    const date = c.commit?.committer?.date || c.commit?.author?.date;
+    const isNew = lastSeenSha && c.sha !== lastSeenSha && i === 0;
+    const commitUrl = `https://github.com/nxtcoreee3/Flux/commit/${c.sha}`;
+    const num = commitTotal ? (commitTotal - i) : null;
+
+    const row = document.createElement('div');
+    row.className = 'commit-row';
+
+    row.innerHTML = `
+      <div class="commit-sha-line">
+        <a class="commit-sha" href="${commitUrl}" target="_blank" rel="noopener" title="Open commit on GitHub" onclick="event.stopPropagation();">${num ? `#${num}` : `#${sha}`}</a>
+        ${isNew ? '<span class="commit-new-badge">New</span>' : ''}
+        <span class="commit-msg">${msg}</span>
+      </div>
+      <div class="commit-ai-desc" id="ai-desc-${sha}">
+        <span style="color:var(--muted);font-size:10px;">✨ Summarising...</span>
+      </div>
+      <span class="commit-time">${timeAgoShort(date)}</span>
+    `;
+
+    // Clicking the row opens the commit on GitHub
+    row.addEventListener('click', () => {
+      window.open(commitUrl, '_blank', 'noopener');
+    });
+
+    list.appendChild(row);
+
+    // Fetch AI description + files asynchronously per commit
+    (async (sha7, fullSha, rowEl) => {
+      const descEl = rowEl.querySelector(`#ai-desc-${sha7}`);
+      if (!descEl) return;
+      try {
+        const files = await getCommitFiles(fullSha);
+        const aiDesc = await getAICommitDescription(msg, files);
+        const pageLink = getPageLinkFromFiles(files);
+
+        if (aiDesc) {
+          if (pageLink?.url) {
+            descEl.innerHTML = `<a href="${pageLink.url}" onclick="event.stopPropagation();" style="color:var(--accent);text-decoration:none;font-weight:600;" title="Go to ${pageLink.label}">→ ${pageLink.label}:</a> ${aiDesc}`;
+          } else {
+            descEl.textContent = aiDesc;
+          }
+        } else {
+          descEl.textContent = msg.length > 60 ? msg.slice(0, 60) + '…' : msg;
+        }
+      } catch {
+        descEl.textContent = msg.length > 60 ? msg.slice(0, 60) + '…' : msg;
+      }
+    })(sha, c.sha, row);
+  }
+
+  // Store latest sha so we know what's "new" next time
+  if (latestSha) localStorage.setItem('flux_last_seen_commit', latestSha);
+}
+
+async function injectBuildNumber() {
+  try {
+    const commits = await fetchCommits();
+    if (!commits?.length) return;
+
+    const latest = commits[0];
+    const sha = latest.sha.slice(0, 7);
     window._fluxBuildSHA = sha;
-    window._fluxBuildURL = `https://github.com/nxtcoreee3/Flux/commit/${data.sha}`;
-    window._fluxBuildMsg = (data.commit?.message || '').replace(/"/g, '').split('\n')[0];
+    window._fluxBuildURL = `https://github.com/nxtcoreee3/Flux/commit/${latest.sha}`;
+    window._fluxBuildMsg = (latest.commit?.message || '').split('\n')[0];
+
+    // Inject SHA into profile dropdown
     const tryInject = () => {
       const dd = document.getElementById('profile-dropdown');
       if (!dd || dd.querySelector('.build-sha-item')) return;
@@ -1461,7 +1718,20 @@ async function injectBuildNumber() {
     const obs = new MutationObserver(tryInject);
     obs.observe(document.body, { childList: true, subtree: true });
     setTimeout(() => obs.disconnect(), 30000);
-  } catch {}
+
+    // Render commits panel (index.html only)
+    if (document.getElementById('hero-commits')) {
+      await renderCommitsPanel(commits);
+
+      // Auto-refresh every 5 minutes
+      setInterval(async () => {
+        try {
+          const fresh = await fetchCommits(true);
+          if (fresh?.length) await renderCommitsPanel(fresh);
+        } catch {}
+      }, COMMITS_CACHE_TTL);
+    }
+  } catch { }
 }
 
 /* ===================== FULLSCREEN ===================== */
@@ -1471,44 +1741,65 @@ function openFullscreen(url, title) {
   fs.id = 'flux-fullscreen';
   fs.style.cssText = 'position:fixed;inset:0;z-index:9998;background:#000;display:flex;flex-direction:column;';
   fs.innerHTML = `
-    <div id="fs-bar" style="position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(to bottom,rgba(0,0,0,0.75),transparent);transition:opacity 0.3s;">
-      <button id="fs-exit" style="background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px);">✕ Exit</button>
+    <div id="fs-hover-zone" style="position:absolute;top:0;left:0;right:0;height:60px;z-index:5;pointer-events:auto;"></div>
+    <div id="fs-bar" style="position:absolute;top:0;left:0;right:0;z-index:6;display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(to bottom,rgba(0,0,0,0.85),transparent);transition:opacity 0.3s;pointer-events:auto;">
+      <button id="fs-exit" style="background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px);pointer-events:auto;">✕ Exit</button>
       <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);flex:1;">${title}</span>
-      <button id="fs-newtab" style="display:none;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.2);color:white;border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer;backdrop-filter:blur(4px);">↗ Open in New Tab</button>
+      ${isKillSwitchEnabled() ? `<div style="display:flex;align-items:center;">
+        <button id="fs-kill-btn" title="Kill Switch (Shift+Esc)" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:8px 0 0 8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 10px rgba(239,68,68,0.4);">⚡ Kill</button>
+        <button id="fs-kill-settings-btn" title="Configure Kill Switch" style="background:rgba(239,68,68,0.25);color:#fca5a5;border:none;border-left:1px solid rgba(239,68,68,0.4);border-radius:0 8px 8px 0;padding:7px 8px;font-size:11px;cursor:pointer;">⚙</button>
+      </div>` : ''}
     </div>
     <div id="fs-loading-bg" style="position:absolute;inset:0;background:#fff url('assets/loading.gif') center center / 250px no-repeat;z-index:1;"></div>
     <iframe id="fs-iframe" src="${url}" style="flex:1;border:0;width:100%;height:100%;opacity:0;transition:opacity 0.4s ease;position:relative;z-index:2;" allow="autoplay; fullscreen" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
     <div id="fs-embed-warn" style="display:none;position:absolute;inset:0;z-index:3;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:rgba(0,0,0,0.85);">
-      <span style="font-size:32px;">🚫</span>
-      <span style="color:white;font-size:15px;font-weight:600;">This game can't be embedded.</span>
-      <button id="fs-fallback-btn" style="background:#3a7dff;color:white;border:none;border-radius:10px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;">↗ Open in New Tab</button>
+      <span style="font-size:32px;">🕒</span>
+      <span style="color:white;font-size:15px;font-weight:600;text-align:center;padding:0 20px;">This game might be having trouble loading. Please wait, or report it to an Admin.</span>
+      <button id="fs-fallback-btn" style="background:#3a7dff;color:white;border:none;border-radius:10px;padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;">Keep Waiting</button>
+      <a href="social.html" style="color:#9ca3af;font-size:12px;margin-top:8px;text-decoration:underline;">Or report to an Admin</a>
     </div>
   `;
   document.body.appendChild(fs);
   const bar = fs.querySelector('#fs-bar');
+  const hoverZone = fs.querySelector('#fs-hover-zone');
   const fsIframe = fs.querySelector('#fs-iframe');
   const fsWarn = fs.querySelector('#fs-embed-warn');
-  const fsNewTab = fs.querySelector('#fs-newtab');
   let barTimer;
-  const showBar = () => { bar.style.opacity = '1'; clearTimeout(barTimer); barTimer = setTimeout(() => { bar.style.opacity = '0'; }, 3000); };
-  showBar();
-  fs.addEventListener('mousemove', showBar);
+
+  const showBar = () => {
+    bar.style.opacity = '1';
+    clearTimeout(barTimer);
+    barTimer = setTimeout(() => { bar.style.opacity = '0'; }, 3000);
+  };
+  const hideBar = () => { bar.style.opacity = '0'; };
+
+  // Show bar on hover zone (transparent area at top of screen above iframe)
+  hoverZone.addEventListener('mouseenter', showBar);
+  hoverZone.addEventListener('mousemove', showBar);
+  bar.addEventListener('mouseenter', showBar);
+  bar.addEventListener('mousemove', showBar);
+
+  // Touch: tap anywhere shows bar
   fs.addEventListener('touchstart', showBar, { passive: true });
+
+  // Always show bar initially
+  showBar();
+
   fs.querySelector('#fs-exit').addEventListener('click', () => fs.remove());
-  fsNewTab.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
-  fs.querySelector('#fs-fallback-btn').addEventListener('click', () => window.open(url, '_blank', 'noopener'));
-  // Detect embed failure
+  fs.querySelector('#fs-kill-btn')?.addEventListener('click', () => triggerKillSwitch());
+  fs.querySelector('#fs-kill-settings-btn')?.addEventListener('click', (e) => { e.stopPropagation(); buildKillSwitchPopover(); });
+  fs.querySelector('#fs-fallback-btn').addEventListener('click', () => { fsWarn.style.display = 'none'; });
+
   let fsLoaded = false;
-  fsIframe.addEventListener('load', () => { 
-    fsLoaded = true; 
-    fsIframe.style.opacity = '1'; 
+  fsIframe.addEventListener('load', () => {
+    fsLoaded = true;
+    fsIframe.style.opacity = '1';
     const lbg = fs.querySelector('#fs-loading-bg');
     if (lbg) lbg.style.display = 'none';
   }, { once: true });
   setTimeout(() => {
     if (!fsLoaded) {
       fsWarn.style.display = 'flex';
-      fsNewTab.style.display = '';
       const lbg = fs.querySelector('#fs-loading-bg');
       if (lbg) lbg.style.display = 'none';
     }
@@ -1545,10 +1836,16 @@ function openPlayModal(url, title) {
   }
   if (fsBtn) { fsBtn.style.display = ''; fsBtn.onclick = () => { closeModal(); openFullscreen(url, title); }; }
 
-  const closeModal = () => { modal.setAttribute('aria-hidden','true'); if(iframe) iframe.src='about:blank'; clearCurrentlyPlaying(); };
+  // Wire keep-waiting button in play modal
+  const keepWaitingBtn = embedWarning?.querySelector('#keep-waiting') || embedWarning?.querySelector('#keep-waiting-2');
+  if (keepWaitingBtn) {
+    keepWaitingBtn.onclick = () => { embedWarning.classList.add('hidden'); };
+  }
+
+  const closeModal = () => { modal.setAttribute('aria-hidden', 'true'); if (iframe) iframe.src = 'about:blank'; clearCurrentlyPlaying(); };
   if (closeBtn) closeBtn.onclick = closeModal;
   modal.querySelectorAll('[data-close]').forEach(el => el.onclick = closeModal);
-  window.addEventListener('keydown', function escClose(e) { if(e.key==='Escape'){ closeModal(); window.removeEventListener('keydown',escClose); } });
+  window.addEventListener('keydown', function escClose(e) { if (e.key === 'Escape') { closeModal(); window.removeEventListener('keydown', escClose); } });
 
   if (iframe) {
     embedWarning?.classList.add('hidden');
@@ -1561,21 +1858,24 @@ function openPlayModal(url, title) {
     }
 
     let loaded = false;
-    iframe.addEventListener('load', () => { 
-      loaded=true; 
-      embedWarning?.classList.add('hidden'); 
+    iframe.addEventListener('load', () => {
+      loaded = true;
+      embedWarning?.classList.add('hidden');
       iframe.style.opacity = '1';
       if (iframe.parentElement) {
         iframe.parentElement.style.background = ""; // remove loading gif once loaded
       }
-    }, { once:true });
+    }, { once: true });
     setTimeout(() => {
       if (!loaded) {
+        // Fallback for X-Frame-Options
         embedWarning?.classList.remove('hidden');
         if (fsBtn) fsBtn.style.display = 'none'; // hide if embedding blocked
-        if (openTabBtn) openTabBtn.style.display = ''; // show new tab only now
+        
         const fb = embedWarning?.querySelector('a');
-        if (fb) { fb.href=url; fb.onclick=()=>{ window.open(url,'_blank','noopener'); return true; }; }
+        if (fb) {
+          fb.href = 'social.html';
+        }
       }
     }, 2200);
   } else {
@@ -1587,21 +1887,21 @@ document.addEventListener('click', (e) => {
   if (!e.target) return;
   if (e.target.matches('[data-close]') || e.target.classList.contains('modal-backdrop')) {
     const m = e.target.closest('.modal');
-    if (m) { m.setAttribute('aria-hidden','true'); const iframe=m.querySelector('iframe'); if(iframe) iframe.src='about:blank'; }
+    if (m) { m.setAttribute('aria-hidden', 'true'); const iframe = m.querySelector('iframe'); if (iframe) iframe.src = 'about:blank'; }
   }
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key==='Escape') {
+  if (e.key === 'Escape') {
     document.querySelectorAll('.modal[aria-hidden="false"]').forEach(m => {
-      m.setAttribute('aria-hidden','true');
-      const iframe=m.querySelector('iframe'); if(iframe) iframe.src='about:blank';
+      m.setAttribute('aria-hidden', 'true');
+      const iframe = m.querySelector('iframe'); if (iframe) iframe.src = 'about:blank';
     });
   }
 });
 
 /* ===================== FLOATING TOOLTIP ===================== */
-(function() {
+(function () {
   const tip = document.createElement('div');
   tip.id = 'flux-tooltip';
   tip.style.cssText = 'position:fixed;z-index:99999;background:#111827;color:#fff;font-size:12px;font-weight:500;padding:7px 11px;border-radius:9px;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,0.3);white-space:nowrap;opacity:0;transition:opacity 0.15s ease;max-width:260px;white-space:normal;line-height:1.4;';
@@ -1698,13 +1998,13 @@ async function openGameDetail(game) {
   overlay.id = 'flux-game-detail';
   overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;font-family:inherit;';
 
-  const pricing = _gamePricing[game.id] || { price:0, discount:0 };
+  const pricing = _gamePricing[game.id] || { price: 0, discount: 0 };
   const isExpired = pricing.discountExpiry && new Date(pricing.discountExpiry) < new Date();
   const activeDiscount = (!isExpired && pricing.discount > 0) ? pricing.discount : 0;
-  const finalPrice = activeDiscount > 0 ? Math.round(pricing.price*(1-activeDiscount/100)) : (pricing.price||0);
+  const finalPrice = activeDiscount > 0 ? Math.round(pricing.price * (1 - activeDiscount / 100)) : (pricing.price || 0);
   const isLocked = finalPrice > 0 && !_unlockedGames.includes(game.id);
   const stats = _allGameStats[game.id] || {};
-  const avgRating = stats.ratingCount ? (stats.ratingTotal/stats.ratingCount).toFixed(1) : null;
+  const avgRating = stats.ratingCount ? (stats.ratingTotal / stats.ratingCount).toFixed(1) : null;
   const isModLocked = stats.locked === true;
   const isOwnerView = window._fluxIsOwner === true;
 
@@ -1720,8 +2020,8 @@ async function openGameDetail(game) {
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           ${avgRating ? `<div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg,#f9fafb);border-radius:10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));"><span>⭐</span><div><div style="font-size:16px;font-weight:700;color:#f59e0b;">${avgRating}</div><div style="font-size:10px;color:var(--muted,#6b7280);">${stats.ratingCount} ratings</div></div></div>` : ''}
           ${stats.plays ? `<div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg,#f9fafb);border-radius:10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));"><span>🎮</span><div><div style="font-size:16px;font-weight:700;color:var(--text,#111);">${stats.plays.toLocaleString()}</div><div style="font-size:10px;color:var(--muted,#6b7280);">total plays</div></div></div>` : ''}
-          <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg,#f9fafb);border-radius:10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));"><span>💎</span><div><div style="font-size:16px;font-weight:700;color:var(--text,#111);">${finalPrice > 0 ? finalPrice+' pts' : 'Free'}</div><div style="font-size:10px;color:var(--muted,#6b7280);">${isLocked ? 'to unlock' : '✓ unlocked'}</div></div></div>
-          ${stats.firstSeen ? `<div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg,#f9fafb);border-radius:10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));"><span>📅</span><div><div style="font-size:12px;font-weight:700;color:var(--text,#111);">${new Date(stats.firstSeen).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}</div><div style="font-size:10px;color:var(--muted,#6b7280);">added</div></div></div>` : ''}
+          <div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg,#f9fafb);border-radius:10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));"><span>💎</span><div><div style="font-size:16px;font-weight:700;color:var(--text,#111);">${finalPrice > 0 ? finalPrice + ' pts' : 'Free'}</div><div style="font-size:10px;color:var(--muted,#6b7280);">${isLocked ? 'to unlock' : '✓ unlocked'}</div></div></div>
+          ${stats.firstSeen ? `<div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg,#f9fafb);border-radius:10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));"><span>📅</span><div><div style="font-size:12px;font-weight:700;color:var(--text,#111);">${new Date(stats.firstSeen).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</div><div style="font-size:10px;color:var(--muted,#6b7280);">added</div></div></div>` : ''}
         </div>
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--muted,#6b7280);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">About this game</div>
@@ -1729,10 +2029,10 @@ async function openGameDetail(game) {
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           ${isModLocked && !isOwnerView
-            ? `<button id="gd-modlock-info" style="flex:1;min-width:140px;padding:12px 20px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">🔒 Temporarily Unavailable (Get Info)</button>`
-            : isLocked
-              ? `<button id="gd-unlock-btn" style="flex:1;min-width:140px;padding:12px 20px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">🔒 Unlock for ${finalPrice} pts</button>`
-              : `<button id="gd-play-btn" style="flex:1;min-width:140px;padding:12px 20px;background:var(--accent,#3a7dff);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">▶ Play Now</button>`}
+      ? `<button id="gd-modlock-info" style="flex:1;min-width:140px;padding:12px 20px;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">🔒 Temporarily Unavailable (Get Info)</button>`
+      : isLocked
+        ? `<button id="gd-unlock-btn" style="flex:1;min-width:140px;padding:12px 20px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">🔒 Unlock for ${finalPrice} pts</button>`
+        : `<button id="gd-play-btn" style="flex:1;min-width:140px;padding:12px 20px;background:var(--accent,#3a7dff);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">▶ Play Now</button>`}
           <button id="gd-fav-btn" style="padding:12px 20px;border:1px solid var(--glass-border,rgba(0,0,0,0.1));border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;background:var(--bg,#f9fafb);color:var(--text,#111);">${isFav(game.id) ? '★ Favourited' : '☆ Favourite'}</button>
         </div>
         <div>
@@ -1740,7 +2040,7 @@ async function openGameDetail(game) {
           <div style="background:var(--bg,#f9fafb);border-radius:12px;padding:14px 16px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));margin-bottom:12px;">
             <div style="font-size:13px;font-weight:600;color:var(--text,#111);margin-bottom:10px;">Leave a Review</div>
             <div id="gd-star-row" style="display:flex;gap:6px;margin-bottom:10px;">
-              ${[1,2,3,4,5].map(s=>`<button class="gd-star" data-star="${s}" style="background:none;border:none;font-size:26px;cursor:pointer;color:#d1d5db;padding:0;">★</button>`).join('')}
+              ${[1, 2, 3, 4, 5].map(s => `<button class="gd-star" data-star="${s}" style="background:none;border:none;font-size:26px;cursor:pointer;color:#d1d5db;padding:0;">★</button>`).join('')}
             </div>
             <textarea id="gd-review-text" placeholder="Share your thoughts... (optional)" maxlength="500" rows="2" style="width:100%;padding:9px 12px;border:1px solid var(--glass-border,rgba(0,0,0,0.1));border-radius:10px;font-size:13px;font-family:inherit;resize:none;box-sizing:border-box;outline:none;background:var(--panel,#fff);color:var(--text,#111);"></textarea>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px;">
@@ -1748,7 +2048,7 @@ async function openGameDetail(game) {
               <button id="gd-submit-review" style="padding:7px 16px;background:var(--accent,#3a7dff);color:white;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;">Submit</button>
             </div>
           </div>
-          <div id="gd-reviews-list" style="display:flex;flex-direction:column;gap:12px;"><div style="text-align:center;color:var(--muted,#6b7280);font-size:13px;padding:16px;">Loading reviews...</div></div>
+          <div id="gd-reviews-list" style="display:flex;flex-direction:column;gap:12px;"><div style="text-align:center;color:var(--muted,#6b7280);font-size:13px;padding:16px;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div></div>
         </div>
       </div>
     </div>`;
@@ -1757,7 +2057,7 @@ async function openGameDetail(game) {
   const close = () => overlay.remove();
   document.getElementById('gd-close').addEventListener('click', close);
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
-  window.addEventListener('keydown', function escH(e) { if(e.key==='Escape'){close();window.removeEventListener('keydown',escH);} });
+  window.addEventListener('keydown', function escH(e) { if (e.key === 'Escape') { close(); window.removeEventListener('keydown', escH); } });
 
   document.getElementById('gd-play-btn')?.addEventListener('click', () => {
     close(); addRecent(game.id); renderRecentSection();
@@ -1777,21 +2077,21 @@ async function openGameDetail(game) {
   let selectedRating = 0;
   const stars = overlay.querySelectorAll('.gd-star');
   stars.forEach(btn => {
-    btn.addEventListener('mouseenter', () => { const v=parseInt(btn.dataset.star); stars.forEach(s=>s.style.color=parseInt(s.dataset.star)<=v?'#f59e0b':'#d1d5db'); });
-    btn.addEventListener('mouseleave', () => { stars.forEach(s=>s.style.color=parseInt(s.dataset.star)<=selectedRating?'#f59e0b':'#d1d5db'); });
-    btn.addEventListener('click', () => { selectedRating=parseInt(btn.dataset.star); stars.forEach(s=>s.style.color=parseInt(s.dataset.star)<=selectedRating?'#f59e0b':'#d1d5db'); });
+    btn.addEventListener('mouseenter', () => { const v = parseInt(btn.dataset.star); stars.forEach(s => s.style.color = parseInt(s.dataset.star) <= v ? '#f59e0b' : '#d1d5db'); });
+    btn.addEventListener('mouseleave', () => { stars.forEach(s => s.style.color = parseInt(s.dataset.star) <= selectedRating ? '#f59e0b' : '#d1d5db'); });
+    btn.addEventListener('click', () => { selectedRating = parseInt(btn.dataset.star); stars.forEach(s => s.style.color = parseInt(s.dataset.star) <= selectedRating ? '#f59e0b' : '#d1d5db'); });
   });
 
   document.getElementById('gd-submit-review').addEventListener('click', async () => {
-    const msg=document.getElementById('gd-review-msg'), comment=document.getElementById('gd-review-text').value.trim();
-    if(!selectedRating){msg.style.color='#ef4444';msg.textContent='Pick a star rating first.';return;}
-    msg.style.color='#9ca3af';msg.textContent='Saving...';
-    const r=await submitReview(game.id,game.title,selectedRating,comment);
-    if(r.ok){msg.style.color='#22c55e';msg.textContent='✓ Saved!';document.getElementById('gd-review-text').value='';selectedRating=0;stars.forEach(s=>s.style.color='#d1d5db');loadDetailReviews(game.id);}
-    else{msg.style.color='#ef4444';msg.textContent=r.error;}
+    const msg = document.getElementById('gd-review-msg'), comment = document.getElementById('gd-review-text').value.trim();
+    if (!selectedRating) { msg.style.color = '#ef4444'; msg.textContent = 'Pick a star rating first.'; return; }
+    msg.style.color = '#9ca3af'; msg.textContent = 'Saving...';
+    const r = await submitReview(game.id, game.title, selectedRating, comment);
+    if (r.ok) { msg.style.color = '#22c55e'; msg.textContent = '✓ Saved!'; document.getElementById('gd-review-text').value = ''; selectedRating = 0; stars.forEach(s => s.style.color = '#d1d5db'); loadDetailReviews(game.id); }
+    else { msg.style.color = '#ef4444'; msg.textContent = r.error; }
   });
 
-  getAiGameDescription(game).then(desc => { const el=document.getElementById('gd-ai-desc'); if(el) el.textContent=desc; });
+  getAiGameDescription(game).then(desc => { const el = document.getElementById('gd-ai-desc'); if (el) el.textContent = desc; });
   loadDetailReviews(game.id);
 }
 
@@ -1799,36 +2099,36 @@ async function loadDetailReviews(gameId) {
   const list = document.getElementById('gd-reviews-list');
   if (!list) return;
   const reviews = await getGameReviews(gameId);
-  if (!reviews.length) { list.innerHTML='<div style="text-align:center;color:var(--muted,#6b7280);font-size:13px;padding:16px;">No reviews yet. Be the first!</div>'; return; }
-  list.innerHTML='';
+  if (!reviews.length) { list.innerHTML = '<div style="text-align:center;color:var(--muted,#6b7280);font-size:13px;padding:16px;">No reviews yet. Be the first!</div>'; return; }
+  list.innerHTML = '';
   reviews.forEach(r => {
-    const item=document.createElement('div');
-    item.style.cssText='background:var(--bg,#f9fafb);border-radius:12px;padding:14px 16px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));';
-    const stars='★'.repeat(r.rating)+'☆'.repeat(5-r.rating);
-    const d=Date.now()-new Date(r.createdAt).getTime();
-    const timeAgo=d<3600000?Math.floor(d/60000)+'m ago':d<86400000?Math.floor(d/3600000)+'h ago':Math.floor(d/86400000)+'d ago';
-    const isMe=r.uid===(window._currentUserUid||''), isAdmin=window._currentUserUid==='zEy6TO5ligf2um4rssIZs9C9X7f2';
-    const alreadyLiked=(r.likes||[]).includes(window._currentUserUid||'');
-    item.innerHTML=`
+    const item = document.createElement('div');
+    item.style.cssText = 'background:var(--bg,#f9fafb);border-radius:12px;padding:14px 16px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));';
+    const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+    const d = Date.now() - new Date(r.createdAt).getTime();
+    const timeAgo = d < 3600000 ? Math.floor(d / 60000) + 'm ago' : d < 86400000 ? Math.floor(d / 3600000) + 'h ago' : Math.floor(d / 86400000) + 'd ago';
+    const isMe = r.uid === (window._currentUserUid || ''), isAdmin = window._currentUserUid === 'zEy6TO5ligf2um4rssIZs9C9X7f2';
+    const alreadyLiked = (r.likes || []).includes(window._currentUserUid || '');
+    item.innerHTML = `
       <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--accent,#3a7dff);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">${(r.displayName||'?')[0].toUpperCase()}</div>
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--accent,#3a7dff);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">${(r.displayName || '?')[0].toUpperCase()}</div>
         <div style="flex:1;">
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span style="font-size:13px;font-weight:700;color:var(--text,#111);">@${r.username}</span>
             <span style="color:#f59e0b;">${stars}</span>
             <span style="font-size:11px;color:var(--muted,#6b7280);">${timeAgo}</span>
           </div>
-          ${r.comment?`<div style="font-size:13px;color:var(--text,#111);margin-top:4px;line-height:1.5;">${r.comment}</div>`:''}
+          ${r.comment ? `<div style="font-size:13px;color:var(--text,#111);margin-top:4px;line-height:1.5;">${r.comment}</div>` : ''}
         </div>
-        ${(isMe||isAdmin)?`<button class="gd-del-rev" data-id="${r.id}" style="background:none;border:none;color:var(--muted,#9ca3af);cursor:pointer;font-size:13px;flex-shrink:0;">🗑</button>`:''}
+        ${(isMe || isAdmin) ? `<button class="gd-del-rev" data-id="${r.id}" style="background:none;border:none;color:var(--muted,#9ca3af);cursor:pointer;font-size:13px;flex-shrink:0;">🗑</button>` : ''}
       </div>
       <div style="display:flex;align-items:center;gap:14px;padding-top:8px;border-top:1px solid var(--glass-border,rgba(0,0,0,0.06));">
-        <button class="gd-like" data-id="${r.id}" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--muted,#6b7280);display:flex;align-items:center;gap:4px;padding:0;">${alreadyLiked?'❤️':'🤍'} ${r.likes?.length||0}</button>
-        <button class="gd-reply-toggle" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--muted,#6b7280);padding:0;">💬 ${r.comments?.length||0} ${r.comments?.length===1?'reply':'replies'}</button>
+        <button class="gd-like" data-id="${r.id}" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--muted,#6b7280);display:flex;align-items:center;gap:4px;padding:0;">${alreadyLiked ? '❤️' : '🤍'} ${r.likes?.length || 0}</button>
+        <button class="gd-reply-toggle" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--muted,#6b7280);padding:0;">💬 ${r.comments?.length || 0} ${r.comments?.length === 1 ? 'reply' : 'replies'}</button>
       </div>
       <div class="gd-comments-area" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid var(--glass-border,rgba(0,0,0,0.06));">
         <div class="gd-clist" style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;">
-          ${(r.comments||[]).map(c=>`<div style="display:flex;gap:8px;"><div style="width:24px;height:24px;border-radius:50%;background:var(--accent,#3a7dff);display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700;flex-shrink:0;">${(c.displayName||'?')[0].toUpperCase()}</div><div style="flex:1;background:var(--panel,#fff);border-radius:8px;padding:7px 10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));font-size:12px;color:var(--text,#111);"><strong>@${c.username}</strong> ${c.comment}</div></div>`).join('')}
+          ${(r.comments || []).map(c => `<div style="display:flex;gap:8px;"><div style="width:24px;height:24px;border-radius:50%;background:var(--accent,#3a7dff);display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700;flex-shrink:0;">${(c.displayName || '?')[0].toUpperCase()}</div><div style="flex:1;background:var(--panel,#fff);border-radius:8px;padding:7px 10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));font-size:12px;color:var(--text,#111);"><strong>@${c.username}</strong> ${c.comment}</div></div>`).join('')}
         </div>
         <div style="display:flex;gap:8px;">
           <input class="gd-cin" data-review="${r.id}" type="text" placeholder="Reply..." maxlength="300" style="flex:1;padding:7px 10px;border:1px solid var(--glass-border,rgba(0,0,0,0.1));border-radius:8px;font-size:12px;font-family:inherit;outline:none;background:var(--panel,#fff);color:var(--text,#111);">
@@ -1837,15 +2137,15 @@ async function loadDetailReviews(gameId) {
       </div>`;
     list.appendChild(item);
     item.querySelector('.gd-like').addEventListener('click', async e => {
-      const btn=e.currentTarget; const res=await likeReview(gameId,btn.dataset.id);
-      if(res.ok){const cnt=parseInt(btn.textContent.match(/\d+/)?.[0]||0)+(res.liked?1:-1);btn.innerHTML=`${res.liked?'❤️':'🤍'} ${Math.max(0,cnt)}`;}
+      const btn = e.currentTarget; const res = await likeReview(gameId, btn.dataset.id);
+      if (res.ok) { const cnt = parseInt(btn.textContent.match(/\d+/)?.[0] || 0) + (res.liked ? 1 : -1); btn.innerHTML = `${res.liked ? '❤️' : '🤍'} ${Math.max(0, cnt)}`; }
     });
-    item.querySelector('.gd-reply-toggle').addEventListener('click',()=>{const a=item.querySelector('.gd-comments-area');a.style.display=a.style.display==='none'?'block':'none';});
-    item.querySelector('.gd-csub').addEventListener('click', async()=>{
-      const inp=item.querySelector('.gd-cin'); const res=await addReviewComment(gameId,r.id,inp.value.trim());
-      if(res.ok){const cl=item.querySelector('.gd-clist');const nd=document.createElement('div');nd.style.cssText='display:flex;gap:8px;';nd.innerHTML=`<div style="width:24px;height:24px;border-radius:50%;background:var(--accent,#3a7dff);display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700;flex-shrink:0;">Y</div><div style="flex:1;background:var(--panel,#fff);border-radius:8px;padding:7px 10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));font-size:12px;color:var(--text,#111);"><strong>You</strong> ${inp.value.trim()}</div>`;cl.appendChild(nd);inp.value='';}
+    item.querySelector('.gd-reply-toggle').addEventListener('click', () => { const a = item.querySelector('.gd-comments-area'); a.style.display = a.style.display === 'none' ? 'block' : 'none'; });
+    item.querySelector('.gd-csub').addEventListener('click', async () => {
+      const inp = item.querySelector('.gd-cin'); const res = await addReviewComment(gameId, r.id, inp.value.trim());
+      if (res.ok) { const cl = item.querySelector('.gd-clist'); const nd = document.createElement('div'); nd.style.cssText = 'display:flex;gap:8px;'; nd.innerHTML = `<div style="width:24px;height:24px;border-radius:50%;background:var(--accent,#3a7dff);display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700;flex-shrink:0;">Y</div><div style="flex:1;background:var(--panel,#fff);border-radius:8px;padding:7px 10px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));font-size:12px;color:var(--text,#111);"><strong>You</strong> ${inp.value.trim()}</div>`; cl.appendChild(nd); inp.value = ''; }
     });
-    item.querySelector('.gd-del-rev')?.addEventListener('click', async e=>{if(!confirm('Delete?'))return;await deleteReview(gameId,e.currentTarget.dataset.id);item.remove();if(!list.children.length)loadDetailReviews(gameId);});
+    item.querySelector('.gd-del-rev')?.addEventListener('click', async e => { if (!confirm('Delete?')) return; await deleteReview(gameId, e.currentTarget.dataset.id); item.remove(); if (!list.children.length) loadDetailReviews(gameId); });
   });
 }
 
@@ -1858,8 +2158,8 @@ async function showUnlockModal(game, finalPrice, discount, originalPrice) {
     const { getApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
     const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
     const user = getAuth(getApp()).currentUser;
-    if (user) { const s=await gd(fd(getFirestore(getApp()),'profiles',user.uid)); userPoints=s.exists()?(s.data().points||0):0; }
-  } catch {}
+    if (user) { const s = await gd(fd(getFirestore(getApp()), 'profiles', user.uid)); userPoints = s.exists() ? (s.data().points || 0) : 0; }
+  } catch { }
   const canAfford = userPoints >= finalPrice;
   const modal = document.createElement('div');
   modal.id = 'flux-unlock-modal';
@@ -1868,25 +2168,25 @@ async function showUnlockModal(game, finalPrice, discount, originalPrice) {
     <div style="background:var(--panel,#fff);border-radius:20px;padding:28px 24px;max-width:380px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.25);text-align:center;">
       <div style="font-size:44px;margin-bottom:12px;">🔒</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text,#111);margin-bottom:6px;">${game.title}</div>
-      ${discount>0?`<div style="margin-bottom:6px;"><span style="text-decoration:line-through;color:var(--muted,#9ca3af);font-size:14px;">${originalPrice} pts</span> <span style="background:linear-gradient(135deg,#ef4444,#f97316);color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;">${discount}% OFF</span></div>`:''}
+      ${discount > 0 ? `<div style="margin-bottom:6px;"><span style="text-decoration:line-through;color:var(--muted,#9ca3af);font-size:14px;">${originalPrice} pts</span> <span style="background:linear-gradient(135deg,#ef4444,#f97316);color:white;font-size:11px;font-weight:800;padding:2px 8px;border-radius:20px;">${discount}% OFF</span></div>` : ''}
       <div style="font-size:28px;font-weight:800;color:var(--accent,#3a7dff);margin-bottom:8px;">${finalPrice} pts</div>
-      <div style="font-size:13px;color:var(--muted,#6b7280);margin-bottom:20px;">Your balance: <strong style="color:${canAfford?'#22c55e':'#ef4444'}">${userPoints} pts</strong></div>
+      <div style="font-size:13px;color:var(--muted,#6b7280);margin-bottom:20px;">Your balance: <strong style="color:${canAfford ? '#22c55e' : '#ef4444'}">${userPoints} pts</strong></div>
       ${canAfford
-        ? `<button id="unlock-confirm-btn" style="width:100%;padding:13px;background:var(--accent,#3a7dff);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;">🔓 Unlock for ${finalPrice} pts</button>`
-        : `<button id="earn-more-btn" style="width:100%;padding:13px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;">💡 How to earn more points</button>`}
+      ? `<button id="unlock-confirm-btn" style="width:100%;padding:13px;background:var(--accent,#3a7dff);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;">🔓 Unlock for ${finalPrice} pts</button>`
+      : `<button id="earn-more-btn" style="width:100%;padding:13px;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;">💡 How to earn more points</button>`}
       <button id="unlock-cancel-btn" style="width:100%;padding:11px;background:none;border:1px solid var(--glass-border,rgba(0,0,0,0.1));border-radius:12px;font-size:14px;cursor:pointer;color:var(--text,#111);">Cancel</button>
       <p id="unlock-msg" style="font-size:12px;margin:10px 0 0;display:none;"></p>
     </div>`;
   document.body.appendChild(modal);
   const close = () => modal.remove();
   document.getElementById('unlock-cancel-btn').addEventListener('click', close);
-  modal.addEventListener('click', e => { if(e.target===modal) close(); });
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
   document.getElementById('unlock-confirm-btn')?.addEventListener('click', async () => {
-    const btn=document.getElementById('unlock-confirm-btn'); btn.textContent='Unlocking...'; btn.disabled=true;
-    const res=await unlockGame(game.id, finalPrice);
-    const msg=document.getElementById('unlock-msg'); msg.style.display='block';
-    if(res.ok){_unlockedGames.push(game.id);msg.style.color='#22c55e';msg.textContent=`✓ Unlocked! Balance: ${res.newBalance} pts`;setTimeout(()=>{close();renderGames(GAMES);},1500);}
-    else{msg.style.color='#ef4444';msg.textContent=res.error;btn.textContent=`🔓 Unlock for ${finalPrice} pts`;btn.disabled=false;}
+    const btn = document.getElementById('unlock-confirm-btn'); btn.textContent = 'Unlocking...'; btn.disabled = true;
+    const res = await unlockGame(game.id, finalPrice);
+    const msg = document.getElementById('unlock-msg'); msg.style.display = 'block';
+    if (res.ok) { _unlockedGames.push(game.id); msg.style.color = '#22c55e'; msg.textContent = `✓ Unlocked! Balance: ${res.newBalance} pts`; setTimeout(() => { close(); renderGames(GAMES); }, 1500); }
+    else { msg.style.color = '#ef4444'; msg.textContent = res.error; btn.textContent = `🔓 Unlock for ${finalPrice} pts`; btn.disabled = false; }
   });
   document.getElementById('earn-more-btn')?.addEventListener('click', () => { close(); showEarnPointsModal(game, finalPrice); });
 }
@@ -1898,21 +2198,21 @@ function showEarnPointsModal(game, requiredPts) {
   modal.id = 'flux-earn-modal';
   modal.style.cssText = 'position:fixed;inset:0;z-index:9100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);padding:20px;box-sizing:border-box;font-family:inherit;';
   const ways = [
-    {icon:'🔐',label:'Daily login',pts:'+10 pts',desc:'Log in every day'},
-    {icon:'🔥',label:'Login streak',pts:'+2 pts/day',desc:'Consecutive logins earn bonus (max +50)'},
-    {icon:'⏱️',label:'Time on site',pts:'+1 pt/5 min',desc:'Just browse Flux'},
-    {icon:'🎰',label:'Spin the wheel',pts:'Up to 500 pts',desc:'Spin once per hour in your profile menu'},
-    {icon:'🎁',label:'Receive a gift',pts:'Varies',desc:'Another player can gift you their points'},
+    { icon: '🔐', label: 'Daily login', pts: '+10 pts', desc: 'Log in every day' },
+    { icon: '🔥', label: 'Login streak', pts: '+2 pts/day', desc: 'Consecutive logins earn bonus (max +50)' },
+    { icon: '⏱️', label: 'Time on site', pts: '+1 pt/5 min', desc: 'Just browse Flux' },
+    { icon: '🎰', label: 'Spin the wheel', pts: 'Up to 500 pts', desc: 'Spin once per hour in your profile menu' },
+    { icon: '🎁', label: 'Receive a gift', pts: 'Varies', desc: 'Another player can gift you their points' },
   ];
   modal.innerHTML = `
     <div style="background:var(--panel,#fff);border-radius:20px;padding:28px 24px;max-width:420px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.25);">
       <div style="text-align:center;margin-bottom:20px;">
         <div style="font-size:40px;margin-bottom:8px;">💡</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text,#111);">How to Earn Points</div>
-        ${game?`<div style="font-size:13px;color:var(--muted,#6b7280);margin-top:4px;">Need <strong style="color:var(--accent,#3a7dff)">${requiredPts} pts</strong> to unlock <strong>${game.title}</strong></div>`:''}
+        ${game ? `<div style="font-size:13px;color:var(--muted,#6b7280);margin-top:4px;">Need <strong style="color:var(--accent,#3a7dff)">${requiredPts} pts</strong> to unlock <strong>${game.title}</strong></div>` : ''}
       </div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
-        ${ways.map(w=>`<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg,#f9fafb);border-radius:12px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));"><span style="font-size:22px;flex-shrink:0;">${w.icon}</span><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text,#111);">${w.label}</div><div style="font-size:11px;color:var(--muted,#6b7280);">${w.desc}</div></div><span style="font-size:12px;font-weight:700;color:#22c55e;white-space:nowrap;">${w.pts}</span></div>`).join('')}
+        ${ways.map(w => `<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg,#f9fafb);border-radius:12px;border:1px solid var(--glass-border,rgba(0,0,0,0.07));"><span style="font-size:22px;flex-shrink:0;">${w.icon}</span><div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--text,#111);">${w.label}</div><div style="font-size:11px;color:var(--muted,#6b7280);">${w.desc}</div></div><span style="font-size:12px;font-weight:700;color:#22c55e;white-space:nowrap;">${w.pts}</span></div>`).join('')}
       </div>
       <div style="display:flex;gap:10px;">
         <button id="earn-spin-btn" style="flex:1;padding:12px;background:linear-gradient(135deg,#8b5cf6,#ec4899);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">🎰 Spin Now</button>
@@ -1922,35 +2222,35 @@ function showEarnPointsModal(game, requiredPts) {
   document.body.appendChild(modal);
   const close = () => modal.remove();
   document.getElementById('earn-close-btn').addEventListener('click', close);
-  modal.addEventListener('click', e => { if(e.target===modal) close(); });
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
   document.getElementById('earn-spin-btn').addEventListener('click', () => { close(); window.openSpinWheel?.(); });
 }
 
 /* ===================== SPIN WHEEL ===================== */
-window.openSpinWheel = async function() {
+window.openSpinWheel = async function () {
   document.getElementById('flux-spin-modal')?.remove();
   const lastSpin = await getLastSpin();
-  const cooldownMs = lastSpin ? Math.max(0, new Date(lastSpin).getTime()+3600000-Date.now()) : 0;
+  const cooldownMs = lastSpin ? Math.max(0, new Date(lastSpin).getTime() + 3600000 - Date.now()) : 0;
   const segs = SPIN_SEGMENTS;
-  const total = segs.reduce((s,seg)=>s+seg.weight,0);
-  const size=260, cx=130, cy=130, r=126;
-  let svgSlices=''; let angle=-Math.PI/2;
+  const total = segs.reduce((s, seg) => s + seg.weight, 0);
+  const size = 260, cx = 130, cy = 130, r = 126;
+  let svgSlices = ''; let angle = -Math.PI / 2;
   segs.forEach(seg => {
-    const sweep=(seg.weight/total)*2*Math.PI;
-    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
-    const x2=cx+r*Math.cos(angle+sweep),y2=cy+r*Math.sin(angle+sweep);
-    const large=sweep>Math.PI?1:0;
-    const mid=angle+sweep/2, tx=cx+(r*0.65)*Math.cos(mid), ty=cy+(r*0.65)*Math.sin(mid);
-    svgSlices+=`<path d="M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${large},1 ${x2.toFixed(2)},${y2.toFixed(2)} Z" fill="${seg.color}" stroke="white" stroke-width="1.5"/>`;
-    svgSlices+=`<text x="${tx.toFixed(2)}" y="${ty.toFixed(2)}" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="10" font-weight="700" font-family="DM Sans,sans-serif" transform="rotate(${(mid*180/Math.PI).toFixed(1)},${tx.toFixed(2)},${ty.toFixed(2)})">${seg.label}</text>`;
-    angle+=sweep;
+    const sweep = (1 / segs.length) * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(angle), y1 = cy + r * Math.sin(angle);
+    const x2 = cx + r * Math.cos(angle + sweep), y2 = cy + r * Math.sin(angle + sweep);
+    const large = sweep > Math.PI ? 1 : 0;
+    const mid = angle + sweep / 2, tx = cx + (r * 0.65) * Math.cos(mid), ty = cy + (r * 0.65) * Math.sin(mid);
+    svgSlices += `<path d="M${cx},${cy} L${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${large},1 ${x2.toFixed(2)},${y2.toFixed(2)} Z" fill="${seg.color}" stroke="white" stroke-width="1.5"/>`;
+    svgSlices += `<text x="${tx.toFixed(2)}" y="${ty.toFixed(2)}" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="10" font-weight="700" font-family="DM Sans,sans-serif" transform="rotate(${(mid * 180 / Math.PI).toFixed(1)},${tx.toFixed(2)},${ty.toFixed(2)})">${seg.label}</text>`;
+    angle += sweep;
   });
-  const onCooldown=cooldownMs>0;
-  const mL=Math.floor(cooldownMs/60000), sL=Math.floor((cooldownMs%60000)/1000);
-  const modal=document.createElement('div');
-  modal.id='flux-spin-modal';
-  modal.style.cssText='position:fixed;inset:0;z-index:9100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:20px;box-sizing:border-box;font-family:inherit;';
-  modal.innerHTML=`
+  const onCooldown = cooldownMs > 0;
+  const mL = Math.floor(cooldownMs / 60000), sL = Math.floor((cooldownMs % 60000) / 1000);
+  const modal = document.createElement('div');
+  modal.id = 'flux-spin-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.65);backdrop-filter:blur(8px);padding:20px;box-sizing:border-box;font-family:inherit;';
+  modal.innerHTML = `
     <div style="background:var(--panel,#fff);border-radius:24px;padding:28px 24px;max-width:360px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.3);text-align:center;">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--text,#111);margin-bottom:4px;">🎰 Spin Wheel</div>
       <div style="font-size:12px;color:var(--muted,#6b7280);margin-bottom:16px;">Spin once per hour to win points!</div>
@@ -1959,48 +2259,48 @@ window.openSpinWheel = async function() {
         <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:22px solid #111827;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));"></div>
       </div>
       <div id="spin-result" style="min-height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;font-weight:700;color:var(--text,#111);"></div>
-      ${onCooldown?`<div style="padding:12px;background:rgba(239,68,68,0.08);border-radius:12px;border:1px solid rgba(239,68,68,0.15);margin-bottom:14px;"><div style="font-size:13px;color:#ef4444;font-weight:700;">⏱ Next spin in</div><div id="spin-countdown" style="font-size:22px;font-weight:800;color:#ef4444;">${mL}m ${sL}s</div></div>`:''}
-      <button id="spin-btn" ${onCooldown?'disabled':''} style="width:100%;padding:13px;background:${onCooldown?'#d1d5db':'linear-gradient(135deg,#8b5cf6,#ec4899)'};color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:${onCooldown?'not-allowed':'pointer'};margin-bottom:10px;">${onCooldown?'⏳ On Cooldown':'🎰 Spin!'}</button>
+      ${onCooldown ? `<div style="padding:12px;background:rgba(239,68,68,0.08);border-radius:12px;border:1px solid rgba(239,68,68,0.15);margin-bottom:14px;"><div style="font-size:13px;color:#ef4444;font-weight:700;">⏱ Next spin in</div><div id="spin-countdown" style="font-size:22px;font-weight:800;color:#ef4444;">${mL}m ${sL}s</div></div>` : ''}
+      <button id="spin-btn" ${onCooldown ? 'disabled' : ''} style="width:100%;padding:13px;background:${onCooldown ? '#d1d5db' : 'linear-gradient(135deg,#8b5cf6,#ec4899)'};color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:${onCooldown ? 'not-allowed' : 'pointer'};margin-bottom:10px;">${onCooldown ? '⏳ On Cooldown' : '🎰 Spin!'}</button>
       <button id="spin-close-btn" style="width:100%;padding:11px;background:none;border:1px solid var(--glass-border,rgba(0,0,0,0.1));border-radius:12px;font-size:14px;cursor:pointer;color:var(--text,#111);">Close</button>
     </div>`;
   document.body.appendChild(modal);
-  const close=()=>modal.remove();
-  document.getElementById('spin-close-btn').addEventListener('click',close);
-  modal.addEventListener('click',e=>{if(e.target===modal)close();});
-  if(onCooldown){
-    const cEl=document.getElementById('spin-countdown');
-    const tick=setInterval(()=>{
-      const rem=Math.max(0,new Date(lastSpin).getTime()+3600000-Date.now());
-      if(!document.getElementById('spin-countdown')){clearInterval(tick);return;}
-      if(rem<=0){cEl.textContent='Ready!';clearInterval(tick);return;}
-      cEl.textContent=Math.floor(rem/60000)+'m '+Math.floor((rem%60000)/1000)+'s';
-    },1000);
+  const close = () => modal.remove();
+  document.getElementById('spin-close-btn').addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  if (onCooldown) {
+    const cEl = document.getElementById('spin-countdown');
+    const tick = setInterval(() => {
+      const rem = Math.max(0, new Date(lastSpin).getTime() + 3600000 - Date.now());
+      if (!document.getElementById('spin-countdown')) { clearInterval(tick); return; }
+      if (rem <= 0) { cEl.textContent = 'Ready!'; clearInterval(tick); return; }
+      cEl.textContent = Math.floor(rem / 60000) + 'm ' + Math.floor((rem % 60000) / 1000) + 's';
+    }, 1000);
   }
-  document.getElementById('spin-btn').addEventListener('click', async()=>{
-    const btn=document.getElementById('spin-btn'), res=document.getElementById('spin-result');
-    btn.disabled=true; btn.textContent='Spinning...';
-    const result=await spinWheel();
-    if(!result.ok){res.innerHTML=`<span style="color:#ef4444;font-size:14px;">${result.error==='cooldown'?'⏱ Come back later!':result.error}</span>`;btn.disabled=false;btn.textContent='🎰 Spin!';return;}
-    const seg=result.segment;
-    const segIdx=segs.findIndex(s=>s.label===seg.label);
-    const segAngleDeg=segs.slice(0,segIdx).reduce((acc,s)=>acc+(s.weight/total)*360,0)+(seg.weight/total)*180;
-    const spins=5+Math.random()*3;
-    document.getElementById('spin-wheel-svg').style.transform=`rotate(${spins*360+(360-segAngleDeg)}deg)`;
-    setTimeout(()=>{
-      if(seg.points>0) res.innerHTML=`<span style="color:#22c55e;">🎉 You won <strong style="font-size:28px;">${seg.points}</strong> pts!</span>`;
-      else res.innerHTML=`<span style="color:#6b7280;">😅 Try again next hour!</span>`;
-      btn.textContent='⏳ Come back in 1 hour';
-    },4200);
+  document.getElementById('spin-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('spin-btn'), res = document.getElementById('spin-result');
+    btn.disabled = true; btn.textContent = 'Spinning...';
+    const result = await spinWheel();
+    if (!result.ok) { res.innerHTML = `<span style="color:#ef4444;font-size:14px;">${result.error === 'cooldown' ? '⏱ Come back later!' : result.error}</span>`; btn.disabled = false; btn.textContent = '🎰 Spin!'; return; }
+    const seg = result.segment;
+    const segIdx = segs.findIndex(s => s.label === seg.label);
+    const segAngleDeg = (segIdx * (360 / segs.length)) + (180 / segs.length);
+    const spins = 5 + Math.floor(Math.random() * 3);
+    document.getElementById('spin-wheel-svg').style.transform = `rotate(${spins * 360 + (360 - segAngleDeg)}deg)`;
+    setTimeout(() => {
+      if (seg.points > 0) res.innerHTML = `<span style="color:#22c55e;">🎉 You won <strong style="font-size:28px;">${seg.points}</strong> pts!</span>`;
+      else res.innerHTML = `<span style="color:#6b7280;">😅 Try again next hour!</span>`;
+      btn.textContent = '⏳ Come back in 1 hour';
+    }, 4200);
   });
 };
 
 /* ===================== GIFT POINTS MODAL ===================== */
-window.openGiftPoints = function() {
+window.openGiftPoints = function () {
   document.getElementById('flux-gift-modal')?.remove();
-  const modal=document.createElement('div');
-  modal.id='flux-gift-modal';
-  modal.style.cssText='position:fixed;inset:0;z-index:9100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);padding:20px;box-sizing:border-box;font-family:inherit;';
-  modal.innerHTML=`
+  const modal = document.createElement('div');
+  modal.id = 'flux-gift-modal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9100;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);padding:20px;box-sizing:border-box;font-family:inherit;';
+  modal.innerHTML = `
     <div style="background:var(--panel,#fff);border-radius:20px;padding:28px 24px;max-width:380px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.25);">
       <div style="text-align:center;margin-bottom:20px;"><div style="font-size:40px;margin-bottom:8px;">🎁</div><div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--text,#111);">Gift Points</div><div style="font-size:13px;color:var(--muted,#6b7280);margin-top:4px;">Send your points to another player. Daily cap: 500 pts.</div></div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
@@ -2015,34 +2315,34 @@ window.openGiftPoints = function() {
       </div>
     </div>`;
   document.body.appendChild(modal);
-  const close=()=>modal.remove();
-  document.getElementById('gift-close-btn').addEventListener('click',close);
-  modal.addEventListener('click',e=>{if(e.target===modal)close();});
-  const updatePreview=()=>{
-    const u=document.getElementById('gift-username').value.trim();
-    const a=parseInt(document.getElementById('gift-amount').value)||0;
-    const p=document.getElementById('gift-preview');
-    if(u&&a>0){p.style.display='block';p.innerHTML=`Sending <strong>${a} pts</strong> to <strong>@${u}</strong>`;}
-    else p.style.display='none';
+  const close = () => modal.remove();
+  document.getElementById('gift-close-btn').addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  const updatePreview = () => {
+    const u = document.getElementById('gift-username').value.trim();
+    const a = parseInt(document.getElementById('gift-amount').value) || 0;
+    const p = document.getElementById('gift-preview');
+    if (u && a > 0) { p.style.display = 'block'; p.innerHTML = `Sending <strong>${a} pts</strong> to <strong>@${u}</strong>`; }
+    else p.style.display = 'none';
   };
-  document.getElementById('gift-username').addEventListener('input',updatePreview);
-  document.getElementById('gift-amount').addEventListener('input',updatePreview);
-  document.getElementById('gift-send-btn').addEventListener('click', async()=>{
-    const username=document.getElementById('gift-username').value.trim().toLowerCase().replace('@','');
-    const amount=parseInt(document.getElementById('gift-amount').value);
-    const msg=document.getElementById('gift-msg'), btn=document.getElementById('gift-send-btn');
-    if(!username){msg.style.color='#ef4444';msg.textContent='Enter a username.';msg.style.display='block';return;}
-    if(!amount||amount<1){msg.style.color='#ef4444';msg.textContent='Enter a valid amount.';msg.style.display='block';return;}
-    btn.textContent='Sending...';btn.disabled=true;
-    const res=await giftPointsToUser(username,amount);
-    msg.style.display='block';
-    if(res.ok){msg.style.color='#22c55e';msg.textContent=`✓ Sent ${amount} pts to @${username}! Balance: ${res.newBalance} pts`;setTimeout(close,2500);}
-    else{msg.style.color='#ef4444';msg.textContent=res.error;btn.textContent='🎁 Send Gift';btn.disabled=false;}
+  document.getElementById('gift-username').addEventListener('input', updatePreview);
+  document.getElementById('gift-amount').addEventListener('input', updatePreview);
+  document.getElementById('gift-send-btn').addEventListener('click', async () => {
+    const username = document.getElementById('gift-username').value.trim().toLowerCase().replace('@', '');
+    const amount = parseInt(document.getElementById('gift-amount').value);
+    const msg = document.getElementById('gift-msg'), btn = document.getElementById('gift-send-btn');
+    if (!username) { msg.style.color = '#ef4444'; msg.textContent = 'Enter a username.'; msg.style.display = 'block'; return; }
+    if (!amount || amount < 1) { msg.style.color = '#ef4444'; msg.textContent = 'Enter a valid amount.'; msg.style.display = 'block'; return; }
+    btn.textContent = 'Sending...'; btn.disabled = true;
+    const res = await giftPointsToUser(username, amount);
+    msg.style.display = 'block';
+    if (res.ok) { msg.style.color = '#22c55e'; msg.textContent = `✓ Sent ${amount} pts to @${username}! Balance: ${res.newBalance} pts`; setTimeout(close, 2500); }
+    else { msg.style.color = '#ef4444'; msg.textContent = res.error; btn.textContent = '🎁 Send Gift'; btn.disabled = false; }
   });
 };
 
 /* ===================== REDEEM CODE MODAL ===================== */
-window.openRedeemCode = function() {
+window.openRedeemCode = function () {
   document.getElementById('flux-redeem-modal')?.remove();
   const modal = document.createElement('div');
   modal.id = 'flux-redeem-modal';
@@ -2097,11 +2397,10 @@ window.openRedeemCode = function() {
       result.style.background = 'rgba(34,197,94,0.1)';
       result.style.border = '1px solid rgba(34,197,94,0.25)';
       result.style.color = '#16a34a';
-      result.innerHTML = `${res.message}<br><span style="font-size:12px;font-weight:400;opacity:0.8;">${
-        res.type === 'points' ? 'Points added to your balance instantly.' :
-        res.type === 'game' ? 'Game is now unlocked — play it from the games page.' :
-        `${res.value} free spin${res.value > 1 ? 's' : ''} added. Use them from your profile menu.`
-      }</span>`;
+      result.innerHTML = `${res.message}<br><span style="font-size:12px;font-weight:400;opacity:0.8;">${res.type === 'points' ? 'Points added to your balance instantly.' :
+          res.type === 'game' ? 'Game is now unlocked — play it from the games page.' :
+            `${res.value} free spin${res.value > 1 ? 's' : ''} added. Use them from your profile menu.`
+        }</span>`;
       input.value = '';
       input.style.borderColor = '#22c55e';
       setTimeout(() => { input.style.borderColor = ''; }, 2000);
@@ -2121,3 +2420,309 @@ window.openRedeemCode = function() {
     }
   });
 };
+
+function updateGlobalUnreadBadge(total) {
+  let navLink = null;
+  document.querySelectorAll('#main-nav a').forEach(a => {
+    if (a.getAttribute('href') === 'messages.html') navLink = a;
+  });
+  
+  if (!navLink) return;
+
+  let badge = navLink.querySelector('.global-unread-badge');
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.className = 'global-unread-badge';
+    badge.style.cssText = `
+      margin-left: 6px; background: #ef4444; color: white;
+      font-size: 10px; font-weight: 800; padding: 2px 6px;
+      border-radius: 20px; display: none; align-items: center;
+      justify-content: center; min-width: 18px; height: 18px;
+    `;
+    navLink.appendChild(badge);
+  }
+  
+  badge.textContent = total;
+  badge.style.display = total > 0 ? 'inline-flex' : 'none';
+}
+
+function showNotificationToast(title, text, avatar, link) {
+  const container = document.getElementById('toast-container') || document.body;
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed; top: 20px; right: 20px; z-index: 10000;
+    width: 300px; background: #fff; border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05);
+    padding: 12px; display: flex; gap: 12px; align-items: center;
+    cursor: pointer; animation: toastSlideIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    font-family: 'Inter', sans-serif;
+  `;
+  
+  const avatarHTML = avatar 
+    ? `<img src="${avatar}" style="width:44px;height:44px;border-radius:12px;object-fit:cover;flex-shrink:0;">`
+    : `<div style="width:44px;height:44px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;flex-shrink:0;">💬</div>`;
+
+  toast.innerHTML = `
+    ${avatarHTML}
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:2px;">${title}</div>
+      <div style="font-size:12px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${text}</div>
+    </div>
+  `;
+  
+  toast.addEventListener('click', () => { window.location.href = link; });
+  
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes toastSlideIn {
+      from { transform: translateX(100%) scale(0.9); opacity: 0; }
+      to { transform: translateX(0) scale(1); opacity: 1; }
+    }
+    @keyframes toastSlideOut {
+      from { transform: translateX(0) scale(1); opacity: 1; }
+      to { transform: translateX(100%) scale(0.9); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'toastSlideOut 0.3s forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 5000);
+}
+
+/* ===================== KILL SWITCH (Boss Key) ===================== */
+
+const KILL_SWITCH_KEY = 'flux_kill_switch';
+
+const KILL_SWITCH_PRESETS = [
+  { label: '📊 Google Sheets', value: 'https://docs.google.com/spreadsheets/', type: 'web' },
+  { label: '🔍 Google', value: 'https://www.google.com', type: 'web' },
+  { label: '📰 BBC News', value: 'https://www.bbc.co.uk/news', type: 'web' },
+  { label: '📧 Gmail', value: 'https://mail.google.com', type: 'web' },
+  { label: '📅 Google Calendar', value: 'https://calendar.google.com', type: 'web' },
+  { label: '📄 Google Docs', value: 'https://docs.google.com/document/', type: 'web' },
+  { label: '🎨 Figma', value: 'figma://', type: 'app' },
+  { label: '💻 VS Code', value: 'vscode://', type: 'app' },
+  { label: '🎵 Spotify', value: 'spotify://', type: 'app' },
+  { label: '💬 Slack', value: 'slack://', type: 'app' },
+  { label: '📱 Discord', value: 'discord://', type: 'app' },
+  { label: '🔧 Custom…', value: 'custom', type: 'custom' },
+];
+
+function loadKillSwitch() {
+  try {
+    return JSON.parse(localStorage.getItem(KILL_SWITCH_KEY)) || { value: 'https://www.google.com', label: '🔍 Google', custom: '' };
+  } catch { return { value: 'https://www.google.com', label: '🔍 Google', custom: '' }; }
+}
+
+function saveKillSwitch(data) {
+  localStorage.setItem(KILL_SWITCH_KEY, JSON.stringify(data));
+}
+
+function triggerKillSwitch() {
+  const cfg = loadKillSwitch();
+  const target = cfg.value === 'custom' ? cfg.custom : cfg.value;
+  if (!target) return;
+  // Close game modal if open
+  const modal = document.getElementById('play-modal');
+  if (modal) { modal.setAttribute('aria-hidden', 'true'); const iframe = modal.querySelector('iframe'); if (iframe) iframe.src = ''; }
+  window.location.replace(target);
+}
+
+function buildKillSwitchPopover() {
+  const existing = document.getElementById('kill-switch-popover');
+  if (existing) { existing.remove(); return; }
+
+  const cfg = loadKillSwitch();
+
+  const pop = document.createElement('div');
+  pop.id = 'kill-switch-popover';
+  pop.style.cssText = `
+    position: fixed;
+    top: 70px; right: 16px;
+    width: 300px;
+    background: var(--panel);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    z-index: 9999;
+    padding: 18px;
+    animation: killPopIn 0.18s cubic-bezier(0.34,1.56,0.64,1) both;
+  `;
+
+  const isCustom = cfg.value === 'custom';
+  pop.innerHTML = `
+    <style>
+      @keyframes killPopIn {
+        from { opacity: 0; transform: scale(0.92) translateY(-8px); }
+        to   { opacity: 1; transform: scale(1) translateY(0); }
+      }
+      .kill-preset-opt {
+        display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+        border-radius: 10px; cursor: pointer; font-size: 13px;
+        color: var(--text); transition: background 0.12s;
+        border: 1px solid transparent;
+      }
+      .kill-preset-opt:hover { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.15); }
+      .kill-preset-opt.selected { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #ef4444; font-weight: 700; }
+      .kill-preset-opt .opt-type { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 20px; flex-shrink: 0; }
+      .kill-preset-opt .opt-type.web { background: rgba(34,197,94,0.15); color: #16a34a; }
+      .kill-preset-opt .opt-type.app { background: rgba(58,125,255,0.15); color: #3a7dff; }
+    </style>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:800;color:var(--text);">⚡ Kill Switch</div>
+      <button id="kill-pop-close" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px;">✕</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin:0 0 12px;line-height:1.5;">Choose where to instantly escape to when you hit Kill Switch. <strong style="color:var(--text);">Shift+Esc</strong> also works as a hotkey.</p>
+    <div id="kill-presets-list" style="display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto;margin-bottom:12px;">
+      ${KILL_SWITCH_PRESETS.map(p => `
+        <div class="kill-preset-opt ${cfg.value === p.value ? 'selected' : ''}" data-value="${p.value}" data-label="${p.label}" data-type="${p.type}">
+          <span style="flex:1;">${p.label}</span>
+          ${p.type !== 'custom' ? `<span class="opt-type ${p.type}">${p.type === 'app' ? 'App' : 'Web'}</span>` : ''}
+        </div>
+      `).join('')}
+    </div>
+    <div id="kill-custom-wrap" style="display:${isCustom ? 'block' : 'none'};margin-bottom:12px;">
+      <input id="kill-custom-input" type="text" placeholder="e.g. https://... or figma://"
+        value="${cfg.custom || ''}"
+        style="width:100%;padding:8px 12px;border:1px solid var(--glass-border);border-radius:10px;font-size:13px;box-sizing:border-box;background:var(--bg);color:var(--text);outline:none;">
+    </div>
+    <button id="kill-save-btn" style="width:100%;padding:10px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;letter-spacing:0.3px;">
+      Save & Close
+    </button>
+  `;
+
+  document.body.appendChild(pop);
+
+  let currentSelection = { value: cfg.value, label: cfg.label, custom: cfg.custom || '' };
+
+  const presetsList = pop.querySelector('#kill-presets-list');
+  const customWrap = pop.querySelector('#kill-custom-wrap');
+  const customInput = pop.querySelector('#kill-custom-input');
+
+  presetsList.querySelectorAll('.kill-preset-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      presetsList.querySelectorAll('.kill-preset-opt').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      currentSelection.value = opt.dataset.value;
+      currentSelection.label = opt.dataset.label;
+      customWrap.style.display = opt.dataset.type === 'custom' ? 'block' : 'none';
+    });
+  });
+
+  customInput?.addEventListener('input', () => { currentSelection.custom = customInput.value.trim(); });
+
+  pop.querySelector('#kill-pop-close').addEventListener('click', () => pop.remove());
+  pop.querySelector('#kill-save-btn').addEventListener('click', () => {
+    if (currentSelection.value === 'custom' && !currentSelection.custom) {
+      customInput.style.borderColor = '#ef4444';
+      customInput.focus();
+      return;
+    }
+    saveKillSwitch(currentSelection);
+    pop.remove();
+    showToast('Kill Switch configured! ⚡', 'success');
+    document.querySelectorAll('.flux-kill-btn').forEach(btn => {
+      btn.title = `Kill Switch → ${currentSelection.value === 'custom' ? currentSelection.custom : currentSelection.label}`;
+    });
+  });
+
+  setTimeout(() => {
+    document.addEventListener('click', function outsideClick(e) {
+      if (!pop.contains(e.target) && !e.target.closest('.flux-kill-btn-settings')) {
+        pop.remove();
+        document.removeEventListener('click', outsideClick);
+      }
+    });
+  }, 0);
+}
+
+function createKillButton(compact = false) {
+  const cfg = loadKillSwitch();
+  const target = cfg.value === 'custom' ? cfg.custom : cfg.label;
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;align-items:center;flex-shrink:0;';
+
+  const killBtn = document.createElement('button');
+  killBtn.className = 'flux-kill-btn';
+  killBtn.title = `Kill Switch → ${target} (Shift+Esc)`;
+  killBtn.style.cssText = `
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    border-radius: ${compact ? '8px 0 0 8px' : '10px 0 0 10px'};
+    padding: ${compact ? '6px 10px' : '8px 13px'};
+    font-weight: 800;
+    font-size: ${compact ? '12px' : '13px'};
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: 0.3px;
+    transition: opacity 0.15s, transform 0.1s;
+    box-shadow: 0 2px 12px rgba(239,68,68,0.35);
+  `;
+  killBtn.innerHTML = `<span>⚡</span>${compact ? '' : '<span>Kill</span>'}`;
+  killBtn.addEventListener('click', triggerKillSwitch);
+  killBtn.addEventListener('mouseenter', () => { killBtn.style.opacity = '0.88'; });
+  killBtn.addEventListener('mouseleave', () => { killBtn.style.opacity = '1'; });
+
+  const settingsBtn = document.createElement('button');
+  settingsBtn.className = 'flux-kill-btn-settings';
+  settingsBtn.title = 'Configure Kill Switch';
+  settingsBtn.style.cssText = `
+    background: rgba(239,68,68,0.15);
+    color: #ef4444;
+    border: none;
+    border-left: 1px solid rgba(239,68,68,0.3);
+    border-radius: ${compact ? '0 8px 8px 0' : '0 10px 10px 0'};
+    padding: ${compact ? '6px 7px' : '8px 8px'};
+    font-size: ${compact ? '10px' : '11px'};
+    cursor: pointer;
+    transition: background 0.15s;
+    box-shadow: 0 2px 12px rgba(239,68,68,0.15);
+  `;
+  settingsBtn.textContent = '⚙';
+  settingsBtn.addEventListener('click', (e) => { e.stopPropagation(); buildKillSwitchPopover(); });
+  settingsBtn.addEventListener('mouseenter', () => { settingsBtn.style.background = 'rgba(239,68,68,0.25)'; });
+  settingsBtn.addEventListener('mouseleave', () => { settingsBtn.style.background = 'rgba(239,68,68,0.15)'; });
+
+  wrap.appendChild(killBtn);
+  wrap.appendChild(settingsBtn);
+  return wrap;
+}
+
+const KILL_ENABLED_KEY = 'flux_kill_switch_enabled';
+function isKillSwitchEnabled() { return localStorage.getItem(KILL_ENABLED_KEY) !== '0'; }
+
+function initKillSwitch() {
+  if (!isKillSwitchEnabled()) return;
+
+  // 1. Inject into topbar right-actions
+  const rightActions = document.querySelector('.right-actions');
+  if (rightActions && !rightActions.querySelector('.flux-kill-btn')) {
+    rightActions.prepend(createKillButton(false));
+  }
+
+  // 2. Fill dedicated modal slots (index.html + games.html)
+  ['modal-kill-btn-wrap', 'modal-kill-btn-wrap-2'].forEach(id => {
+    const wrap = document.getElementById(id);
+    if (wrap && !wrap.querySelector('.flux-kill-btn')) {
+      wrap.appendChild(createKillButton(true));
+    }
+  });
+
+  // Keyboard shortcut: Shift + Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.shiftKey && e.key === 'Escape') { e.preventDefault(); triggerKillSwitch(); }
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initKillSwitch);
+} else {
+  initKillSwitch();
+}

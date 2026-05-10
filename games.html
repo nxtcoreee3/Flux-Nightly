@@ -19,7 +19,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Games — Flux</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
     .hot-badge { position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#ef4444,#f59e0b);color:white;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;letter-spacing:0.5px;z-index:2;box-shadow:0 2px 8px rgba(239,68,68,0.4);display:inline-block;width:fit-content; }
@@ -121,6 +121,25 @@
   </style>
 </head>
 <body>
+  <div id="global-page-loader" style="position:fixed;inset:0;background:#ffffff;z-index:9999999;display:flex;justify-content:center;align-items:center;transition:opacity 0.4s ease;pointer-events:none;">
+    <img src="assets/loading.gif" style="width:250px;height:auto;" alt="Loading...">
+  </div>
+  <script>
+    // Fast Boot: hide the white loader quickly (best effort)
+    (function(){
+      const hide = () => {
+        try { if (localStorage.getItem('flux_fast_boot') !== '1') return; } catch(e){ return; }
+        const el = document.getElementById('global-page-loader');
+        if (!el) return;
+        el.style.opacity = '0';
+        setTimeout(() => { try { el.remove(); } catch(e){} }, 420);
+      };
+      setTimeout(hide, 80);
+      requestAnimationFrame(hide);
+      window.addEventListener('pageshow', hide, { once: true });
+    })();
+  </script>
+
   <header class="topbar">
     <div class="brand">
       <a href="index.html" class="logo"><img src="assets/logo.png" alt="Flux" style="height:32px;vertical-align:middle;margin-right:6px;"> FLUX</a>
@@ -223,9 +242,9 @@
     <div class="modal-backdrop" data-close></div>
     <aside class="modal-panel" role="dialog" aria-modal="true" aria-label="Play game">
       <header class="modal-header">
-        <div id="modal-title-2">Loading...</div>
+        <div id="modal-title-2"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>
         <div class="modal-tools">
-          <button id="open-tab-2" class="tool-btn">Open in new tab</button>
+          <div id="modal-kill-btn-wrap-2"></div>
           <button id="close-modal-2" class="tool-btn" aria-label="Close">✕</button>
         </div>
       </header>
@@ -233,13 +252,25 @@
         <div id="iframe-wrap-2" class="iframe-wrap">
           <iframe id="game-iframe-2" src="" frameborder="0" allow="autoplay; fullscreen" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
         </div>
-        <div id="embed-warning-2" class="embed-warning hidden">
-          This site prevents embedding. <a id="open-fallback-2" href="#" target="_blank" rel="noopener">Open in a new tab</a>
+        <div id="embed-warning-2" class="embed-warning hidden" style="text-align:center;">
+          <div style="font-size:24px;margin-bottom:8px;">🕒</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;">Taking a while to load?</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px;">This site might be blocking embedding or just slow.</div>
+          <div style="display:flex;gap:8px;justify-content:center;">
+            <button id="keep-waiting-2" style="padding:6px 12px;background:var(--accent);color:white;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">Keep Waiting</button>
+            <a href="social.html" style="padding:6px 12px;background:rgba(0,0,0,0.05);color:var(--text);border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">Report to Admin</a>
+          </div>
         </div>
       </div>
     </aside>
   </div>
 
   <script type="module" src="script.js"></script>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => { const loader = document.getElementById('global-page-loader'); if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 400); } }, 400);
+  });
+</script>
 </body>
 </html>

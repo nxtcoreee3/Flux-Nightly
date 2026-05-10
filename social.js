@@ -4,15 +4,15 @@ import {
   getProfile, searchProfiles, renderBadges,
   initAuthUI, initServerStatus, initBroadcast,
   initChaos, initJumpscare, initPresence, initCookieConsent,
-  initDarkMode, initChatLock, fetchLeaderboard
+  initDarkMode, initChatLock, fetchLeaderboard, reportUser, updateProfile
 } from './firebase-auth.js';
 
 import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
-  getFirestore, collection, addDoc, deleteDoc,
+  getFirestore, collection, addDoc, deleteDoc, setDoc,
   doc, query, orderBy, limit, onSnapshot,
-  serverTimestamp, getDoc, getDocs, where
+  serverTimestamp, getDoc, getDocs, where, deleteField
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -31,6 +31,10 @@ const db = getFirestore(app);
 
 const OWNER_UID = 'zEy6TO5ligf2um4rssIZs9C9X7f2';
 const MAX_MESSAGES = 80;
+const GLOBAL_CONVO_ID = 'global';
+const PRESENCE_TTL_MS = 12000;
+const TYPING_TTL_MS = 4500;
+const TYPING_THROTTLE_MS = 1800;
 
 /* ── Year footer ── */
 document.addEventListener('DOMContentLoaded', () => {
@@ -53,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initChatLock('global',
     () => {
-      // Locked — disable input
       const input = document.getElementById('chat-input');
       const send = document.getElementById('chat-send');
       const area = document.getElementById('chat-input-area');
@@ -62,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (area) area.style.opacity = '0.5';
     },
     () => {
-      // Unlocked — re-enable
       const input = document.getElementById('chat-input');
       const send = document.getElementById('chat-send');
       const area = document.getElementById('chat-input-area');
@@ -78,6 +80,151 @@ document.addEventListener('DOMContentLoaded', () => {
 ══════════════════════════════════════ */
 let _currentProfile = null;
 let _unsubChat = null;
+let _unsubPresence = null;
+let _presencePingTimer = null;
+let _typingIdleTimer = null;
+let _typingLastSend = 0;
+let _pickerOpen = false;
+
+const _presenceProfileCache = {};
+
+async function getPresenceProfile(uid) {
+  if (!uid) return null;
+  if (_presenceProfileCache[uid]) return _presenceProfileCache[uid];
+  const p = await getProfile(uid);
+  if (p) _presenceProfileCache[uid] = p;
+  return p;
+}
+
+function renderPresenceCorner(items = []) {
+  const corner = document.getElementById('global-presence-corner');
+  if (!corner) return;
+  if (!items.length) { corner.innerHTML = ''; return; }
+
+  const typingCount = items.filter(i => i.state === 'typing').length;
+  const stickerCount = items.filter(i => i.state === 'stickers').length;
+  const thinkingCount = items.filter(i => i.state === 'thinking').length;
+  const watchingCount = items.filter(i => i.state === 'watching').length;
+
+  const label = typingCount
+    ? (typingCount === 1 ? 'Typing…' : `${typingCount} typing…`)
+    : stickerCount
+      ? (stickerCount === 1 ? 'Sticker…' : `${stickerCount} stickers…`)
+      : thinkingCount
+        ? (thinkingCount === 1 ? 'Thinking…' : `${thinkingCount} thinking…`)
+        : (watchingCount === 1 ? 'Watching' : `${watchingCount} watching`);
+
+  const icon = typingCount ? '✍️' : (stickerCount ? '🎬' : (thinkingCount ? '🧠' : '👀'));
+
+  const stack = items.slice(0, 3).map((i, idx) => {
+    const p = i.profile || null;
+    const fallback = (p?.displayName || p?.username || i.uid || '?')[0] || '?';
+    const src = p?.avatarURL || '';
+    const avatar = src
+      ? `<img src="${src}" style="width:18px;height:18px;border-radius:6px;object-fit:cover;border:1px solid rgba(0,0,0,0.06);">`
+      : `<div style="width:18px;height:18px;border-radius:6px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:white;font-size:9px;font-weight:900;border:1px solid rgba(0,0,0,0.06);">${escapeHtml(fallback.toUpperCase())}</div>`;
+    return `<div style="margin-left:${idx === 0 ? 0 : -6}px;">${avatar}</div>`;
+  }).join('');
+
+  corner.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(0,0,0,0.04);border:1px solid var(--glass-border);">
+      <div style="display:flex;align-items:center;">${stack}</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:900;color:var(--muted);white-space:nowrap;">
+        <span>${icon}</span><span>${escapeHtml(label)}</span>
+      </div>
+    </div>
+  `;
+}
+
+function startPresenceCornerListener() {
+  if (_unsubPresence) { _unsubPresence(); _unsubPresence = null; }
+
+  const q = query(
+    collection(db, 'presence'),
+    where('chatConvoId', '==', GLOBAL_CONVO_ID),
+    orderBy('chatAt', 'desc'),
+    limit(10)
+  );
+
+  _unsubPresence = onSnapshot(q, async (snap) => {
+    const now = Date.now();
+    const rows = [];
+    snap.docs.forEach((d) => {
+      const data = d.data() || {};
+      const state = data.chatState || 'watching';
+      const at = data.chatAt;
+      const ms = at?.toMillis ? at.toMillis() : (typeof at === 'number' ? at : 0);
+      if (!ms || (now - ms) > PRESENCE_TTL_MS) return;
+      rows.push({ uid: d.id, state, ms });
+    });
+
+    const priority = (s) => s === 'typing' ? 4 : (s === 'stickers' ? 3 : (s === 'thinking' ? 2 : 1));
+    rows.sort((a, b) => (priority(b.state) - priority(a.state)) || (b.ms - a.ms));
+
+    const top = rows.slice(0, 6);
+    const items = [];
+    for (const r of top) {
+      const p = await getPresenceProfile(r.uid);
+      items.push({ ...r, profile: p });
+    }
+    renderPresenceCorner(items);
+  }, () => renderPresenceCorner([]));
+}
+
+async function setGlobalChatState(state) {
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous) return;
+  const payload = state
+    ? { chatConvoId: GLOBAL_CONVO_ID, chatState: state, chatAt: serverTimestamp() }
+    : { chatConvoId: deleteField(), chatState: deleteField(), chatAt: deleteField() };
+  try {
+    await setDoc(doc(db, 'presence', user.uid), payload, { merge: true });
+  } catch {}
+}
+
+async function setGlobalTyping(isTyping) {
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous) return;
+
+  if (_typingIdleTimer) clearTimeout(_typingIdleTimer);
+
+  if (!isTyping) {
+    _typingLastSend = 0;
+    if (_pickerOpen) return;
+    const draft = (document.getElementById('chat-input')?.value || '').trim();
+    setGlobalChatState(draft ? 'thinking' : 'watching').catch(() => {});
+    return;
+  }
+  if (_pickerOpen) return;
+
+  const now = Date.now();
+  if (now - _typingLastSend < TYPING_THROTTLE_MS) {
+    _typingIdleTimer = setTimeout(() => setGlobalTyping(false).catch(() => {}), TYPING_TTL_MS);
+    return;
+  }
+  _typingLastSend = now;
+  setGlobalChatState('typing').catch(() => {});
+  _typingIdleTimer = setTimeout(() => setGlobalTyping(false).catch(() => {}), TYPING_TTL_MS);
+}
+
+function startPresencePings() {
+  if (_presencePingTimer) { clearInterval(_presencePingTimer); _presencePingTimer = null; }
+  setGlobalTyping(false).catch(() => {});
+  _presencePingTimer = setInterval(() => {
+    if (_pickerOpen) return;
+    if (_typingLastSend && (Date.now() - _typingLastSend) < TYPING_TTL_MS) return;
+    const draft = (document.getElementById('chat-input')?.value || '').trim();
+    setGlobalChatState(draft ? 'thinking' : 'watching').catch(() => {});
+  }, 9000);
+}
+
+function stopPresencePings() {
+  if (_presencePingTimer) { clearInterval(_presencePingTimer); _presencePingTimer = null; }
+  if (_typingIdleTimer) { clearTimeout(_typingIdleTimer); _typingIdleTimer = null; }
+  _typingLastSend = 0;
+  _pickerOpen = false;
+  setGlobalChatState(null).catch(() => {});
+}
 
 async function initChat() {
   onAuthStateChanged(auth, async (user) => {
@@ -95,14 +242,12 @@ async function initChat() {
       if (profile && !profile.isBanned) {
         inputArea.style.display = 'flex';
         signinPrompt.style.display = 'none';
-        // Show my profile card in sidebar
         showMyProfileCard(profile);
       } else if (!profile) {
         inputArea.style.display = 'none';
         signinPrompt.style.display = 'block';
         signinPrompt.innerHTML = '<p>Create a profile to join the chat.</p><a href="index.html" style="color:var(--accent);font-size:13px;font-weight:600;">Set up profile →</a>';
       } else {
-        // Banned
         inputArea.style.display = 'none';
         signinPrompt.style.display = 'block';
         signinPrompt.innerHTML = '<p style="color:#ef4444;">🚫 You are banned from chat.</p>';
@@ -112,12 +257,15 @@ async function initChat() {
     startChatListener(user);
   });
 
-  // Send on click
   document.getElementById('chat-send')?.addEventListener('click', sendMessage);
 
-  // Send on Enter
   document.getElementById('chat-input')?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+
+  document.getElementById('global-gif-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    showGlobalGifPicker();
   });
 }
 
@@ -151,7 +299,6 @@ function renderChatSnap(snap, currentUser) {
     patchMessageBadges(el, msg.uid);
   });
 
-  // Track last message id for poll comparison
   _lastChatDocId = snap.docs[snap.docs.length - 1]?.id || null;
 
   if (wasAtBottom) container.scrollTop = container.scrollHeight;
@@ -162,12 +309,10 @@ function startChatListener(currentUser) {
 
   const q = query(collection(db, 'chat'), orderBy('sentAt', 'asc'), limit(MAX_MESSAGES));
 
-  // Primary: real-time listener
   _unsubChat = onSnapshot(q, (snap) => {
     renderChatSnap(snap, currentUser);
   });
 
-  // Fallback poll every 2s for mobile Safari
   setInterval(async () => {
     try {
       const { getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
@@ -188,29 +333,58 @@ function renderMessageSync(msg, currentUser) {
     : '';
 
   const avatarHTML = msg.avatarURL
-    ? `<img class="chat-msg-avatar" src="${msg.avatarURL}" alt="">`
-    : `<div class="chat-msg-avatar-placeholder">${(msg.displayName || msg.username || '?')[0].toUpperCase()}</div>`;
+    ? `<img class="chat-msg-avatar" src="${msg.avatarURL}" style="width:28px;height:28px;border-radius:8px;object-fit:cover;margin-${isOwn?'left':'right'}:8px;flex-shrink:0;">`
+    : `<div class="chat-msg-avatar-placeholder" style="width:28px;height:28px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;margin-${isOwn?'left':'right'}:8px;flex-shrink:0;">${(msg.displayName || msg.username || '?')[0].toUpperCase()}</div>`;
 
-  // Use baked-in badges for instant render
   const badgesHTML = renderBadges(msg.badges || [], msg.roles || []);
 
   const div = document.createElement('div');
   div.className = 'chat-msg';
   div.dataset.id = msg.id;
   div.dataset.uid = msg.uid;
+  div.style.cssText = `display:flex;align-items:flex-end;margin-bottom:12px;flex-direction:${isOwn?'row-reverse':'row'}`;
+  
+  const isGif = msg.type === 'gif';
+  const msgContent = isGif
+    ? `<img src="${msg.text}" alt="GIF" style="max-width:180px;border-radius:10px;display:block;">`
+    : `<div class="chat-msg-text" style="font-size:13px;line-height:1.4;word-break:break-word;">${escapeHtml(msg.text)}</div>`;
+
+  const bubbleStyle = isGif
+    ? 'padding:0;background:transparent;border:none;border-radius:18px;position:relative;'
+    : isOwn
+      ? 'padding:10px 14px;border-radius:18px;border-bottom-right-radius:4px;position:relative;background:var(--accent);color:white;'
+      : 'padding:10px 14px;border-radius:18px;border-bottom-left-radius:4px;position:relative;background:var(--panel);color:var(--text);border:1px solid var(--glass-border);';
+
   div.innerHTML = `
     ${avatarHTML}
-    <div class="chat-msg-body">
-      <div class="chat-msg-meta">
-        <a class="chat-msg-name" href="profile.html?user=${msg.username}">@${msg.username}</a>
+    <div class="chat-msg-body" style="max-width:55%;position:relative;">
+      <div class="chat-msg-meta" style="display:flex;align-items:center;gap:6px;margin-bottom:2px;${isOwn?'flex-direction:row-reverse;':''}">
+        <a class="chat-msg-name" href="profile.html?user=${msg.username}" style="font-size:11px;font-weight:700;color:var(--text);text-decoration:none;">@${msg.username}</a>
         <span class="msg-badges">${badgesHTML}</span>
-        <span class="chat-msg-time">${time}</span>
-        ${(isAdmin || isOwn) ? `<button class="chat-msg-delete" title="Delete">✕</button>` : ''}
+        <span class="chat-msg-time" style="font-size:9px;color:var(--muted);">${time}</span>
       </div>
       <div class="msg-playing"></div>
-      <div class="chat-msg-text">${escapeHtml(msg.text)}</div>
+      <div class="chat-msg-bubble" style="${bubbleStyle}">
+        ${msgContent}
+        <div class="msg-actions" style="position:absolute;top:-24px;${isOwn?'right:0;':'left:0;'}display:none;gap:4px;background:var(--panel);padding:2px 6px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);border:1px solid var(--glass-border);z-index:10;">
+          <button class="msg-report" style="background:none;border:none;cursor:pointer;font-size:10px;padding:2px;" title="Report">🚩</button>
+          ${(isAdmin || isOwn) ? `<button class="chat-msg-delete" style="background:none;border:none;cursor:pointer;font-size:10px;padding:2px;" title="Delete">🗑️</button>` : ''}
+        </div>
+      </div>
     </div>
   `;
+
+  div.addEventListener('mouseenter', () => div.querySelector('.msg-actions').style.display = 'flex');
+  div.addEventListener('mouseleave', () => div.querySelector('.msg-actions').style.display = 'none');
+
+  div.querySelector('.msg-report')?.addEventListener('click', async () => {
+    const reason = prompt('Why are you reporting this user?');
+    if (reason) {
+      await reportUser(msg.uid, reason, `Social Chat Context: ${msg.text} (Msg: ${msg.id})`);
+      alert('Report sent to moderators.');
+      div.style.opacity = '0.4';
+    }
+  });
 
   div.querySelector('.chat-msg-delete')?.addEventListener('click', () => deleteMessage(msg.id));
   return div;
@@ -224,7 +398,6 @@ async function patchMessageBadges(el, uid) {
     if (badgesEl) {
       badgesEl.innerHTML = renderBadges(liveProfile.badges || [], liveProfile.roles || []);
     }
-    // Show currently playing
     const playingEl = el.querySelector('.msg-playing');
     if (playingEl && liveProfile.currentlyPlaying) {
       playingEl.innerHTML = `<span style="font-size:10px;color:#22c55e;">🎮 Playing ${liveProfile.currentlyPlaying.title}</span>`;
@@ -237,12 +410,10 @@ async function sendMessage() {
   const text = input.value.trim();
   if (!text || !_currentProfile) return;
 
-  // Check if global chat is locked
   try {
     const lockSnap = await getDoc(doc(db, 'stats', 'chatlock'));
     if (lockSnap.exists() && lockSnap.data().globalLocked) {
       input.value = '';
-      // Show locked notice
       const container = document.getElementById('chat-messages');
       const notice = document.createElement('div');
       notice.style.cssText = 'text-align:center;padding:8px;color:#ef4444;font-size:12px;font-weight:600;';
@@ -257,7 +428,6 @@ async function sendMessage() {
   input.disabled = true;
 
   try {
-    // Always re-fetch profile so roles/badges are current at send time
     const freshProfile = await getProfile(auth.currentUser.uid) || _currentProfile;
     if (freshProfile.isBanned) { input.disabled = false; return; }
 
@@ -269,6 +439,7 @@ async function sendMessage() {
       badges: freshProfile.badges || [],
       roles: freshProfile.roles || [],
       text,
+      type: 'text',
       sentAt: serverTimestamp(),
     });
   } catch (e) {
@@ -285,6 +456,106 @@ async function deleteMessage(msgId) {
   } catch (e) { console.warn('Delete failed:', e); }
 }
 
+async function sendGifToChat(url, name) {
+  if (!_currentProfile) return;
+  try {
+    const freshProfile = await getProfile(auth.currentUser.uid) || _currentProfile;
+    if (freshProfile.isBanned) return;
+    await addDoc(collection(db, 'chat'), {
+      uid: auth.currentUser.uid,
+      username: freshProfile.username,
+      displayName: freshProfile.displayName,
+      avatarURL: freshProfile.avatarURL || '',
+      badges: freshProfile.badges || [],
+      roles: freshProfile.roles || [],
+      text: url,
+      stickerName: name || '',
+      type: 'gif',
+      sentAt: serverTimestamp(),
+    });
+  } catch (e) { console.warn('GIF send failed:', e); }
+}
+
+function showGlobalGifPicker() {
+  const existing = document.getElementById('global-gif-picker');
+  if (existing) { existing.remove(); return; }
+
+  const picker = document.createElement('div');
+  picker.id = 'global-gif-picker';
+  picker.style.cssText = 'position:absolute;bottom:60px;left:0;right:0;z-index:600;background:var(--panel);border-radius:16px 16px 0 0;padding:14px;box-shadow:0 -4px 30px rgba(0,0,0,0.15);border-top:1px solid var(--glass-border);max-height:280px;display:flex;flex-direction:column;';
+  picker.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-shrink:0;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);">🎬 Stickers <span style="display:inline-flex;align-items:center;background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;letter-spacing:0.8px;text-transform:uppercase;vertical-align:middle;">Beta</span></span>
+      <button id="global-gif-close" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0;">✕</button>
+    </div>
+    <input id="global-gif-search" type="text" placeholder="Search stickers..." style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--glass-border);background:var(--bg);color:var(--text);font-size:13px;outline:none;box-sizing:border-box;margin-bottom:10px;font-family:inherit;flex-shrink:0;">
+    <div id="global-gif-results" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;overflow-y:auto;flex:1;"></div>
+  `;
+
+  const inputWrap = document.querySelector('.chat-input-wrap');
+  if (inputWrap) {
+    inputWrap.style.position = 'relative';
+    inputWrap.appendChild(picker);
+  } else {
+    document.body.appendChild(picker);
+  }
+
+  picker.querySelector('#global-gif-close').addEventListener('click', () => picker.remove());
+
+  let _allStickers = [];
+
+  const renderStickers = (list) => {
+    const results = picker.querySelector('#global-gif-results');
+    if (!list.length) {
+      results.innerHTML = '<div style="grid-column:1/-1;padding:12px;font-size:12px;color:var(--muted);text-align:center;">No stickers found.<br><span style="font-size:10px;">Add GIFs to your GIFs/ folder.</span></div>';
+      return;
+    }
+    results.innerHTML = '';
+    list.forEach(s => {
+      const img = document.createElement('img');
+      img.src = s.url;
+      img.title = s.name;
+      img.style.cssText = 'width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:border-color 0.15s;';
+      img.addEventListener('mouseenter', () => img.style.borderColor = 'var(--accent)');
+      img.addEventListener('mouseleave', () => img.style.borderColor = 'transparent');
+      img.addEventListener('click', async () => {
+        picker.remove();
+        await sendGifToChat(s.url, s.name);
+      });
+      results.appendChild(img);
+    });
+  };
+
+  const loadStickers = async () => {
+    const results = picker.querySelector('#global-gif-results');
+    results.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--muted);font-size:12px;">Loading stickers...</div>';
+    try {
+      const resp = await fetch(`GIFs/manifest.json?t=${Date.now()}`, { cache: 'no-store' });
+      if (!resp.ok) throw new Error('No manifest');
+      _allStickers = await resp.json();
+      renderStickers(_allStickers);
+    } catch {
+      results.innerHTML = '<div style="grid-column:1/-1;padding:12px;font-size:12px;color:var(--muted);text-align:center;">No stickers yet.<br><span style="font-size:10px;">Create a <strong>GIFs/manifest.json</strong> file.</span></div>';
+    }
+  };
+
+  picker.querySelector('#global-gif-search').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    renderStickers(q ? _allStickers.filter(s => s.name.toLowerCase().includes(q)) : _allStickers);
+  });
+
+  setTimeout(() => {
+    document.addEventListener('click', function handler(e) {
+      if (!picker.contains(e.target) && e.target.id !== 'global-gif-btn') {
+        picker.remove();
+        document.removeEventListener('click', handler);
+      }
+    });
+  }, 50);
+
+  loadStickers();
+}
+
 /* ══════════════════════════════════════
    USER SEARCH
 ══════════════════════════════════════ */
@@ -299,7 +570,7 @@ function initSearch() {
       document.getElementById('search-results').innerHTML = '<div class="search-empty">Type to search for players</div>';
       return;
     }
-    document.getElementById('search-results').innerHTML = '<div class="search-empty">Searching...</div>';
+    document.getElementById('search-results').innerHTML = '<div class="search-empty"><img src="assets/loading.gif" style="width:40px;height:auto;opacity:0.6;"></div>';
     _timer = setTimeout(() => runSearch(val), 350);
   });
 }
@@ -380,7 +651,7 @@ async function initLeaderboard() {
   const card = document.getElementById('leaderboard-card');
   if (!card) return;
 
-  card.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:13px;text-align:center;">Loading...</div>';
+  card.innerHTML = '<div style="padding:16px;color:var(--muted);font-size:13px;text-align:center;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>';
 
   const { points, streaks } = await fetchLeaderboard();
 
@@ -421,7 +692,6 @@ async function initLeaderboard() {
     <div id="lb-streaks-list" style="display:none;">${renderList(streaks, 'loginStreak', 'days', '🔥')}</div>
   `;
 
-  // Remove border from last items
   card.querySelectorAll('#lb-points-list > div:last-child, #lb-streaks-list > div:last-child').forEach(el => el.style.borderBottom = 'none');
 
   document.getElementById('lb-tab-points').addEventListener('click', () => {
@@ -460,7 +730,6 @@ async function initRecommended() {
     const recommendations = [];
     const seen = new Set([user.uid, ...myFollowing]);
 
-    // 1. Mutuals — people that people I follow also follow
     try {
       for (const followedUid of myFollowing.slice(0, 5)) {
         const theirProfile = await getProfile(followedUid);
@@ -477,7 +746,6 @@ async function initRecommended() {
       }
     } catch {}
 
-    // 2. Fill remaining with newest users
     if (recommendations.length < 5) {
       try {
         const q = query(collection(db, 'profiles'), orderBy('joinedAt', 'desc'), limit(20));
@@ -530,7 +798,6 @@ async function initRecommended() {
       list.appendChild(item);
     });
 
-    // Remove border from last item
     list.lastChild?.style.setProperty('border-bottom', 'none');
     card.style.display = 'block';
   });
@@ -540,3 +807,5 @@ async function initRecommended() {
 function escapeHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+setTimeout(() => { if(window.hideGlobalLoader) window.hideGlobalLoader(); }, 600);

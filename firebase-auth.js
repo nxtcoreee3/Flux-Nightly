@@ -44,7 +44,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const rtdb = getDatabase(app);
+export const rtdb = getDatabase(app);
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 
@@ -122,8 +122,21 @@ export function initPresence() {
           }
         }
       } catch {}
-      set(presenceRef, payload);
-      onDisconnect(presenceRef).remove();
+      onDisconnect(presenceRef).remove().then(() => {
+        set(presenceRef, payload);
+      });
+      if (user && !user.isAnonymous) {
+        logActivity('Entered the site');
+        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js").then(({ push }) => {
+          const exitLogRef = push(ref(rtdb, 'activityLogs'));
+          onDisconnect(exitLogRef).set({
+            uid: user.uid,
+            username: payload.username || user.uid.slice(0, 8),
+            action: 'Left the site',
+            timestamp: serverTimestamp()
+          });
+        }).catch(()=>{});
+      }
     }
   });
 
@@ -139,7 +152,14 @@ export function initPresence() {
   };
 
   onValue(ref(rtdb, 'presence'), (snap) => {
-    _onlineCount = snap.exists() ? Object.keys(snap.val()).length : 0;
+    let validCount = 0;
+    const now = Date.now();
+    if (snap.exists()) {
+      Object.values(snap.val()).forEach(s => {
+        if (!s.timestamp || now - s.timestamp < 12 * 60 * 60 * 1000) validCount++;
+      });
+    }
+    _onlineCount = validCount;
     // update stats dropdown if open
     const el = document.getElementById('stats-online-count');
     if (el) el.textContent = _onlineCount;
@@ -179,13 +199,26 @@ export function initPresence() {
     }
   };
 
-  // Per-user refresh — only attach the RTDB listener once
+  // Per-user refresh & cache reset
   onAuthStateChanged(auth, (user) => {
     if (!user || user.isAnonymous || _refreshListenerAttached) return;
     _refreshListenerAttached = true;
+    
     onValue(ref(rtdb, `forceRefresh/${user.uid}`), (snap) => {
       if (!snap.exists()) return;
       _handleRefresh(snap.val()?.triggeredAt, 'user');
+    });
+
+    onValue(ref(rtdb, `forceResetCache/${user.uid}`), (snap) => {
+      if (!snap.exists()) return;
+      const triggeredAt = snap.val()?.triggeredAt;
+      if (!triggeredAt) return;
+      const stored = sessionStorage.getItem(`_fluxReset_${user.uid}`);
+      if (stored === triggeredAt.toString()) return;
+      sessionStorage.setItem(`_fluxReset_${user.uid}`, triggeredAt.toString());
+      localStorage.clear();
+      sessionStorage.clear();
+      setTimeout(() => location.reload(true), 500);
     });
   });
 
@@ -196,7 +229,7 @@ export function initPresence() {
   });
 }
 
-/* ===================== FORCE REFRESH ===================== */
+/* ===================== FORCE REFRESH / RESET ===================== */
 export async function forceRefreshUser(targetUid) {
   const user = auth.currentUser;
   if (!user || user.uid !== 'zEy6TO5ligf2um4rssIZs9C9X7f2') return { ok: false, error: 'Admin only.' };
@@ -206,8 +239,21 @@ export async function forceRefreshUser(targetUid) {
       by: user.uid,
       rand: Math.random()
     });
-    // Cleanup so it doesn't stay there forever (shorter timeout so it cleans before reload)
     setTimeout(() => set(ref(rtdb, `forceRefresh/${targetUid}`), null), 200);
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
+
+export async function forceResetCacheUser(targetUid) {
+  const user = auth.currentUser;
+  if (!user || user.uid !== 'zEy6TO5ligf2um4rssIZs9C9X7f2') return { ok: false, error: 'Admin only.' };
+  try {
+    await set(ref(rtdb, `forceResetCache/${targetUid}`), {
+      triggeredAt: new Date().getTime(),
+      by: user.uid,
+      rand: Math.random()
+    });
+    setTimeout(() => set(ref(rtdb, `forceResetCache/${targetUid}`), null), 200);
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 }
@@ -508,7 +554,7 @@ export async function setCurrentlyPlaying(gameId, gameTitle) {
     await updateDoc(doc(db, 'profiles', user.uid), {
       currentlyPlaying: { id: gameId, title: gameTitle, since: new Date().toISOString() }
     });
-    // Also update the RTDB presence node so mod panel sees it live
+    logActivity(`Started playing ${gameTitle}`);
     if (typeof window._fluxUpdatePresence === 'function') {
       window._fluxUpdatePresence({ id: gameId, title: gameTitle, since: new Date().toISOString() });
     }
@@ -520,9 +566,26 @@ export async function clearCurrentlyPlaying() {
   if (!user || user.isAnonymous) return;
   try {
     await updateDoc(doc(db, 'profiles', user.uid), { currentlyPlaying: null });
+    logActivity('Stopped playing');
     if (typeof window._fluxUpdatePresence === 'function') {
       window._fluxUpdatePresence(null);
     }
+  } catch {}
+}
+
+export async function logActivity(action) {
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous) return;
+  try {
+    const pSnap = await getDoc(doc(db, 'profiles', user.uid));
+    const username = pSnap.exists() ? pSnap.data().username : user.uid.slice(0, 8);
+    const { push } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+    await push(ref(rtdb, 'activityLogs'), {
+      uid: user.uid,
+      username: username || user.uid.slice(0, 8),
+      action: action,
+      timestamp: serverTimestamp()
+    });
   } catch {}
 }
 
@@ -575,13 +638,14 @@ export function initUpdateNotification() {
 
   async function checkForUpdate() {
     try {
-      // Fetch latest commit from GitHub to be completely automatic
-      const res = await fetch('https://api.github.com/repos/nxtcoreee3/Flux/commits?per_page=1', { cache: 'no-store' });
+      // Fetch version.json with cache-busting
+      const res = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) return;
       const data = await res.json();
-      if (!data || !data[0]) return;
-      
-      const latestBuild = data[0].sha.slice(0, 6);
+      const latestBuild = data.build;
+      const latestVersion = data.version || '';
+      if (!latestBuild) return;
+
       const storedBuild = localStorage.getItem(STORAGE_KEY);
 
       if (!storedBuild) {
@@ -592,53 +656,56 @@ export function initUpdateNotification() {
 
       if (storedBuild !== latestBuild && !_notifShown) {
         _notifShown = true;
-        showUpdatePopup(latestBuild, storedBuild);
+        showUpdateBanner(latestBuild, latestVersion, storedBuild);
       }
     } catch {}
   }
 
-  function showUpdatePopup(newBuild, oldBuild) {
-    const existing = document.getElementById('flux-update-popup');
+  function showUpdateBanner(build, version, oldBuild) {
+    const existing = document.getElementById('flux-update-banner');
     if (existing) existing.remove();
 
-    const popup = document.createElement('div');
-    popup.id = 'flux-update-popup';
-    popup.style.cssText = `
-      position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99999999;
-      display:flex;justify-content:center;align-items:center;backdrop-filter:blur(4px);
-      opacity:0;transition:opacity 0.3s ease;
+    const banner = document.createElement('div');
+    banner.id = 'flux-update-banner';
+    banner.style.cssText = `
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+      z-index:9999;display:flex;align-items:center;gap:14px;
+      background:var(--panel,#fff);
+      border:1px solid var(--glass-border,rgba(0,0,0,0.08));
+      border-radius:16px;padding:14px 18px;
+      box-shadow:0 12px 40px rgba(0,0,0,0.15);
+      max-width:440px;width:calc(100vw - 48px);
+      transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
     `;
-    popup.innerHTML = `
-      <div style="background:var(--panel,#fff);padding:24px;border-radius:16px;max-width:340px;width:90%;box-shadow:0 10px 25px rgba(0,0,0,0.2);text-align:center;transform:translateY(20px);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);">
-        <div style="font-size:36px;margin-bottom:12px;">🚀</div>
-        <h2 style="margin:0 0 8px;font-size:18px;font-weight:700;color:var(--text,#111827);">New Update Available!</h2>
-        <p style="margin:0 0 16px;font-size:13px;color:var(--muted,#4b5563);line-height:1.5;">
-          You are currently using version <strong>#${oldBuild}</strong>, but the latest version is <strong>#${newBuild}</strong>.<br><br>Please update to ensure everything runs smoothly!
-        </p>
-        <div style="display:flex;gap:10px;justify-content:center;">
-          <button id="update-dismiss-btn" style="padding:10px 16px;border:none;background:var(--bg,#f3f4f6);color:var(--muted,#4b5563);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;">Decline</button>
-          <button id="update-refresh-btn" style="padding:10px 16px;border:none;background:var(--accent,#3a7dff);color:#fff;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;flex:1;">Update Site</button>
+    banner.innerHTML = `
+      <span style="font-size:22px;flex-shrink:0;">🚀</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:700;color:var(--text,#111);">New update available!</div>
+        <div style="font-size:12px;color:var(--muted,#6b7280);margin-top:2px;">
+          Version: <code style="background:rgba(58,125,255,0.1);color:var(--accent,#3a7dff);padding:1px 5px;border-radius:4px;font-size:11px;">#${oldBuild}</code> → <code style="background:rgba(58,125,255,0.1);color:var(--accent,#3a7dff);padding:1px 5px;border-radius:4px;font-size:11px;">#${build}</code>
         </div>
       </div>
+      <div style="display:flex;gap:8px;flex-shrink:0;">
+        <button id="update-refresh-btn" style="padding:8px 14px;background:var(--accent,#3a7dff);color:white;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;">Refresh</button>
+        <button id="update-dismiss-btn" style="background:none;border:none;color:var(--muted,#9ca3af);cursor:pointer;font-size:18px;padding:0 2px;line-height:1;">✕</button>
+      </div>
     `;
-    document.body.appendChild(popup);
+    document.body.appendChild(banner);
 
-    // Fade in
+    // Slide up
     requestAnimationFrame(() => {
-      popup.style.opacity = '1';
-      popup.firstElementChild.style.transform = 'translateY(0)';
+      banner.style.transform = 'translateX(-50%) translateY(0)';
     });
 
     document.getElementById('update-refresh-btn').addEventListener('click', () => {
-      localStorage.setItem(STORAGE_KEY, newBuild);
+      localStorage.setItem(STORAGE_KEY, build);
       window.location.reload(true);
     });
 
     document.getElementById('update-dismiss-btn').addEventListener('click', () => {
-      popup.style.opacity = '0';
-      popup.firstElementChild.style.transform = 'translateY(20px)';
-      setTimeout(() => popup.remove(), 300);
-      localStorage.setItem(STORAGE_KEY, newBuild); // User declined this version, don't show until next version
+      banner.style.transform = 'translateX(-50%) translateY(80px)';
+      setTimeout(() => banner.remove(), 400);
+      localStorage.setItem(STORAGE_KEY, build); // User declined this version, don't show until next version
     });
   }
 
@@ -896,6 +963,54 @@ export async function searchProfiles(term) {
   } catch { return []; }
 }
 
+export async function syncProfileAvatar(force = false) {
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous) return false;
+  try {
+    const profileRef = doc(db, 'profiles', user.uid);
+    const snap = await getDoc(profileRef);
+    if (!snap.exists()) return false;
+    const photo = user.photoURL;
+    if (!photo) return false;
+    if (!force && snap.data().avatarURL === photo) return false;
+    await updateDoc(profileRef, { avatarURL: photo });
+    return true;
+  } catch { return false; }
+}
+
+export async function reportUser(targetUid, reason, context = '') {
+  const user = auth.currentUser;
+  if (!user || user.isAnonymous) return { ok: false, error: 'Sign in to report.' };
+  try {
+    const { addDoc, collection } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    await addDoc(collection(db, 'userReports'), {
+      reportedUid: targetUid,
+      reason,
+      context,
+      reportedBy: user.uid,
+      reportedAt: new Date().toISOString(),
+      status: 'open'
+    });
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
+
+export async function fetchUserReports() {
+  try {
+    const { collection, query, where, getDocs } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const q = query(collection(db, 'userReports'), where('status', '==', 'open'));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch { return []; }
+}
+
+export async function dismissUserReport(reportId) {
+  try {
+    await updateDoc(doc(db, 'userReports', reportId), { status: 'dismissed' });
+    return { ok: true };
+  } catch (e) { return { ok: false, error: e.message }; }
+}
+
 export async function isUsernameTaken(username) {
   const p = await getProfileByUsername(username);
   return p !== null;
@@ -966,56 +1081,78 @@ export function initNotifications() {
   const user = auth.currentUser;
   if (!user || user.isAnonymous) return;
 
-  // Inject bell into nav
-  const rightActions = document.querySelector('.right-actions');
-  if (!rightActions || document.getElementById('notif-btn')) return;
+  // Inject notifications panel into the profile dropdown (not the nav bar)
+  if (document.getElementById('notif-panel-container')) return;
 
-  const wrapper = document.createElement('div');
-  wrapper.style.cssText = 'position:relative;display:flex;align-items:center;';
-  wrapper.innerHTML = `
-    <button id="notif-btn" class="icon-btn" title="Notifications" style="cursor:pointer;position:relative;padding:8px 10px;font-size:16px;">
-      🔔
-      <span id="notif-badge" style="display:none;position:absolute;top:4px;right:4px;background:#ef4444;color:white;font-size:9px;font-weight:800;padding:1px 4px;border-radius:20px;min-width:14px;text-align:center;line-height:14px;">0</span>
-    </button>
-    <div id="notif-dropdown" style="display:none;position:absolute;top:calc(100% + 10px);right:0;background:var(--panel);border:1px solid var(--glass-border);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.15);width:300px;z-index:300;overflow:hidden;">
-      <div style="padding:14px 16px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--text);">🔔 Notifications</span>
+  // Build the notifications slide-in panel that appears when clicking the dropdown item
+  const panel = document.createElement('div');
+  panel.id = 'notif-panel-container';
+  panel.style.cssText = 'display:none;position:fixed;top:0;right:0;width:320px;height:100vh;z-index:9500;background:var(--panel);border-left:1px solid var(--glass-border);box-shadow:-20px 0 60px rgba(0,0,0,0.18);flex-direction:column;';
+  panel.innerHTML = `
+    <div style="padding:16px 18px;border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--text);">🔔 Notifications</span>
+      <div style="display:flex;align-items:center;gap:8px;">
         <button id="notif-mark-all" style="background:none;border:none;font-size:11px;color:var(--accent);cursor:pointer;font-weight:700;">Mark all read</button>
+        <button id="notif-panel-close" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0;line-height:1;">✕</button>
       </div>
-      <div id="notif-list" style="max-height:340px;overflow-y:auto;"></div>
     </div>
+    <div id="notif-list" style="flex:1;overflow-y:auto;"></div>
   `;
-  rightActions.prepend(wrapper);
+  document.body.appendChild(panel);
 
-  const btn = wrapper.querySelector('#notif-btn');
-  const dd = wrapper.querySelector('#notif-dropdown');
+  const openPanel = () => {
+    panel.style.display = 'flex';
+    loadNotifications(user.uid);
+    // close profile dropdown
+    const dd = document.getElementById('profile-dropdown');
+    if (dd) dd.style.display = 'none';
+  };
+  const closePanel = () => { panel.style.display = 'none'; };
 
-  btn.addEventListener('click', (e) => {
+  document.getElementById('notif-panel-close').addEventListener('click', closePanel);
+
+  // Wire the dropdown button (added in initAuthUI HTML)
+  // Do not rely on document-level delegation because clicks inside the dropdown
+  // can be stopped by parent handlers.
+  const ddBtn = document.getElementById('notif-dropdown-btn');
+  ddBtn?.addEventListener('click', (e) => {
     e.stopPropagation();
-    const isOpen = dd.style.display !== 'none';
-    dd.style.display = isOpen ? 'none' : 'block';
-    if (!isOpen) loadNotifications(user.uid);
+    openPanel();
   });
-  document.addEventListener('click', () => { dd.style.display = 'none'; });
 
   document.getElementById('notif-mark-all').addEventListener('click', async (e) => {
     e.stopPropagation();
     await markAllNotificationsRead(user.uid);
-    document.getElementById('notif-badge').style.display = 'none';
+    const navBadge = document.getElementById('notif-nav-badge');
+    if (navBadge) navBadge.style.display = 'none';
     loadNotifications(user.uid);
   });
 
-  // Listen for unread count
+  // Listen for unread count — update badge on the profile user-display button
   import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(({ collection: col, query: q, where: w, onSnapshot: ons }) => {
     const unreadQ = q(col(db, 'notifications'), w('uid', '==', user.uid), w('read', '==', false));
     ons(unreadQ, (snap) => {
-      const badge = document.getElementById('notif-badge');
-      if (!badge) return;
+      let badge = document.getElementById('notif-nav-badge');
+      if (!badge) {
+        // Create a badge on the user-display button if not already there
+        const userDisplay = document.getElementById('user-display');
+        if (userDisplay) {
+          badge = document.createElement('span');
+          badge.id = 'notif-nav-badge';
+          badge.style.cssText = 'position:absolute;top:-4px;right:-4px;background:#ef4444;color:white;font-size:9px;font-weight:800;padding:1px 4px;border-radius:20px;min-width:14px;text-align:center;line-height:14px;display:none;';
+          userDisplay.style.position = 'relative';
+          userDisplay.appendChild(badge);
+        }
+      }
+      // Also update dropdown button badge
+      const ddBadge = document.getElementById('notif-dd-badge');
       if (snap.size > 0) {
-        badge.textContent = snap.size > 9 ? '9+' : snap.size;
-        badge.style.display = 'inline-block';
+        const countStr = snap.size > 9 ? '9+' : String(snap.size);
+        if (badge) { badge.textContent = countStr; badge.style.display = 'inline-block'; }
+        if (ddBadge) { ddBadge.textContent = countStr; ddBadge.style.display = 'inline-block'; }
       } else {
-        badge.style.display = 'none';
+        if (badge) badge.style.display = 'none';
+        if (ddBadge) ddBadge.style.display = 'none';
       }
     });
   });
@@ -1024,7 +1161,7 @@ export function initNotifications() {
 async function loadNotifications(uid) {
   const list = document.getElementById('notif-list');
   if (!list) return;
-  list.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:13px;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>';
+  list.innerHTML = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:13px;">Loading...</div>';
 
   try {
     const { collection: col, query: q, where: w, limit: lim, getDocs: gd } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
@@ -1436,7 +1573,22 @@ function showBanOverlay(reason, bannedAt) {
   window._fluxBanned = true;
 }
 
-export function initAuthUI(onUserChange) {
+export async function initAuthUI(onUserChange) {
+  window.hideGlobalLoader = () => {
+    const loader = document.getElementById('global-page-loader');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => loader.remove(), 400);
+    }
+  };
+
+  // Safety net: forcibly hide loader after 3 seconds of page load to prevent permanent white screens
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (window.hideGlobalLoader) window.hideGlobalLoader();
+    }, 3500);
+  });
+
   // Handle redirect result from GitHub/Google sign-in on Safari
   import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js").then(({ getRedirectResult }) => {
     getRedirectResult(auth).catch(() => {});
@@ -1472,6 +1624,9 @@ export function initAuthUI(onUserChange) {
       <a id="view-profile-btn" href="profile.html" style="display:none;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--text,#111827);text-decoration:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));">
         <span>👤</span> My Profile
       </a>
+      <button id="notif-dropdown-btn" style="width:100%;padding:10px 16px;background:none;border:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));text-align:left;cursor:pointer;font-size:13px;color:var(--text,#111827);display:flex;align-items:center;gap:10px;">
+        <span>🔔</span> Notifications <span id="notif-dd-badge" style="display:none;margin-left:auto;background:#ef4444;color:white;font-size:9px;font-weight:800;padding:1px 6px;border-radius:20px;min-width:16px;text-align:center;">0</span>
+      </button>
       <button id="spin-wheel-btn" style="width:100%;padding:10px 16px;background:none;border:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));text-align:left;cursor:pointer;font-size:13px;color:var(--text,#111827);display:flex;align-items:center;gap:10px;">
         <span>🎰</span> Spin Wheel <span id="spin-cooldown-label" style="font-size:10px;color:#6b7280;margin-left:auto;"></span>
       </button>
@@ -1484,6 +1639,11 @@ export function initAuthUI(onUserChange) {
       <a href="settings.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--text,#111827);text-decoration:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));">
         <span>⚙️</span> Settings
       </a>
+      <button id="fast-boot-btn" style="width:100%;padding:10px 16px;background:none;border:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));text-align:left;cursor:pointer;font-size:13px;color:var(--text,#111827);display:flex;align-items:center;gap:10px;">
+        <span>⚡</span> Boost Mode
+        <span style="font-size:9px;font-weight:900;letter-spacing:0.6px;padding:2px 7px;border-radius:999px;background:linear-gradient(135deg,#7c6aff,#a855f7);color:#fff;">BETA</span>
+        <span id="fast-boot-state" style="margin-left:auto;font-size:10px;font-weight:900;padding:2px 8px;border-radius:999px;background:rgba(58,125,255,0.12);color:var(--accent,#3a7dff);border:1px solid rgba(58,125,255,0.18);">OFF</span>
+      </button>
       <a href="status.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--text,#111827);text-decoration:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));">
         <span>🛰️</span> Status
       </a>
@@ -1610,6 +1770,38 @@ export function initAuthUI(onUserChange) {
     if (typeof window.openRedeemCode === 'function') window.openRedeemCode();
   });
 
+  // Fast boot toggle
+  const fastBootBtn = document.getElementById('fast-boot-btn');
+  const fastBootState = document.getElementById('fast-boot-state');
+  const applyFastBootState = () => {
+    let on = false;
+    try { on = localStorage.getItem('flux_fast_boot') === '1'; } catch {}
+    if (fastBootState) {
+      fastBootState.textContent = on ? 'ON' : 'OFF';
+      fastBootState.style.background = on ? 'rgba(34,197,94,0.14)' : 'rgba(58,125,255,0.12)';
+      fastBootState.style.borderColor = on ? 'rgba(34,197,94,0.22)' : 'rgba(58,125,255,0.18)';
+      fastBootState.style.color = on ? '#16a34a' : 'var(--accent,#3a7dff)';
+    }
+  };
+  applyFastBootState();
+  fastBootBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('profile-dropdown').style.display = 'none';
+    let on = false;
+    try { on = localStorage.getItem('flux_fast_boot') === '1'; } catch {}
+    try { localStorage.setItem('flux_fast_boot', on ? '0' : '1'); } catch {}
+    applyFastBootState();
+
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;background:#111827;color:white;padding:12px 18px;border-radius:18px;font-size:13px;font-weight:800;box-shadow:0 10px 40px rgba(0,0,0,0.3);opacity:0;transition:opacity 0.2s;';
+    toast.textContent = on ? 'Boost Mode disabled.' : 'Boost Mode enabled — reloading…';
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => { toast.style.opacity = '1'; });
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 200); }, 1600);
+
+    setTimeout(() => location.reload(), 300);
+  });
+
   // dark-toggle moved to settings.html
 
   document.getElementById('beta-mode-btn')?.addEventListener('click', async (e) => {
@@ -1635,8 +1827,10 @@ export function initAuthUI(onUserChange) {
   });
 
   userDisplay.addEventListener('click', async (e) => {
-    e.stopPropagation();
     const dd = document.getElementById('profile-dropdown');
+    // If the click is inside the dropdown, let the dropdown handle it.
+    if (e.target && e.target.closest && e.target.closest('#profile-dropdown')) return;
+    e.stopPropagation();
     const isOpening = dd.style.display === 'none';
     dd.style.display = isOpening ? 'block' : 'none';
     if (isOpening) {
@@ -1665,6 +1859,8 @@ export function initAuthUI(onUserChange) {
       } catch {}
     }
   });
+  // Keep dropdown clicks from bubbling to the document-level "close dropdown" handler.
+  document.getElementById('profile-dropdown')?.addEventListener('click', (e) => e.stopPropagation());
   document.addEventListener('click', () => {
     const dd = document.getElementById('profile-dropdown');
     if (dd) dd.style.display = 'none';
@@ -1713,13 +1909,23 @@ export function initAuthUI(onUserChange) {
       <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">👥 Online Users</div>
       <div style="margin-bottom:4px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-          <span id="mod-online-summary" style="font-size:12px;color:#6b7280;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></span>
+          <span id="mod-online-summary" style="font-size:12px;color:#6b7280;">Loading...</span>
           <div style="display:flex;gap:6px;">
             <button id="mod-refresh-all-btn" style="padding:5px 12px;background:#ef4444;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px;">🔄 Refresh All</button>
             <button id="mod-reload-users-btn" style="padding:5px 10px;background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px;">↺ Reload List</button>
           </div>
         </div>
         <div id="mod-online-users-list" style="display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto;"></div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid rgba(0,0,0,0.07);margin:16px 0;">
+
+      <!-- ── ACTIVITY LOGS ── -->
+      <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">📜 Activity Logs</div>
+      <div style="margin-bottom:4px;">
+        <button id="mod-open-logs-btn" style="width:100%;padding:10px;background:#3a7dff;color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;gap:6px;">
+          View Full Activity Logs ↗
+        </button>
       </div>
 
       <hr style="border:none;border-top:1px solid rgba(0,0,0,0.07);margin:16px 0;">
@@ -1769,7 +1975,7 @@ export function initAuthUI(onUserChange) {
       <!-- ── SERVER CONTROL ── -->
       <div style="font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Server Control</div>
       <div style="margin-bottom:12px;">
-        <div id="mod-current-status" style="font-size:13px;font-weight:600;color:#111827;padding:10px 12px;background:#f9fafb;border-radius:8px;border:1px solid rgba(0,0,0,0.07);margin-bottom:10px;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>
+        <div id="mod-current-status" style="font-size:13px;font-weight:600;color:#111827;padding:10px 12px;background:#f9fafb;border-radius:8px;border:1px solid rgba(0,0,0,0.07);margin-bottom:10px;">Loading...</div>
         <select id="mod-duration" style="width:100%;padding:10px 12px;border:1px solid rgba(0,0,0,0.1);border-radius:10px;font-size:13px;color:#111827;background:#fff;outline:none;cursor:pointer;margin-bottom:8px;">
           <option value="0">⛔ No limit — restore manually</option>
           <option value="1">⏱ 1 minute</option>
@@ -2269,7 +2475,7 @@ export function initAuthUI(onUserChange) {
 
       if (_modPresenceUnsub) _modPresenceUnsub();
 
-      list.innerHTML = '<div style="font-size:12px;color:#9ca3af;padding:8px 0;"><div style="display:flex;justify-content:center;padding:20px;"><img src="assets/loading.gif" style="width:80px;height:auto;" alt="Loading..."></div></div>';
+      list.innerHTML = '<div style="font-size:12px;color:#9ca3af;padding:8px 0;">Loading...</div>';
 
 
         _modPresenceUnsub = onValue(ref(rtdb, 'presence'), (presSnap) => {
@@ -2280,7 +2486,10 @@ export function initAuthUI(onUserChange) {
         // Deduplicate by uid (one user may have multiple tabs)
         const byUid = {};
         const anonymous = [];
+        const now = Date.now();
         sessionList.forEach(s => {
+          if (s.timestamp && now - s.timestamp > 12 * 60 * 60 * 1000) return; // Ignore ghost sessions
+
           if (s.uid) {
             if (!byUid[s.uid]) byUid[s.uid] = s;
           } else {
@@ -2318,10 +2527,16 @@ export function initAuthUI(onUserChange) {
                 ${playing ? `🎮 Playing <strong style="color:#111827;">${playing}</strong>` : '🏠 Browsing'}
               </div>
             </div>
-            <button class="mod-force-refresh-btn" data-uid="${s.uid}" data-name="${s.username || s.uid.slice(0,8)}"
-              style="padding:4px 10px;background:#3a7dff;color:white;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:11px;flex-shrink:0;">
-              🔄
-            </button>
+            <div style="display:flex;gap:4px;flex-shrink:0;">
+              <button class="mod-force-refresh-btn" data-uid="${s.uid}" data-name="${s.username || s.uid.slice(0,8)}" title="Force Refresh"
+                style="padding:4px 10px;background:#3a7dff;color:white;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:11px;">
+                🔄
+              </button>
+              <button class="mod-reset-cache-btn" data-uid="${s.uid}" data-name="${s.username || s.uid.slice(0,8)}" title="Reset Cache"
+                style="padding:4px 10px;background:#ef4444;color:white;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:11px;">
+                🗑️
+              </button>
+            </div>
           `;
           list.appendChild(item);
         });
@@ -2336,10 +2551,16 @@ export function initAuthUI(onUserChange) {
               <div style="font-size:13px;font-weight:600;color:#6b7280;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Anonymous ${i + 1}</div>
               <div style="font-size:11px;color:#9ca3af;">Guest (sid: ${s.sessionId ? s.sessionId.slice(0,6) : '?'})</div>
             </div>
-            <button class="mod-force-refresh-btn" data-uid="${s.sessionId}" data-name="Guest"
-              style="padding:4px 10px;background:#9ca3af;color:white;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:11px;flex-shrink:0;">
-              🔄
-            </button>
+            <div style="display:flex;gap:4px;flex-shrink:0;">
+              <button class="mod-force-refresh-btn" data-uid="${s.sessionId}" data-name="Guest" title="Force Refresh"
+                style="padding:4px 10px;background:#9ca3af;color:white;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:11px;">
+                🔄
+              </button>
+              <button class="mod-reset-cache-btn" data-uid="${s.sessionId}" data-name="Guest" title="Reset Cache"
+                style="padding:4px 10px;background:#ef4444;color:white;border:none;border-radius:7px;font-weight:700;cursor:pointer;font-size:11px;">
+                🗑️
+              </button>
+            </div>
           `;
           list.appendChild(anonItem);
         });
@@ -2362,6 +2583,24 @@ export function initAuthUI(onUserChange) {
           });
         });
 
+        // Wire reset-cache buttons
+        list.querySelectorAll('.mod-reset-cache-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const uid = btn.dataset.uid;
+            const name = btn.dataset.name;
+            btn.textContent = '…'; btn.disabled = true;
+            const result = await forceResetCacheUser(uid);
+            if (result.ok) {
+              btn.textContent = '✓'; btn.style.background = '#22c55e';
+              const modMsg = document.getElementById('mod-msg');
+              if (modMsg) { modMsg.style.color='#22c55e'; modMsg.textContent=`✓ Cache reset sent to @${name}`; modMsg.style.display='block'; setTimeout(()=>modMsg.style.display='none',2500); }
+            } else {
+              btn.textContent = '✗'; btn.style.background = '#ef4444';
+              setTimeout(() => { btn.textContent = '🗑️'; btn.style.background = '#ef4444'; btn.disabled = false; }, 2000);
+            }
+          });
+        });
+
       }, (err) => {
         list.innerHTML = `<div style="font-size:12px;color:#ef4444;padding:8px 0;text-align:center;">Realtime DB Permission Denied.<br>Please update your Realtime Database rules.<br>${err.message}</div>`;
       });
@@ -2370,6 +2609,10 @@ export function initAuthUI(onUserChange) {
     };
 
     renderOnlineUsers();
+    
+    document.getElementById('mod-open-logs-btn')?.addEventListener('click', () => {
+      window.open('logs.html', '_blank');
+    });
 
     document.getElementById('mod-reload-users-btn')?.addEventListener('click', renderOnlineUsers);
 
@@ -2693,6 +2936,10 @@ export function initAuthUI(onUserChange) {
   }
 
   onAuthChange(async (user) => {
+    window._currentUserUid = user?.uid || null;
+    window._fluxIsOwner = user?.uid === ADMIN_UID;
+    window._fluxBanned = false; // reset on change
+
     if (user) {
       authBtn.style.display = 'none';
       userDisplay.style.display = 'flex';
@@ -2713,6 +2960,7 @@ export function initAuthUI(onUserChange) {
 
         // ── BAN CHECK ── show overlay and block everything if banned
         if (profile && profile.isBanned) {
+          window._fluxBanned = true;
           showBanOverlay(profile.banReason || '', profile.bannedAt || '');
           // Still show their name/avatar so they know they're logged in
           if (name) name.textContent = profile.displayName || profile.username || user.displayName || user.email;
@@ -2812,8 +3060,72 @@ export function initAuthUI(onUserChange) {
       authBtn.style.display = '';
       userDisplay.style.display = 'none';
     }
+
+    // ── Global message notification watcher (runs on every page) ──
+    if (user && !user.isAnonymous && !window._fluxMsgWatcherActive) {
+      window._fluxMsgWatcherActive = true;
+      let _prevTotal = 0;
+      watchUnreadMessages(user.uid, async (total, latest) => {
+        // Update nav badge on any page that has the messages link
+        const navLink = document.querySelector('#main-nav a[href="messages.html"]');
+        if (navLink) {
+          let badge = navLink.querySelector('.global-unread-badge');
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'global-unread-badge';
+            badge.style.cssText = 'margin-left:6px;background:#ef4444;color:white;font-size:10px;font-weight:800;padding:1px 5px;border-radius:20px;display:none;vertical-align:middle;';
+            navLink.appendChild(badge);
+          }
+          badge.textContent = total;
+          badge.style.display = total > 0 ? 'inline-block' : 'none';
+        }
+
+        // Show toast only when count increases and we're not on messages page
+        if (total > _prevTotal && latest && !window.location.pathname.includes('messages.html')) {
+          try {
+            const senderProfile = await getProfile(latest.senderUid);
+            const senderName = senderProfile?.displayName || senderProfile?.username || 'Someone';
+            const senderAvatar = senderProfile?.avatarURL || '';
+            const msgText = latest.text || '🎬 Sent a sticker';
+
+            // Build toast
+            let toastContainer = document.getElementById('flux-notif-container');
+            if (!toastContainer) {
+              toastContainer = document.createElement('div');
+              toastContainer.id = 'flux-notif-container';
+              toastContainer.style.cssText = 'position:fixed;top:20px;right:20px;z-index:999999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';
+              document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            toast.style.cssText = 'pointer-events:all;width:300px;background:var(--panel,#fff);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.2);border:1px solid var(--glass-border,rgba(0,0,0,0.08));padding:12px;display:flex;gap:12px;align-items:center;cursor:pointer;opacity:0;transform:translateX(20px);transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);';
+
+            const avatarEl = senderAvatar
+              ? `<img src="${senderAvatar}" style="width:42px;height:42px;border-radius:12px;object-fit:cover;flex-shrink:0;">`
+              : `<div style="width:42px;height:42px;border-radius:12px;background:var(--accent,#3a7dff);display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:700;flex-shrink:0;">💬</div>`;
+
+            toast.innerHTML = `
+              ${avatarEl}
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:12px;font-weight:800;color:var(--text,#111);margin-bottom:2px;">💬 ${senderName}</div>
+                <div style="font-size:12px;color:var(--muted,#6b7280);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${msgText}</div>
+              </div>
+              <button style="background:none;border:none;color:var(--muted,#9ca3af);font-size:16px;cursor:pointer;flex-shrink:0;padding:0;line-height:1;" onclick="event.stopPropagation();this.closest('[id]').remove();">✕</button>
+            `;
+
+            toast.addEventListener('click', () => { window.location.href = 'messages.html'; });
+            toastContainer.appendChild(toast);
+            requestAnimationFrame(() => { toast.style.opacity = '1'; toast.style.transform = 'translateX(0)'; });
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; setTimeout(() => toast.remove(), 250); }, 5000);
+          } catch {}
+        }
+        _prevTotal = total;
+      });
+    }
+
     if (onUserChange) onUserChange(user);
   });
+
 }
 
 /* ===================== SERVER STATUS ===================== */
@@ -4021,5 +4333,28 @@ function showPolicyGate() {
       overlay.remove();
       location.reload();
     } catch (e) { console.warn('Sign out failed:', e); }
+  });
+}
+export function watchUnreadMessages(uid, callback) {
+  import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(({ collection, query, where, onSnapshot }) => {
+    const q = query(collection(db, 'conversations'), where('members', 'array-contains', uid));
+    return onSnapshot(q, (snap) => {
+      let total = 0;
+      let latest = null;
+      snap.docs.forEach(d => {
+        const data = d.data();
+        const unreadCount = data.unread?.[uid] || 0;
+        total += unreadCount;
+        if (unreadCount > 0) {
+          latest = {
+            convoId: d.id,
+            text: data.lastMessage,
+            senderUid: data.type === 'dm' ? data.members.find(m => m !== uid) : data.from,
+            type: data.type
+          };
+        }
+      });
+      callback(total, latest);
+    });
   });
 }

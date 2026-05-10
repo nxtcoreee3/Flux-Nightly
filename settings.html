@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Settings — Flux</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <script>
@@ -21,45 +21,73 @@
     })();
   </script>
   <style>
-    .settings-page { max-width: 680px; margin: 32px auto; padding: 0 20px 60px; }
-    .settings-back { display:inline-flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;margin-bottom:24px;padding:6px 0;transition:color 0.15s; }
-    .settings-back:hover { color:var(--accent); }
-    .settings-title { font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--text);margin:0 0 6px; }
-    .settings-sub { font-size:13px;color:var(--muted);margin:0 0 32px; }
-    .settings-section { margin-bottom:28px; }
-    .settings-section-label { font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px; }
-    .settings-card { background:var(--panel);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden; }
-    .settings-row { display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--glass-border);transition:background 0.1s; }
+    /* Enhanced Premium Aesthetics */
+    body { font-family: 'Inter', 'DM Sans', sans-serif; }
+    .settings-page { max-width: 720px; margin: 48px auto; padding: 0 24px 80px; animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .settings-back { display:inline-flex;align-items:center;gap:8px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;margin-bottom:32px;padding:8px 12px;border-radius:12px;transition:all 0.2s; background: rgba(124,106,255,0.0); margin-left:-12px; }
+    .settings-back:hover { color:var(--accent); background: rgba(124,106,255,0.08); transform: translateX(-4px); }
+    .settings-title { font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--text);margin:0 0 8px; letter-spacing: 1px; }
+    .settings-sub { font-size:15px;color:var(--muted);margin:0 0 40px; font-weight: 500; }
+    .settings-section { margin-bottom:36px; animation: slideUp 0.5s ease-out backwards; }
+    .settings-section:nth-child(2) { animation-delay: 0.1s; }
+    .settings-section:nth-child(3) { animation-delay: 0.2s; }
+    .settings-section:nth-child(4) { animation-delay: 0.3s; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .settings-section-label { font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px; padding-left: 4px; }
+    .settings-card { background:var(--panel);border:1px solid var(--glass-border);border-radius:20px;overflow:hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.05); transition: box-shadow 0.3s ease; }
+    .settings-card:hover { box-shadow: 0 15px 50px rgba(0,0,0,0.1); }
+    .settings-row { display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 24px;border-bottom:1px solid var(--glass-border);transition:all 0.2s ease; }
     .settings-row:last-child { border-bottom:none; }
-    .settings-row:hover { background:rgba(58,125,255,0.03); }
-    .settings-row-left { display:flex;align-items:center;gap:12px; }
-    .settings-row-icon { font-size:20px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:9px;flex-shrink:0; }
+    .settings-row:hover { background:rgba(124,106,255,0.03); }
+    .settings-row-left { display:flex;align-items:center;gap:16px; }
+    .settings-row-icon { font-size:22px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:12px;flex-shrink:0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .settings-row-text { }
-    .settings-row-label { font-size:14px;font-weight:600;color:var(--text); }
-    .settings-row-desc { font-size:12px;color:var(--muted);margin-top:1px; }
-    .settings-btn { background:none;border:1px solid var(--glass-border);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:all 0.15s;font-family:inherit; }
-    .settings-btn:hover { background:rgba(58,125,255,0.07);border-color:rgba(58,125,255,0.3);color:var(--accent); }
+    .settings-row-label { font-size:15px;font-weight:600;color:var(--text); letter-spacing: -0.2px; }
+    .settings-row-desc { font-size:13px;color:var(--muted);margin-top:2px; }
+    .settings-btn { background:none;border:1px solid var(--glass-border);border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;transition:all 0.2s;font-family:inherit; }
+    .settings-btn:hover { background:rgba(58,125,255,0.07);border-color:rgba(58,125,255,0.3);color:var(--accent); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(58,125,255,0.1); }
     .settings-btn.danger { color:#ef4444;border-color:rgba(239,68,68,0.2); }
-    .settings-btn.danger:hover { background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.4); }
-    .settings-btn.primary { background:var(--accent);color:white;border-color:var(--accent); }
-    .settings-btn.primary:hover { opacity:0.88; }
+    .settings-btn.danger:hover { background:rgba(239,68,68,0.07);border-color:rgba(239,68,68,0.4); box-shadow: 0 4px 12px rgba(239,68,68,0.1); }
+    .settings-btn.primary { background:var(--accent);color:white;border-color:var(--accent); box-shadow: 0 4px 16px rgba(58,125,255,0.2); }
+    .settings-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(58,125,255,0.3); }
     /* Toggle switch */
-    .toggle-wrap { position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0; }
+    .toggle-wrap { position:relative;display:inline-block;width:48px;height:26px;flex-shrink:0; }
     .toggle-wrap input { opacity:0;width:0;height:0;position:absolute; }
-    .toggle-track { position:absolute;inset:0;background:#d1d5db;border-radius:12px;transition:background 0.2s;cursor:pointer; }
-    .toggle-thumb { position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);pointer-events:none; }
+    .toggle-track { position:absolute;inset:0;background:var(--glass-border);border-radius:13px;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);cursor:pointer; }
+    .toggle-thumb { position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:all 0.3s cubic-bezier(0.4, 0, 0.2, 1);box-shadow:0 2px 4px rgba(0,0,0,0.2);pointer-events:none; }
     input:checked + .toggle-track { background:var(--accent); }
-    input:checked ~ .toggle-thumb { transform:translateX(20px); }
+    input:checked ~ .toggle-thumb { transform:translateX(22px); box-shadow:0 2px 6px rgba(0,0,0,0.3); }
     /* Beta badge in settings */
-    .beta-pill { display:inline-flex;align-items:center;background:linear-gradient(135deg,#7c6aff,#a855f7);color:white;font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;letter-spacing:0.5px;text-transform:uppercase;margin-left:8px; }
+    .beta-pill { display:inline-flex;align-items:center;background:linear-gradient(135deg,#7c6aff,#a855f7);color:white;font-size:10px;font-weight:800;padding:3px 8px;border-radius:20px;letter-spacing:0.5px;text-transform:uppercase;margin-left:8px; box-shadow: 0 2px 10px rgba(124,106,255,0.3); }
     /* Password inputs */
-    .settings-input { width:100%;padding:10px 12px;border:1px solid var(--glass-border);border-radius:10px;font-size:14px;outline:none;box-sizing:border-box;background:var(--bg,#f9fafb);color:var(--text);font-family:inherit;transition:border-color 0.15s; }
-    .settings-input:focus { border-color:var(--accent);box-shadow:0 0 0 3px rgba(58,125,255,0.1); }
-    .settings-expandable { display:none;padding:14px 18px;border-top:1px solid var(--glass-border);background:var(--bg,#f9fafb); }
-    .settings-expandable.open { display:block; }
+    .settings-input { width:100%;padding:12px 16px;border:1px solid var(--glass-border);border-radius:12px;font-size:14px;outline:none;box-sizing:border-box;background:var(--bg,#f9fafb);color:var(--text);font-family:inherit;transition:all 0.2s; }
+    .settings-input:focus { border-color:var(--accent);box-shadow:0 0 0 4px rgba(58,125,255,0.1); background:var(--panel); }
+    .settings-expandable { display:none;padding:20px 24px;border-top:1px solid var(--glass-border);background:var(--bg,#f9fafb); }
+    .settings-expandable.open { display:block; animation: expandDown 0.3s ease-out; }
+    @keyframes expandDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
+  <div id="global-page-loader" style="position:fixed;inset:0;background:#ffffff;z-index:9999999;display:flex;justify-content:center;align-items:center;transition:opacity 0.4s ease;pointer-events:none;">
+    <img src="assets/loading.gif" style="width:250px;height:auto;" alt="Loading...">
+  </div>
+  <script>
+    // Fast Boot: hide the white loader quickly (best effort)
+    (function(){
+      const hide = () => {
+        try { if (localStorage.getItem('flux_fast_boot') !== '1') return; } catch(e){ return; }
+        const el = document.getElementById('global-page-loader');
+        if (!el) return;
+        el.style.opacity = '0';
+        setTimeout(() => { try { el.remove(); } catch(e){} }, 420);
+      };
+      setTimeout(hide, 80);
+      requestAnimationFrame(hide);
+      window.addEventListener('pageshow', hide, { once: true });
+    })();
+  </script>
+
   <header class="topbar">
     <div class="brand">
       <a href="index.html" class="logo"><img src="assets/logo.png" alt="Flux" style="height:32px;vertical-align:middle;margin-right:6px;"> FLUX</a>
@@ -221,6 +249,59 @@
       </div>
     </div>
 
+    <!-- KILL SWITCH -->
+    <div class="settings-section">
+      <div class="settings-section-label">Kill Switch</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div class="settings-row-left">
+            <div class="settings-row-icon" style="background:rgba(239,68,68,0.1);">⚡</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Enable Kill Switch</div>
+              <div class="settings-row-desc">Show the ⚡ Kill button in the nav and game bar</div>
+            </div>
+          </div>
+          <label class="toggle-wrap">
+            <input type="checkbox" id="kill-switch-toggle">
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+        <div class="settings-row" id="kill-switch-dest-row">
+          <div class="settings-row-left">
+            <div class="settings-row-icon" style="background:rgba(239,68,68,0.08);">🎯</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Escape Destination</div>
+              <div class="settings-row-desc" id="kill-switch-current-dest">Loading...</div>
+            </div>
+          </div>
+          <button class="settings-btn" id="kill-switch-configure-btn" style="color:#ef4444;border-color:rgba(239,68,68,0.25);">Configure</button>
+        </div>
+        <div class="settings-row">
+          <div class="settings-row-left">
+            <div class="settings-row-icon" style="background:rgba(239,68,68,0.08);">⌨️</div>
+            <div class="settings-row-text">
+              <div class="settings-row-label">Keyboard Shortcut</div>
+              <div class="settings-row-desc"><kbd style="background:var(--bg);border:1px solid var(--glass-border);border-radius:4px;padding:1px 6px;font-size:11px;font-family:monospace;">Shift</kbd> + <kbd style="background:var(--bg);border:1px solid var(--glass-border);border-radius:4px;padding:1px 6px;font-size:11px;font-family:monospace;">Esc</kbd> triggers Kill Switch instantly</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Configure panel -->
+      <div id="kill-switch-config-panel" style="display:none;margin-top:8px;background:var(--panel);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;">
+        <div style="padding:16px 18px;border-bottom:1px solid var(--glass-border);font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Choose your escape destination</div>
+        <div id="kill-switch-presets-settings" style="display:flex;flex-direction:column;max-height:280px;overflow-y:auto;"></div>
+        <div id="kill-custom-settings-wrap" style="display:none;padding:14px 18px;border-top:1px solid var(--glass-border);">
+          <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Custom URL or App Protocol</label>
+          <input id="kill-custom-settings-input" type="text" placeholder="e.g. https://example.com or figma://" class="settings-input">
+        </div>
+        <div style="padding:14px 18px;border-top:1px solid var(--glass-border);display:flex;gap:8px;">
+          <button id="kill-save-settings-btn" class="settings-btn primary" style="background:linear-gradient(135deg,#ef4444,#dc2626);border-color:#dc2626;">Save Destination</button>
+          <button id="kill-cancel-settings-btn" class="settings-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <!-- NOT SIGNED IN state -->
     <div id="not-signed-in" style="display:none;text-align:center;padding:40px 20px;background:var(--panel);border-radius:14px;border:1px solid var(--glass-border);">
       <div style="font-size:40px;margin-bottom:12px;">🔐</div>
@@ -351,6 +432,127 @@
         document.getElementById('signout-row').style.display = 'flex';
       }
     });
+
+    /* ── Kill Switch Settings ── */
+    const KILL_KEY = 'flux_kill_switch';
+    const KILL_ENABLED_KEY = 'flux_kill_switch_enabled';
+    const KILL_PRESETS = [
+      { label: '📊 Google Sheets', value: 'https://docs.google.com/spreadsheets/', type: 'web' },
+      { label: '🔍 Google', value: 'https://www.google.com', type: 'web' },
+      { label: '📰 BBC News', value: 'https://www.bbc.co.uk/news', type: 'web' },
+      { label: '📧 Gmail', value: 'https://mail.google.com', type: 'web' },
+      { label: '📅 Google Calendar', value: 'https://calendar.google.com', type: 'web' },
+      { label: '📄 Google Docs', value: 'https://docs.google.com/document/', type: 'web' },
+      { label: '🎨 Figma', value: 'figma://', type: 'app' },
+      { label: '💻 VS Code', value: 'vscode://', type: 'app' },
+      { label: '🎵 Spotify', value: 'spotify://', type: 'app' },
+      { label: '💬 Slack', value: 'slack://', type: 'app' },
+      { label: '📱 Discord', value: 'discord://', type: 'app' },
+      { label: '🔧 Custom…', value: 'custom', type: 'custom' },
+    ];
+
+    function getKillCfg() {
+      try { return JSON.parse(localStorage.getItem(KILL_KEY)) || { value: 'https://www.google.com', label: '🔍 Google', custom: '' }; }
+      catch { return { value: 'https://www.google.com', label: '🔍 Google', custom: '' }; }
+    }
+    function isKillEnabled() { return localStorage.getItem(KILL_ENABLED_KEY) !== '0'; }
+
+    const killToggle = document.getElementById('kill-switch-toggle');
+    const killDestRow = document.getElementById('kill-switch-dest-row');
+    const killCurrentDest = document.getElementById('kill-switch-current-dest');
+    const killConfigPanel = document.getElementById('kill-switch-config-panel');
+    const killPresetsEl = document.getElementById('kill-switch-presets-settings');
+    const killCustomWrap = document.getElementById('kill-custom-settings-wrap');
+    const killCustomInput = document.getElementById('kill-custom-settings-input');
+
+    // Init state
+    killToggle.checked = isKillEnabled();
+    killDestRow.style.display = isKillEnabled() ? 'flex' : 'none';
+    function updateDestLabel() {
+      const cfg = getKillCfg();
+      killCurrentDest.textContent = cfg.value === 'custom' ? (cfg.custom || 'Not set') : cfg.label;
+    }
+    updateDestLabel();
+
+    killToggle.addEventListener('change', () => {
+      const on = killToggle.checked;
+      localStorage.setItem(KILL_ENABLED_KEY, on ? '1' : '0');
+      killDestRow.style.display = on ? 'flex' : 'none';
+      if (!on) killConfigPanel.style.display = 'none';
+    });
+
+    // Build presets list
+    function buildPresetsUI() {
+      const cfg = getKillCfg();
+      killPresetsEl.innerHTML = KILL_PRESETS.map(p => `
+        <div class="kill-setting-opt settings-row" data-value="${p.value}" data-label="${p.label}" data-type="${p.type}"
+          style="cursor:pointer;${cfg.value === p.value ? 'background:rgba(239,68,68,0.06);' : ''}">
+          <div class="settings-row-left" style="pointer-events:none;">
+            <div style="width:8px;height:8px;border-radius:50%;background:${cfg.value === p.value ? '#ef4444' : 'var(--glass-border)'};flex-shrink:0;margin-right:4px;"></div>
+            <div class="settings-row-text">
+              <div class="settings-row-label" style="font-size:13px;${cfg.value === p.value ? 'color:#ef4444;' : ''}">${p.label}</div>
+            </div>
+          </div>
+          ${p.type !== 'custom' ? `<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:${p.type === 'app' ? 'rgba(58,125,255,0.12)' : 'rgba(34,197,94,0.12)'};color:${p.type === 'app' ? '#3a7dff' : '#16a34a'};">${p.type === 'app' ? 'App' : 'Web'}</span>` : ''}
+        </div>
+      `).join('');
+
+      killCustomWrap.style.display = cfg.value === 'custom' ? 'block' : 'none';
+      killCustomInput.value = cfg.custom || '';
+
+      killPresetsEl.querySelectorAll('.kill-setting-opt').forEach(opt => {
+        opt.addEventListener('click', () => {
+          killPresetsEl.querySelectorAll('.kill-setting-opt').forEach(o => {
+            o.style.background = '';
+            o.querySelector('.settings-row-label').style.color = '';
+            o.querySelector('[style*="border-radius:50%"]').style.background = 'var(--glass-border)';
+          });
+          opt.style.background = 'rgba(239,68,68,0.06)';
+          opt.querySelector('.settings-row-label').style.color = '#ef4444';
+          opt.querySelector('[style*="border-radius:50%"]').style.background = '#ef4444';
+          killCustomWrap.style.display = opt.dataset.type === 'custom' ? 'block' : 'none';
+        });
+      });
+    }
+
+    document.getElementById('kill-switch-configure-btn').addEventListener('click', () => {
+      const isOpen = killConfigPanel.style.display !== 'none';
+      killConfigPanel.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen) buildPresetsUI();
+    });
+
+    document.getElementById('kill-save-settings-btn').addEventListener('click', () => {
+      const selected = killPresetsEl.querySelector('.kill-setting-opt[style*="rgba(239,68,68,0.06)"]');
+      if (!selected) return;
+      const val = selected.dataset.value;
+      const label = selected.dataset.label;
+      const custom = killCustomInput.value.trim();
+      if (val === 'custom' && !custom) {
+        killCustomInput.style.borderColor = '#ef4444';
+        killCustomInput.focus();
+        return;
+      }
+      localStorage.setItem(KILL_KEY, JSON.stringify({ value: val, label, custom }));
+      killConfigPanel.style.display = 'none';
+      updateDestLabel();
+      // Toast
+      const t = document.createElement('div');
+      t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:12px 22px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 30px rgba(239,68,68,0.35);pointer-events:none;opacity:0;transition:opacity 0.2s;';
+      t.textContent = `⚡ Kill Switch → ${val === 'custom' ? custom : label}`;
+      document.body.appendChild(t);
+      requestAnimationFrame(() => t.style.opacity = '1');
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 200); }, 2500);
+    });
+
+    document.getElementById('kill-cancel-settings-btn').addEventListener('click', () => {
+      killConfigPanel.style.display = 'none';
+    });
   </script>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => { const loader = document.getElementById('global-page-loader'); if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.remove(), 400); } }, 400);
+  });
+</script>
 </body>
 </html>

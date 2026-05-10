@@ -3,7 +3,10 @@
    favorites (cloud+local), dark mode, toasts, recently played, new badge, stats button
 */
 
-if (window.location.hostname !== 'nxtcoreee3.github.io' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.hostname !== '') {
+const isOfficial = window.location.hostname === 'nxtcoreee3.github.io' && (window.location.pathname === '/Flux' || window.location.pathname.startsWith('/Flux/'));
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '';
+
+if (!isOfficial && !isLocal) {
   alert("You have to be redirected to the official site since this one can be dangerous");
   window.location.href = "https://nxtcoreee3.github.io/Flux";
 }

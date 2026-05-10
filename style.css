@@ -5,35 +5,34 @@
 ═══════════════════════════════════════════ */
 
 :root {
-  --bg: #f4f7fb;
+  --bg: #f8f9fa;
   --panel: #ffffff;
-  --glass-bg: rgba(255,255,255,0.7);
-  --glass-border: rgba(0,0,0,0.04);
-  --accent: #6366f1;
-  --muted: #64748b;
-  --text: #0f172a;
+  --glass-bg: rgba(255,255,255,0.5);
+  --glass-border: rgba(0,0,0,0.08);
+  --accent: #3a7dff;
+  --muted: #6b7280;
+  --text: #111827;
   --card: #ffffff;
-  --glass-blur: 16px;
-  --radius: 16px;
-  --glass-shadow: 0 10px 40px rgba(0,0,0,0.05);
-  --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.4));
-  --input-bg: rgba(255,255,255,0.6);
+  --glass-blur: 10px;
+  --radius: 14px;
+  --glass-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+  --input-bg: transparent;
   --footer-border: rgba(0,0,0,0.05);
 }
 
 html.dark {
-  --bg: #09090b;
-  --panel: #18181b;
-  --glass-bg: rgba(255,255,255,0.02);
-  --glass-border: rgba(255,255,255,0.05);
-  --accent: #06b6d4;
-  --muted: #a1a1aa;
-  --text: #f8fafc;
-  --card: #18181b;
-  --glass-shadow: 0 16px 40px rgba(0,0,0,0.4);
-  --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-  --input-bg: rgba(255,255,255,0.03);
-  --footer-border: rgba(255,255,255,0.04);
+  --bg: #0f1117;
+  --panel: #1a1d27;
+  --glass-bg: rgba(255,255,255,0.04);
+  --glass-border: rgba(255,255,255,0.08);
+  --muted: #9ca3af;
+  --text: #f3f4f6;
+  --card: #1a1d27;
+  --glass-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  --glass-gradient: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  --input-bg: rgba(255,255,255,0.05);
+  --footer-border: rgba(255,255,255,0.06);
 }
 
 html.dark body {
@@ -60,7 +59,7 @@ html.dark input, html.dark select {
 html, body { height: 100%; }
 body {
   margin: 0;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   background:
     radial-gradient(1200px 600px at 10% 20%, rgba(58,125,255,0.06), transparent 8%),
     radial-gradient(1000px 400px at 90% 80%, rgba(34,197,94,0.03), transparent 8%),
@@ -80,7 +79,7 @@ body {
   position: sticky; top: 0; z-index: 40; transition: background 0.3s ease;
 }
 .brand { display: flex; align-items: center; gap: 12px; }
-.logo { font-family: 'Outfit', sans-serif; font-size: 34px; font-weight: 800; color: var(--accent); text-decoration: none; letter-spacing: -1px; }
+.logo { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: var(--accent); text-decoration: none; letter-spacing: 1px; }
 .tag { color: var(--muted); font-size: 13px; }
 .nav { display: flex; align-items: center; gap: 12px; }
 .nav-toggle { display: none; background: none; border: 0; color: var(--muted); font-size: 18px; padding: 6px 8px; border-radius: 10px; }
@@ -98,7 +97,7 @@ body {
   background: var(--glass-gradient); border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow); backdrop-filter: blur(var(--glass-blur));
 }
-.hero h1 { font-family: 'Outfit', sans-serif; font-size: 48px; font-weight: 800; margin: 0; color: var(--text); letter-spacing: -1px; }
+.hero h1 { font-family: 'Bebas Neue'; font-size: 48px; margin: 0; color: var(--text); }
 .hero p { color: var(--muted); margin: 10px 0 18px; }
 .hero-actions { display: flex; gap: 12px; }
 .btn-large { background: var(--accent); padding: 12px 18px; border-radius: 12px; color: white; text-decoration: none; font-weight: 700; }
@@ -191,7 +190,7 @@ body {
 
 .section { max-width: 1200px; margin: 28px auto; padding: 0 20px; }
 .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.section-head h2 { margin: 0; font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.section-head h2 { margin: 0; font-family: 'Bebas Neue'; font-size: 26px; }
 .search-wrap input, .controls input { background: var(--input-bg); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 10px; color: var(--text); }
 .controls select { background: var(--input-bg); border: 1px solid var(--glass-border); padding: 8px 12px; border-radius: 10px; color: var(--text); }
 .controls { display: flex; gap: 10px; align-items: center; }
@@ -207,7 +206,7 @@ body {
 .card:hover { transform: translateY(-8px); box-shadow: 0 18px 60px rgba(0,0,0,0.12); }
 .thumb { width: 100%; height: 160px; object-fit: cover; display: block; }
 .card-body { padding: 12px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
-.title { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; margin: 0; color: var(--text); }
+.title { font-family: 'Bebas Neue'; font-size: 18px; margin: 0; color: var(--text); }
 .meta { color: var(--muted); font-size: 13px; }
 .card-foot { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-top: 1px solid var(--glass-border); }
 .play-btn { background: var(--accent); padding: 10px 14px; border-radius: 10px; color: white; border: none; font-weight: 700; cursor: pointer; }
@@ -236,7 +235,7 @@ iframe { width: 100%; height: 100%; border: 0; background: #f1f1f1; }
 
 .site-footer { margin-top: 40px; padding: 28px 20px; border-top: 1px solid var(--footer-border); }
 .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; gap: 20px; align-items: center; justify-content: space-between; }
-.logo-small { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--accent); text-decoration: none; letter-spacing: -0.5px; }
+.logo-small { font-family: 'Bebas Neue'; font-size: 20px; color: var(--accent); text-decoration: none; }
 .footer-links a { color: var(--muted); text-decoration: none; margin-right: 10px; }
 .star-btn, .coffee-btn { display: inline-block; padding: 8px 12px; border-radius: 10px; text-decoration: none; background: var(--accent); color: #fff; }
 .footer-brand p { color: var(--muted); font-size: 13px; margin: 4px 0 0; }
@@ -735,7 +734,7 @@ html.beta .section-head h2 {
   background: none;
   -webkit-text-fill-color: unset;
   color: rgba(255,255,255,0.4);
-  font-family: 'Inter', sans-serif;
+  font-family: 'DM Sans', sans-serif;
 }
 
 /* ── Hero — immersive cinematic ── */

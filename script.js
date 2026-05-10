@@ -2563,8 +2563,8 @@ window.createTouchControlsOverlay = function(iframeContainer, iframe) {
   function createBtn(label, code, key, keyCode) {
     const b = document.createElement('div');
     b.innerHTML = label; b.style.cssText = btnStyle;
-    const press = (e) => { e.preventDefault(); b.style.transform = 'scale(0.9)'; b.style.background = \`rgba(200,200,200,\${cfg.opacity / 100})\`; synthesizeKey(iframe, 'keydown', code, key, keyCode); };
-    const release = (e) => { e.preventDefault(); b.style.transform = 'scale(1)'; b.style.background = \`rgba(255,255,255,\${cfg.opacity / 100})\`; synthesizeKey(iframe, 'keyup', code, key, keyCode); };
+    const press = (e) => { e.preventDefault(); b.style.transform = 'scale(0.9)'; b.style.background = `rgba(200,200,200,${cfg.opacity / 100})`; synthesizeKey(iframe, 'keydown', code, key, keyCode); };
+    const release = (e) => { e.preventDefault(); b.style.transform = 'scale(1)'; b.style.background = `rgba(255,255,255,${cfg.opacity / 100})`; synthesizeKey(iframe, 'keyup', code, key, keyCode); };
     b.addEventListener('touchstart', press, {passive: false});
     b.addEventListener('touchend', release, {passive: false});
     b.addEventListener('touchcancel', release, {passive: false});
@@ -2659,14 +2659,14 @@ window.initTouchControlsToggle = function() {
     const btn = document.createElement('button');
     btn.className = 'flux-touch-toggle-btn';
     btn.title = 'Toggle Touch Controls';
-    btn.style.cssText = \`
-      background: \${cfg.enabled ? 'linear-gradient(135deg, #3a7dff, #60a5fa)' : 'var(--bg)'};
-      color: \${cfg.enabled ? 'white' : 'var(--text)'};
-      border: 1px solid \${cfg.enabled ? 'transparent' : 'var(--glass-border)'};
+    btn.style.cssText = `
+      background: ${cfg.enabled ? 'linear-gradient(135deg, #3a7dff, #60a5fa)' : 'var(--bg)'};
+      color: ${cfg.enabled ? 'white' : 'var(--text)'};
+      border: 1px solid ${cfg.enabled ? 'transparent' : 'var(--glass-border)'};
       border-radius: 10px; padding: 7px 11px; font-weight: 800; font-size: 13px; cursor: pointer;
       display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s;
-    \`;
-    btn.innerHTML = \`🎮 <span class="touch-btn-text">\${cfg.enabled ? 'Touch ON' : 'Touch OFF'}</span>\`;
+    `;
+    btn.innerHTML = `🎮 <span class="touch-btn-text">${cfg.enabled ? 'Touch ON' : 'Touch OFF'}</span>`;
     btn.addEventListener('click', () => {
       const cur = getTcCfg(); cur.enabled = !cur.enabled; saveTcCfg(cur);
       

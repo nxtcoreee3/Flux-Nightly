@@ -240,55 +240,80 @@
       </div>
     </div>
 
-    <!-- KILL SWITCH -->
+    <!-- TOUCH CONTROLS -->
     <div class="settings-section">
-      <div class="settings-section-label">Kill Switch</div>
+      <div class="settings-section-label">Touch Controls</div>
       <div class="settings-card">
         <div class="settings-row">
           <div class="settings-row-left">
-            <div class="settings-row-icon" style="background:rgba(239,68,68,0.1);">⚡</div>
+            <div class="settings-row-icon" style="background:rgba(58,125,255,0.1);">🎮</div>
             <div class="settings-row-text">
-              <div class="settings-row-label">Enable Kill Switch</div>
-              <div class="settings-row-desc">Show the ⚡ Kill button in the nav and game bar</div>
+              <div class="settings-row-label">Enable Touch Controls</div>
+              <div class="settings-row-desc">Show virtual keyboard controls over games</div>
             </div>
           </div>
           <label class="toggle-wrap">
-            <input type="checkbox" id="kill-switch-toggle">
+            <input type="checkbox" id="touch-controls-toggle">
             <span class="toggle-track"></span>
             <span class="toggle-thumb"></span>
           </label>
         </div>
-        <div class="settings-row" id="kill-switch-dest-row">
+        <div class="settings-row" id="touch-controls-config-row" style="display:none;">
           <div class="settings-row-left">
-            <div class="settings-row-icon" style="background:rgba(239,68,68,0.08);">🎯</div>
+            <div class="settings-row-icon" style="background:rgba(58,125,255,0.08);">⚙️</div>
             <div class="settings-row-text">
-              <div class="settings-row-label">Escape Destination</div>
-              <div class="settings-row-desc" id="kill-switch-current-dest">Loading...</div>
+              <div class="settings-row-label">Layout & Settings</div>
+              <div class="settings-row-desc" id="touch-controls-current-mode">D-Pad Mode</div>
             </div>
           </div>
-          <button class="settings-btn" id="kill-switch-configure-btn" style="color:#ef4444;border-color:rgba(239,68,68,0.25);">Configure</button>
-        </div>
-        <div class="settings-row">
-          <div class="settings-row-left">
-            <div class="settings-row-icon" style="background:rgba(239,68,68,0.08);">⌨️</div>
-            <div class="settings-row-text">
-              <div class="settings-row-label">Keyboard Shortcut</div>
-              <div class="settings-row-desc"><kbd style="background:var(--bg);border:1px solid var(--glass-border);border-radius:4px;padding:1px 6px;font-size:11px;font-family:monospace;">Shift</kbd> + <kbd style="background:var(--bg);border:1px solid var(--glass-border);border-radius:4px;padding:1px 6px;font-size:11px;font-family:monospace;">Esc</kbd> triggers Kill Switch instantly</div>
-            </div>
-          </div>
+          <button class="settings-btn" id="touch-controls-configure-btn" style="color:var(--accent);border-color:rgba(58,125,255,0.25);">Configure</button>
         </div>
       </div>
       <!-- Configure panel -->
-      <div id="kill-switch-config-panel" style="display:none;margin-top:8px;background:var(--panel);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;">
-        <div style="padding:16px 18px;border-bottom:1px solid var(--glass-border);font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Choose your escape destination</div>
-        <div id="kill-switch-presets-settings" style="display:flex;flex-direction:column;max-height:280px;overflow-y:auto;"></div>
-        <div id="kill-custom-settings-wrap" style="display:none;padding:14px 18px;border-top:1px solid var(--glass-border);">
-          <label style="font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:6px;">Custom URL or App Protocol</label>
-          <input id="kill-custom-settings-input" type="text" placeholder="e.g. https://example.com or figma://" class="settings-input">
+      <div id="touch-controls-config-panel" style="display:none;margin-top:8px;background:var(--panel);border:1px solid var(--glass-border);border-radius:14px;overflow:hidden;">
+        <div style="padding:16px 18px;border-bottom:1px solid var(--glass-border);font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Customize Touch Controls</div>
+        
+        <div style="padding:14px 18px;border-bottom:1px solid var(--glass-border);">
+          <label style="font-size:13px;font-weight:600;color:var(--text);display:block;margin-bottom:8px;">Control Mode</label>
+          <select id="tc-mode" class="settings-input">
+            <option value="dpad">D-Pad (Individual Buttons)</option>
+            <option value="joystick">Virtual Joystick</option>
+          </select>
         </div>
-        <div style="padding:14px 18px;border-top:1px solid var(--glass-border);display:flex;gap:8px;">
-          <button id="kill-save-settings-btn" class="settings-btn primary" style="background:linear-gradient(135deg,#ef4444,#dc2626);border-color:#dc2626;">Save Destination</button>
-          <button id="kill-cancel-settings-btn" class="settings-btn">Cancel</button>
+
+        <div id="tc-dpad-options" style="padding:14px 18px;border-bottom:1px solid var(--glass-border);">
+          <label style="font-size:13px;font-weight:600;color:var(--text);display:block;margin-bottom:8px;">Active Buttons</label>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);"><input type="checkbox" id="tc-btn-w" checked> W</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);"><input type="checkbox" id="tc-btn-a" checked> A</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);"><input type="checkbox" id="tc-btn-s" checked> S</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);"><input type="checkbox" id="tc-btn-d" checked> D</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);"><input type="checkbox" id="tc-btn-space" checked> Space</label>
+          </div>
+        </div>
+
+        <div style="padding:14px 18px;border-bottom:1px solid var(--glass-border);">
+          <label style="font-size:13px;font-weight:600;color:var(--text);display:block;margin-bottom:8px;">Layout</label>
+          <select id="tc-layout" class="settings-input">
+            <option value="left-right">Movement Left, Space Right</option>
+            <option value="right-left">Movement Right, Space Left</option>
+          </select>
+        </div>
+
+        <div style="padding:14px 18px;border-bottom:1px solid var(--glass-border);display:flex;gap:20px;">
+          <div style="flex:1;">
+            <label style="font-size:13px;font-weight:600;color:var(--text);display:flex;justify-content:space-between;margin-bottom:8px;">Size <span id="tc-size-val">60px</span></label>
+            <input type="range" id="tc-size" min="40" max="100" value="60" style="width:100%;">
+          </div>
+          <div style="flex:1;">
+            <label style="font-size:13px;font-weight:600;color:var(--text);display:flex;justify-content:space-between;margin-bottom:8px;">Opacity <span id="tc-opacity-val">50%</span></label>
+            <input type="range" id="tc-opacity" min="10" max="100" value="50" style="width:100%;">
+          </div>
+        </div>
+
+        <div style="padding:14px 18px;background:var(--bg,#f9fafb);display:flex;gap:8px;">
+          <button id="tc-save-btn" class="settings-btn primary">Save Config</button>
+          <button id="tc-cancel-btn" class="settings-btn">Cancel</button>
         </div>
       </div>
     </div>
@@ -424,119 +449,104 @@
       }
     });
 
-    /* ── Kill Switch Settings ── */
-    const KILL_KEY = 'flux_kill_switch';
-    const KILL_ENABLED_KEY = 'flux_kill_switch_enabled';
-    const KILL_PRESETS = [
-      { label: '📊 Google Sheets', value: 'https://docs.google.com/spreadsheets/', type: 'web' },
-      { label: '🔍 Google', value: 'https://www.google.com', type: 'web' },
-      { label: '📰 BBC News', value: 'https://www.bbc.co.uk/news', type: 'web' },
-      { label: '📧 Gmail', value: 'https://mail.google.com', type: 'web' },
-      { label: '📅 Google Calendar', value: 'https://calendar.google.com', type: 'web' },
-      { label: '📄 Google Docs', value: 'https://docs.google.com/document/', type: 'web' },
-      { label: '🎨 Figma', value: 'figma://', type: 'app' },
-      { label: '💻 VS Code', value: 'vscode://', type: 'app' },
-      { label: '🎵 Spotify', value: 'spotify://', type: 'app' },
-      { label: '💬 Slack', value: 'slack://', type: 'app' },
-      { label: '📱 Discord', value: 'discord://', type: 'app' },
-      { label: '🔧 Custom…', value: 'custom', type: 'custom' },
-    ];
-
-    function getKillCfg() {
-      try { return JSON.parse(localStorage.getItem(KILL_KEY)) || { value: 'https://www.google.com', label: '🔍 Google', custom: '' }; }
-      catch { return { value: 'https://www.google.com', label: '🔍 Google', custom: '' }; }
-    }
-    function isKillEnabled() { return localStorage.getItem(KILL_ENABLED_KEY) !== '0'; }
-
-    const killToggle = document.getElementById('kill-switch-toggle');
-    const killDestRow = document.getElementById('kill-switch-dest-row');
-    const killCurrentDest = document.getElementById('kill-switch-current-dest');
-    const killConfigPanel = document.getElementById('kill-switch-config-panel');
-    const killPresetsEl = document.getElementById('kill-switch-presets-settings');
-    const killCustomWrap = document.getElementById('kill-custom-settings-wrap');
-    const killCustomInput = document.getElementById('kill-custom-settings-input');
-
-    // Init state
-    killToggle.checked = isKillEnabled();
-    killDestRow.style.display = isKillEnabled() ? 'flex' : 'none';
-    function updateDestLabel() {
-      const cfg = getKillCfg();
-      killCurrentDest.textContent = cfg.value === 'custom' ? (cfg.custom || 'Not set') : cfg.label;
-    }
-    updateDestLabel();
-
-    killToggle.addEventListener('change', () => {
-      const on = killToggle.checked;
-      localStorage.setItem(KILL_ENABLED_KEY, on ? '1' : '0');
-      killDestRow.style.display = on ? 'flex' : 'none';
-      if (!on) killConfigPanel.style.display = 'none';
-    });
-
-    // Build presets list
-    function buildPresetsUI() {
-      const cfg = getKillCfg();
-      killPresetsEl.innerHTML = KILL_PRESETS.map(p => `
-        <div class="kill-setting-opt settings-row" data-value="${p.value}" data-label="${p.label}" data-type="${p.type}"
-          style="cursor:pointer;${cfg.value === p.value ? 'background:rgba(239,68,68,0.06);' : ''}">
-          <div class="settings-row-left" style="pointer-events:none;">
-            <div style="width:8px;height:8px;border-radius:50%;background:${cfg.value === p.value ? '#ef4444' : 'var(--glass-border)'};flex-shrink:0;margin-right:4px;"></div>
-            <div class="settings-row-text">
-              <div class="settings-row-label" style="font-size:13px;${cfg.value === p.value ? 'color:#ef4444;' : ''}">${p.label}</div>
-            </div>
-          </div>
-          ${p.type !== 'custom' ? `<span style="font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;background:${p.type === 'app' ? 'rgba(58,125,255,0.12)' : 'rgba(34,197,94,0.12)'};color:${p.type === 'app' ? '#3a7dff' : '#16a34a'};">${p.type === 'app' ? 'App' : 'Web'}</span>` : ''}
-        </div>
-      `).join('');
-
-      killCustomWrap.style.display = cfg.value === 'custom' ? 'block' : 'none';
-      killCustomInput.value = cfg.custom || '';
-
-      killPresetsEl.querySelectorAll('.kill-setting-opt').forEach(opt => {
-        opt.addEventListener('click', () => {
-          killPresetsEl.querySelectorAll('.kill-setting-opt').forEach(o => {
-            o.style.background = '';
-            o.querySelector('.settings-row-label').style.color = '';
-            o.querySelector('[style*="border-radius:50%"]').style.background = 'var(--glass-border)';
-          });
-          opt.style.background = 'rgba(239,68,68,0.06)';
-          opt.querySelector('.settings-row-label').style.color = '#ef4444';
-          opt.querySelector('[style*="border-radius:50%"]').style.background = '#ef4444';
-          killCustomWrap.style.display = opt.dataset.type === 'custom' ? 'block' : 'none';
-        });
-      });
-    }
-
-    document.getElementById('kill-switch-configure-btn').addEventListener('click', () => {
-      const isOpen = killConfigPanel.style.display !== 'none';
-      killConfigPanel.style.display = isOpen ? 'none' : 'block';
-      if (!isOpen) buildPresetsUI();
-    });
-
-    document.getElementById('kill-save-settings-btn').addEventListener('click', () => {
-      const selected = killPresetsEl.querySelector('.kill-setting-opt[style*="rgba(239,68,68,0.06)"]');
-      if (!selected) return;
-      const val = selected.dataset.value;
-      const label = selected.dataset.label;
-      const custom = killCustomInput.value.trim();
-      if (val === 'custom' && !custom) {
-        killCustomInput.style.borderColor = '#ef4444';
-        killCustomInput.focus();
-        return;
+    /* ── Touch Controls Settings ── */
+    const TC_KEY = 'flux_touch_controls';
+    
+    function getTcCfg() {
+      try {
+        return JSON.parse(localStorage.getItem(TC_KEY)) || {
+          enabled: false, mode: 'dpad', layout: 'left-right',
+          size: 60, opacity: 50,
+          btns: { w: true, a: true, s: true, d: true, space: true }
+        };
+      } catch {
+        return { enabled: false, mode: 'dpad', layout: 'left-right', size: 60, opacity: 50, btns: { w: true, a: true, s: true, d: true, space: true } };
       }
-      localStorage.setItem(KILL_KEY, JSON.stringify({ value: val, label, custom }));
-      killConfigPanel.style.display = 'none';
-      updateDestLabel();
-      // Toast
+    }
+    function saveTcCfg(cfg) {
+      localStorage.setItem(TC_KEY, JSON.stringify(cfg));
+    }
+
+    const tcToggle = document.getElementById('touch-controls-toggle');
+    const tcConfigRow = document.getElementById('touch-controls-config-row');
+    const tcCurrentMode = document.getElementById('touch-controls-current-mode');
+    const tcConfigPanel = document.getElementById('touch-controls-config-panel');
+
+    const tcMode = document.getElementById('tc-mode');
+    const tcLayout = document.getElementById('tc-layout');
+    const tcSize = document.getElementById('tc-size');
+    const tcSizeVal = document.getElementById('tc-size-val');
+    const tcOpacity = document.getElementById('tc-opacity');
+    const tcOpacityVal = document.getElementById('tc-opacity-val');
+    const tcDpadOpts = document.getElementById('tc-dpad-options');
+    
+    let currentTc = getTcCfg();
+    
+    function applyTcToUI() {
+      tcToggle.checked = currentTc.enabled;
+      tcConfigRow.style.display = currentTc.enabled ? 'flex' : 'none';
+      tcCurrentMode.textContent = currentTc.mode === 'joystick' ? 'Virtual Joystick' : 'D-Pad Mode';
+      
+      tcMode.value = currentTc.mode;
+      tcLayout.value = currentTc.layout;
+      tcSize.value = currentTc.size;
+      tcSizeVal.textContent = currentTc.size + 'px';
+      tcOpacity.value = currentTc.opacity;
+      tcOpacityVal.textContent = currentTc.opacity + '%';
+      
+      document.getElementById('tc-btn-w').checked = currentTc.btns.w;
+      document.getElementById('tc-btn-a').checked = currentTc.btns.a;
+      document.getElementById('tc-btn-s').checked = currentTc.btns.s;
+      document.getElementById('tc-btn-d').checked = currentTc.btns.d;
+      document.getElementById('tc-btn-space').checked = currentTc.btns.space;
+      
+      tcDpadOpts.style.display = currentTc.mode === 'joystick' ? 'none' : 'block';
+    }
+    applyTcToUI();
+
+    tcToggle.addEventListener('change', () => {
+      currentTc.enabled = tcToggle.checked;
+      saveTcCfg(currentTc);
+      applyTcToUI();
+      if (!currentTc.enabled) tcConfigPanel.style.display = 'none';
+    });
+
+    document.getElementById('touch-controls-configure-btn').addEventListener('click', () => {
+      tcConfigPanel.style.display = tcConfigPanel.style.display === 'none' ? 'block' : 'none';
+    });
+
+    tcMode.addEventListener('change', () => {
+      tcDpadOpts.style.display = tcMode.value === 'joystick' ? 'none' : 'block';
+    });
+    tcSize.addEventListener('input', () => tcSizeVal.textContent = tcSize.value + 'px');
+    tcOpacity.addEventListener('input', () => tcOpacityVal.textContent = tcOpacity.value + '%');
+
+    document.getElementById('tc-save-btn').addEventListener('click', () => {
+      currentTc.mode = tcMode.value;
+      currentTc.layout = tcLayout.value;
+      currentTc.size = parseInt(tcSize.value);
+      currentTc.opacity = parseInt(tcOpacity.value);
+      currentTc.btns.w = document.getElementById('tc-btn-w').checked;
+      currentTc.btns.a = document.getElementById('tc-btn-a').checked;
+      currentTc.btns.s = document.getElementById('tc-btn-s').checked;
+      currentTc.btns.d = document.getElementById('tc-btn-d').checked;
+      currentTc.btns.space = document.getElementById('tc-btn-space').checked;
+      saveTcCfg(currentTc);
+      applyTcToUI();
+      tcConfigPanel.style.display = 'none';
+      
       const t = document.createElement('div');
-      t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;padding:12px 22px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 30px rgba(239,68,68,0.35);pointer-events:none;opacity:0;transition:opacity 0.2s;';
-      t.textContent = `⚡ Kill Switch → ${val === 'custom' ? custom : label}`;
+      t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:99999;background:linear-gradient(135deg,#3a7dff,#60a5fa);color:white;padding:12px 22px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 30px rgba(58,125,255,0.35);pointer-events:none;opacity:0;transition:opacity 0.2s;';
+      t.textContent = '🎮 Touch Controls Saved';
       document.body.appendChild(t);
       requestAnimationFrame(() => t.style.opacity = '1');
       setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 200); }, 2500);
     });
-
-    document.getElementById('kill-cancel-settings-btn').addEventListener('click', () => {
-      killConfigPanel.style.display = 'none';
+    
+    document.getElementById('tc-cancel-btn').addEventListener('click', () => {
+      currentTc = getTcCfg(); // reset
+      applyTcToUI();
+      tcConfigPanel.style.display = 'none';
     });
   </script>
 

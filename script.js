@@ -3,7 +3,9 @@
    favorites (cloud+local), dark mode, toasts, recently played, new badge, stats button
 */
 
-const isOfficial = window.location.hostname === 'nxtcoreee3.github.io' && (window.location.pathname === '/Flux' || window.location.pathname.startsWith('/Flux/'));
+const isOfficial = window.location.hostname === 'nxtcoreee3.github.io' && 
+  (window.location.pathname === '/Flux' || window.location.pathname.startsWith('/Flux/') ||
+   window.location.pathname === '/Flux-Nightly' || window.location.pathname.startsWith('/Flux-Nightly/'));
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === '';
 
 if (!isOfficial && !isLocal) {
@@ -1753,10 +1755,7 @@ function openFullscreen(url, title) {
     <div id="fs-bar" style="position:absolute;top:0;left:0;right:0;z-index:6;display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(to bottom,rgba(0,0,0,0.85),transparent);transition:opacity 0.3s;pointer-events:auto;">
       <button id="fs-exit" style="background:rgba(0,0,0,0.7);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:700;cursor:pointer;backdrop-filter:blur(4px);pointer-events:auto;">✕ Exit</button>
       <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.85);flex:1;">${title}</span>
-      ${isKillSwitchEnabled() ? `<div style="display:flex;align-items:center;">
-        <button id="fs-kill-btn" title="Kill Switch (Shift+Esc)" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:8px 0 0 8px;padding:7px 13px;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 10px rgba(239,68,68,0.4);">⚡ Kill</button>
-        <button id="fs-kill-settings-btn" title="Configure Kill Switch" style="background:rgba(239,68,68,0.25);color:#fca5a5;border:none;border-left:1px solid rgba(239,68,68,0.4);border-radius:0 8px 8px 0;padding:7px 8px;font-size:11px;cursor:pointer;">⚙</button>
-      </div>` : ''}
+      <div id="fs-touch-btn-wrap" class="flux-touch-btn-wrap"></div>
     </div>
     <div id="fs-loading-bg" style="position:absolute;inset:0;background:#fff url('assets/loading.gif') center center / 250px no-repeat;z-index:1;"></div>
     <iframe id="fs-iframe" src="${url}" style="flex:1;border:0;width:100%;height:100%;opacity:0;transition:opacity 0.4s ease;position:relative;z-index:2;" allow="autoplay; fullscreen" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
@@ -1794,8 +1793,7 @@ function openFullscreen(url, title) {
   showBar();
 
   fs.querySelector('#fs-exit').addEventListener('click', () => fs.remove());
-  fs.querySelector('#fs-kill-btn')?.addEventListener('click', () => triggerKillSwitch());
-  fs.querySelector('#fs-kill-settings-btn')?.addEventListener('click', (e) => { e.stopPropagation(); buildKillSwitchPopover(); });
+  if (typeof initTouchControlsToggle === 'function') initTouchControlsToggle();
   fs.querySelector('#fs-fallback-btn').addEventListener('click', () => { fsWarn.style.display = 'none'; });
 
   let fsLoaded = false;
@@ -1804,6 +1802,7 @@ function openFullscreen(url, title) {
     fsIframe.style.opacity = '1';
     const lbg = fs.querySelector('#fs-loading-bg');
     if (lbg) lbg.style.display = 'none';
+    if (typeof createTouchControlsOverlay === 'function') createTouchControlsOverlay(fsIframe.parentElement, fsIframe);
   }, { once: true });
   setTimeout(() => {
     if (!fsLoaded) {
@@ -1873,6 +1872,7 @@ function openPlayModal(url, title) {
       if (iframe.parentElement) {
         iframe.parentElement.style.background = ""; // remove loading gif once loaded
       }
+      if (typeof createTouchControlsOverlay === 'function') createTouchControlsOverlay(iframe.parentElement, iframe);
     }, { once: true });
     setTimeout(() => {
       if (!loaded) {
@@ -2500,237 +2500,198 @@ function showNotificationToast(title, text, avatar, link) {
   }, 5000);
 }
 
-/* ===================== KILL SWITCH (Boss Key) ===================== */
+/* ===================== TOUCH CONTROLS OVERLAY ===================== */
 
-const KILL_SWITCH_KEY = 'flux_kill_switch';
+const TC_KEY = 'flux_touch_controls';
+function getTcCfg() {
+  try { return JSON.parse(localStorage.getItem(TC_KEY)) || { enabled: false, mode: 'dpad', layout: 'left-right', size: 60, opacity: 50, btns: { w: true, a: true, s: true, d: true, space: true } }; }
+  catch { return { enabled: false, mode: 'dpad', layout: 'left-right', size: 60, opacity: 50, btns: { w: true, a: true, s: true, d: true, space: true } }; }
+}
 
-const KILL_SWITCH_PRESETS = [
-  { label: '📊 Google Sheets', value: 'https://docs.google.com/spreadsheets/', type: 'web' },
-  { label: '🔍 Google', value: 'https://www.google.com', type: 'web' },
-  { label: '📰 BBC News', value: 'https://www.bbc.co.uk/news', type: 'web' },
-  { label: '📧 Gmail', value: 'https://mail.google.com', type: 'web' },
-  { label: '📅 Google Calendar', value: 'https://calendar.google.com', type: 'web' },
-  { label: '📄 Google Docs', value: 'https://docs.google.com/document/', type: 'web' },
-  { label: '🎨 Figma', value: 'figma://', type: 'app' },
-  { label: '💻 VS Code', value: 'vscode://', type: 'app' },
-  { label: '🎵 Spotify', value: 'spotify://', type: 'app' },
-  { label: '💬 Slack', value: 'slack://', type: 'app' },
-  { label: '📱 Discord', value: 'discord://', type: 'app' },
-  { label: '🔧 Custom…', value: 'custom', type: 'custom' },
-];
+let activeTouchOverlay = null;
 
-function loadKillSwitch() {
+function synthesizeKey(iframe, type, code, key, keyCode) {
   try {
-    return JSON.parse(localStorage.getItem(KILL_SWITCH_KEY)) || { value: 'https://www.google.com', label: '🔍 Google', custom: '' };
-  } catch { return { value: 'https://www.google.com', label: '🔍 Google', custom: '' }; }
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+    const event = new KeyboardEvent(type, { key, code, keyCode, which: keyCode, bubbles: true, cancelable: true });
+    doc.dispatchEvent(event);
+    const active = doc.activeElement;
+    if (active && active !== doc.body) active.dispatchEvent(event);
+  } catch (e) {
+    console.warn("Could not dispatch key event to iframe", e);
+  }
 }
 
-function saveKillSwitch(data) {
-  localStorage.setItem(KILL_SWITCH_KEY, JSON.stringify(data));
-}
+window.createTouchControlsOverlay = function(iframeContainer, iframe) {
+  const cfg = getTcCfg();
+  if (!cfg.enabled) return;
 
-function triggerKillSwitch() {
-  const cfg = loadKillSwitch();
-  const target = cfg.value === 'custom' ? cfg.custom : cfg.value;
-  if (!target) return;
-  // Close game modal if open
-  const modal = document.getElementById('play-modal');
-  if (modal) { modal.setAttribute('aria-hidden', 'true'); const iframe = modal.querySelector('iframe'); if (iframe) iframe.src = ''; }
-  window.location.replace(target);
-}
+  if (activeTouchOverlay) { activeTouchOverlay.remove(); activeTouchOverlay = null; }
 
-function buildKillSwitchPopover() {
-  const existing = document.getElementById('kill-switch-popover');
-  if (existing) { existing.remove(); return; }
-
-  const cfg = loadKillSwitch();
-
-  const pop = document.createElement('div');
-  pop.id = 'kill-switch-popover';
-  pop.style.cssText = `
-    position: fixed;
-    top: 70px; right: 16px;
-    width: 300px;
-    background: var(--panel);
-    border: 1px solid var(--glass-border);
-    border-radius: 18px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-    z-index: 9999;
-    padding: 18px;
-    animation: killPopIn 0.18s cubic-bezier(0.34,1.56,0.64,1) both;
+  const overlay = document.createElement('div');
+  overlay.id = 'flux-touch-overlay';
+  overlay.style.cssText = `
+    position: absolute; inset: 0; z-index: 8000;
+    pointer-events: none;
+    display: flex; flex-direction: column; justify-content: flex-end;
   `;
 
-  const isCustom = cfg.value === 'custom';
-  pop.innerHTML = `
-    <style>
-      @keyframes killPopIn {
-        from { opacity: 0; transform: scale(0.92) translateY(-8px); }
-        to   { opacity: 1; transform: scale(1) translateY(0); }
-      }
-      .kill-preset-opt {
-        display: flex; align-items: center; gap: 8px; padding: 8px 10px;
-        border-radius: 10px; cursor: pointer; font-size: 13px;
-        color: var(--text); transition: background 0.12s;
-        border: 1px solid transparent;
-      }
-      .kill-preset-opt:hover { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.15); }
-      .kill-preset-opt.selected { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #ef4444; font-weight: 700; }
-      .kill-preset-opt .opt-type { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 20px; flex-shrink: 0; }
-      .kill-preset-opt .opt-type.web { background: rgba(34,197,94,0.15); color: #16a34a; }
-      .kill-preset-opt .opt-type.app { background: rgba(58,125,255,0.15); color: #3a7dff; }
-    </style>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-      <div style="font-size:14px;font-weight:800;color:var(--text);">⚡ Kill Switch</div>
-      <button id="kill-pop-close" style="background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px;">✕</button>
-    </div>
-    <p style="font-size:12px;color:var(--muted);margin:0 0 12px;line-height:1.5;">Choose where to instantly escape to when you hit Kill Switch. <strong style="color:var(--text);">Shift+Esc</strong> also works as a hotkey.</p>
-    <div id="kill-presets-list" style="display:flex;flex-direction:column;gap:3px;max-height:220px;overflow-y:auto;margin-bottom:12px;">
-      ${KILL_SWITCH_PRESETS.map(p => `
-        <div class="kill-preset-opt ${cfg.value === p.value ? 'selected' : ''}" data-value="${p.value}" data-label="${p.label}" data-type="${p.type}">
-          <span style="flex:1;">${p.label}</span>
-          ${p.type !== 'custom' ? `<span class="opt-type ${p.type}">${p.type === 'app' ? 'App' : 'Web'}</span>` : ''}
-        </div>
-      `).join('')}
-    </div>
-    <div id="kill-custom-wrap" style="display:${isCustom ? 'block' : 'none'};margin-bottom:12px;">
-      <input id="kill-custom-input" type="text" placeholder="e.g. https://... or figma://"
-        value="${cfg.custom || ''}"
-        style="width:100%;padding:8px 12px;border:1px solid var(--glass-border);border-radius:10px;font-size:13px;box-sizing:border-box;background:var(--bg);color:var(--text);outline:none;">
-    </div>
-    <button id="kill-save-btn" style="width:100%;padding:10px;background:linear-gradient(135deg,#ef4444,#dc2626);color:white;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;letter-spacing:0.3px;">
-      Save & Close
-    </button>
+  const controlsWrap = document.createElement('div');
+  controlsWrap.style.cssText = `
+    display: flex; width: 100%; justify-content: space-between; padding: 20px 40px; box-sizing: border-box;
+    flex-direction: ${cfg.layout === 'right-left' ? 'row-reverse' : 'row'};
+    margin-bottom: 20px;
   `;
 
-  document.body.appendChild(pop);
+  const leftZone = document.createElement('div');
+  const rightZone = document.createElement('div');
+  
+  leftZone.style.cssText = 'position:relative;width:200px;height:200px;';
+  rightZone.style.cssText = 'position:relative;width:120px;height:200px;display:flex;align-items:flex-end;justify-content:center;';
 
-  let currentSelection = { value: cfg.value, label: cfg.label, custom: cfg.custom || '' };
-
-  const presetsList = pop.querySelector('#kill-presets-list');
-  const customWrap = pop.querySelector('#kill-custom-wrap');
-  const customInput = pop.querySelector('#kill-custom-input');
-
-  presetsList.querySelectorAll('.kill-preset-opt').forEach(opt => {
-    opt.addEventListener('click', () => {
-      presetsList.querySelectorAll('.kill-preset-opt').forEach(o => o.classList.remove('selected'));
-      opt.classList.add('selected');
-      currentSelection.value = opt.dataset.value;
-      currentSelection.label = opt.dataset.label;
-      customWrap.style.display = opt.dataset.type === 'custom' ? 'block' : 'none';
-    });
-  });
-
-  customInput?.addEventListener('input', () => { currentSelection.custom = customInput.value.trim(); });
-
-  pop.querySelector('#kill-pop-close').addEventListener('click', () => pop.remove());
-  pop.querySelector('#kill-save-btn').addEventListener('click', () => {
-    if (currentSelection.value === 'custom' && !currentSelection.custom) {
-      customInput.style.borderColor = '#ef4444';
-      customInput.focus();
-      return;
-    }
-    saveKillSwitch(currentSelection);
-    pop.remove();
-    showToast('Kill Switch configured! ⚡', 'success');
-    document.querySelectorAll('.flux-kill-btn').forEach(btn => {
-      btn.title = `Kill Switch → ${currentSelection.value === 'custom' ? currentSelection.custom : currentSelection.label}`;
-    });
-  });
-
-  setTimeout(() => {
-    document.addEventListener('click', function outsideClick(e) {
-      if (!pop.contains(e.target) && !e.target.closest('.flux-kill-btn-settings')) {
-        pop.remove();
-        document.removeEventListener('click', outsideClick);
-      }
-    });
-  }, 0);
-}
-
-function createKillButton(compact = false) {
-  const cfg = loadKillSwitch();
-  const target = cfg.value === 'custom' ? cfg.custom : cfg.label;
-
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'display:flex;align-items:center;flex-shrink:0;';
-
-  const killBtn = document.createElement('button');
-  killBtn.className = 'flux-kill-btn';
-  killBtn.title = `Kill Switch → ${target} (Shift+Esc)`;
-  killBtn.style.cssText = `
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border: none;
-    border-radius: ${compact ? '8px 0 0 8px' : '10px 0 0 10px'};
-    padding: ${compact ? '6px 10px' : '8px 13px'};
-    font-weight: 800;
-    font-size: ${compact ? '12px' : '13px'};
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    letter-spacing: 0.3px;
-    transition: opacity 0.15s, transform 0.1s;
-    box-shadow: 0 2px 12px rgba(239,68,68,0.35);
+  const btnStyle = `
+    position: absolute; width: ${cfg.size}px; height: ${cfg.size}px;
+    background: rgba(255,255,255,${cfg.opacity / 100});
+    border: 2px solid rgba(255,255,255,${Math.min(1, (cfg.opacity + 20) / 100)});
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-family: monospace; font-weight: 800; font-size: ${cfg.size * 0.4}px; color: #111;
+    pointer-events: auto; user-select: none; touch-action: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); backdrop-filter: blur(4px); transition: transform 0.05s;
   `;
-  killBtn.innerHTML = `<span>⚡</span>${compact ? '' : '<span>Kill</span>'}`;
-  killBtn.addEventListener('click', triggerKillSwitch);
-  killBtn.addEventListener('mouseenter', () => { killBtn.style.opacity = '0.88'; });
-  killBtn.addEventListener('mouseleave', () => { killBtn.style.opacity = '1'; });
 
-  const settingsBtn = document.createElement('button');
-  settingsBtn.className = 'flux-kill-btn-settings';
-  settingsBtn.title = 'Configure Kill Switch';
-  settingsBtn.style.cssText = `
-    background: rgba(239,68,68,0.15);
-    color: #ef4444;
-    border: none;
-    border-left: 1px solid rgba(239,68,68,0.3);
-    border-radius: ${compact ? '0 8px 8px 0' : '0 10px 10px 0'};
-    padding: ${compact ? '6px 7px' : '8px 8px'};
-    font-size: ${compact ? '10px' : '11px'};
-    cursor: pointer;
-    transition: background 0.15s;
-    box-shadow: 0 2px 12px rgba(239,68,68,0.15);
-  `;
-  settingsBtn.textContent = '⚙';
-  settingsBtn.addEventListener('click', (e) => { e.stopPropagation(); buildKillSwitchPopover(); });
-  settingsBtn.addEventListener('mouseenter', () => { settingsBtn.style.background = 'rgba(239,68,68,0.25)'; });
-  settingsBtn.addEventListener('mouseleave', () => { settingsBtn.style.background = 'rgba(239,68,68,0.15)'; });
-
-  wrap.appendChild(killBtn);
-  wrap.appendChild(settingsBtn);
-  return wrap;
-}
-
-const KILL_ENABLED_KEY = 'flux_kill_switch_enabled';
-function isKillSwitchEnabled() { return localStorage.getItem(KILL_ENABLED_KEY) !== '0'; }
-
-function initKillSwitch() {
-  if (!isKillSwitchEnabled()) return;
-
-  // 1. Inject into topbar right-actions
-  const rightActions = document.querySelector('.right-actions');
-  if (rightActions && !rightActions.querySelector('.flux-kill-btn')) {
-    rightActions.prepend(createKillButton(false));
+  function createBtn(label, code, key, keyCode) {
+    const b = document.createElement('div');
+    b.innerHTML = label; b.style.cssText = btnStyle;
+    const press = (e) => { e.preventDefault(); b.style.transform = 'scale(0.9)'; b.style.background = \`rgba(200,200,200,\${cfg.opacity / 100})\`; synthesizeKey(iframe, 'keydown', code, key, keyCode); };
+    const release = (e) => { e.preventDefault(); b.style.transform = 'scale(1)'; b.style.background = \`rgba(255,255,255,\${cfg.opacity / 100})\`; synthesizeKey(iframe, 'keyup', code, key, keyCode); };
+    b.addEventListener('touchstart', press, {passive: false});
+    b.addEventListener('touchend', release, {passive: false});
+    b.addEventListener('touchcancel', release, {passive: false});
+    return b;
   }
 
-  // 2. Fill dedicated modal slots (index.html + games.html)
-  ['modal-kill-btn-wrap', 'modal-kill-btn-wrap-2'].forEach(id => {
-    const wrap = document.getElementById(id);
-    if (wrap && !wrap.querySelector('.flux-kill-btn')) {
-      wrap.appendChild(createKillButton(true));
-    }
-  });
+  if (cfg.mode === 'dpad') {
+    const s = cfg.size, gap = 10;
+    const cx = 100 - s/2, cy = 100 - s/2;
+    if (cfg.btns.w) { const w = createBtn('W', 'KeyW', 'w', 87); w.style.left = cx + 'px'; w.style.top = (cy - s - gap) + 'px'; leftZone.appendChild(w); }
+    if (cfg.btns.s) { const sc = createBtn('S', 'KeyS', 's', 83); sc.style.left = cx + 'px'; sc.style.top = cy + 'px'; leftZone.appendChild(sc); }
+    if (cfg.btns.a) { const a = createBtn('A', 'KeyA', 'a', 65); a.style.left = (cx - s - gap) + 'px'; a.style.top = cy + 'px'; leftZone.appendChild(a); }
+    if (cfg.btns.d) { const d = createBtn('D', 'KeyD', 'd', 68); d.style.left = (cx + s + gap) + 'px'; d.style.top = cy + 'px'; leftZone.appendChild(d); }
+  } else {
+    // Joystick
+    const base = document.createElement('div');
+    const r = cfg.size * 1.2;
+    base.style.cssText = `
+      position: absolute; left: ${100 - r}px; top: ${100 - r}px;
+      width: ${r*2}px; height: ${r*2}px; border-radius: 50%;
+      background: rgba(0,0,0,${cfg.opacity / 200}); border: 2px solid rgba(255,255,255,${cfg.opacity / 100});
+      pointer-events: auto; touch-action: none;
+    `;
+    const knob = document.createElement('div');
+    const kr = cfg.size * 0.6;
+    knob.style.cssText = `
+      position: absolute; left: ${r - kr}px; top: ${r - kr}px;
+      width: ${kr*2}px; height: ${kr*2}px; border-radius: 50%;
+      background: rgba(255,255,255,${cfg.opacity / 100}); box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      pointer-events: none; transition: transform 0.05s;
+    `;
+    base.appendChild(knob); leftZone.appendChild(base);
 
-  // Keyboard shortcut: Shift + Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.shiftKey && e.key === 'Escape') { e.preventDefault(); triggerKillSwitch(); }
+    let activeKeys = { w: false, a: false, s: false, d: false };
+    const updateKeys = (nx, ny) => {
+      const w = ny < -0.3, s = ny > 0.3, a = nx < -0.3, d = nx > 0.3;
+      if (w !== activeKeys.w) { synthesizeKey(iframe, w?'keydown':'keyup', 'KeyW', 'w', 87); activeKeys.w = w; }
+      if (s !== activeKeys.s) { synthesizeKey(iframe, s?'keydown':'keyup', 'KeyS', 's', 83); activeKeys.s = s; }
+      if (a !== activeKeys.a) { synthesizeKey(iframe, a?'keydown':'keyup', 'KeyA', 'a', 65); activeKeys.a = a; }
+      if (d !== activeKeys.d) { synthesizeKey(iframe, d?'keydown':'keyup', 'KeyD', 'd', 68); activeKeys.d = d; }
+    };
+    const moveJoystick = (e) => {
+      e.preventDefault();
+      const touch = e.targetTouches[0]; if (!touch) return;
+      const rect = base.getBoundingClientRect();
+      const cx = rect.left + r, cy = rect.top + r;
+      let dx = touch.clientX - cx, dy = touch.clientY - cy;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist > r) { dx = (dx/dist)*r; dy = (dy/dist)*r; }
+      knob.style.transform = `translate(${dx}px, ${dy}px)`;
+      updateKeys(dx/r, dy/r);
+    };
+    const endJoystick = (e) => {
+      e.preventDefault(); knob.style.transform = `translate(0px, 0px)`;
+      updateKeys(0, 0);
+    };
+    base.addEventListener('touchstart', moveJoystick, {passive: false});
+    base.addEventListener('touchmove', moveJoystick, {passive: false});
+    base.addEventListener('touchend', endJoystick, {passive: false});
+    base.addEventListener('touchcancel', endJoystick, {passive: false});
+  }
+
+  if (cfg.btns.space) {
+    const spc = createBtn('—', 'Space', ' ', 32);
+    spc.style.position = 'relative';
+    spc.style.width = (cfg.size * 1.5) + 'px';
+    rightZone.appendChild(spc);
+  }
+
+  controlsWrap.appendChild(leftZone);
+  controlsWrap.appendChild(rightZone);
+  overlay.appendChild(controlsWrap);
+  
+  iframeContainer.style.position = 'relative';
+  iframeContainer.appendChild(overlay);
+  activeTouchOverlay = overlay;
+}
+
+window.initTouchControlsToggle = function() {
+  const cfg = getTcCfg();
+  
+  // Inject to nav bar right-actions (like Kill Switch)
+  const rightActions = document.querySelector('.right-actions');
+  if (rightActions && !rightActions.querySelector('.flux-touch-toggle-btn')) {
+    const wrap = document.createElement('div');
+    wrap.className = 'flux-touch-btn-wrap';
+    rightActions.prepend(wrap);
+  }
+  
+  document.querySelectorAll('.flux-touch-btn-wrap, #modal-touch-btn-wrap, #modal-touch-btn-wrap-2').forEach(wrap => {
+    wrap.innerHTML = '';
+    const btn = document.createElement('button');
+    btn.className = 'flux-touch-toggle-btn';
+    btn.title = 'Toggle Touch Controls';
+    btn.style.cssText = \`
+      background: \${cfg.enabled ? 'linear-gradient(135deg, #3a7dff, #60a5fa)' : 'var(--bg)'};
+      color: \${cfg.enabled ? 'white' : 'var(--text)'};
+      border: 1px solid \${cfg.enabled ? 'transparent' : 'var(--glass-border)'};
+      border-radius: 10px; padding: 7px 11px; font-weight: 800; font-size: 13px; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s;
+    \`;
+    btn.innerHTML = \`🎮 <span class="touch-btn-text">\${cfg.enabled ? 'Touch ON' : 'Touch OFF'}</span>\`;
+    btn.addEventListener('click', () => {
+      const cur = getTcCfg(); cur.enabled = !cur.enabled; saveTcCfg(cur);
+      
+      // Update all toggle buttons on screen
+      document.querySelectorAll('.flux-touch-toggle-btn').forEach(b => {
+        b.style.background = cur.enabled ? 'linear-gradient(135deg, #3a7dff, #60a5fa)' : 'var(--bg)';
+        b.style.color = cur.enabled ? 'white' : 'var(--text)';
+        b.style.borderColor = cur.enabled ? 'transparent' : 'var(--glass-border)';
+        b.querySelector('.touch-btn-text').textContent = cur.enabled ? 'Touch ON' : 'Touch OFF';
+      });
+      
+      // Re-inject if iframe is active
+      document.querySelectorAll('iframe').forEach(ifr => {
+        if (ifr.id === 'game-iframe' || ifr.id === 'game-iframe-2' || ifr.id === 'fs-iframe') {
+          if (cur.enabled) window.createTouchControlsOverlay(ifr.parentElement, ifr);
+          else if (activeTouchOverlay) { activeTouchOverlay.remove(); activeTouchOverlay = null; }
+        }
+      });
+    });
+    wrap.appendChild(btn);
   });
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initKillSwitch);
+  document.addEventListener('DOMContentLoaded', initTouchControlsToggle);
 } else {
-  initKillSwitch();
+  initTouchControlsToggle();
 }

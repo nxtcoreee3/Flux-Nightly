@@ -2507,19 +2507,32 @@ function getTcCfg() {
   try { return JSON.parse(localStorage.getItem(TC_KEY)) || { enabled: false, mode: 'dpad', layout: 'left-right', size: 60, opacity: 50, btns: { w: true, a: true, s: true, d: true, space: true } }; }
   catch { return { enabled: false, mode: 'dpad', layout: 'left-right', size: 60, opacity: 50, btns: { w: true, a: true, s: true, d: true, space: true } }; }
 }
+function saveTcCfg(cfg) {
+  try { localStorage.setItem(TC_KEY, JSON.stringify(cfg)); } catch {}
+}
 
 let activeTouchOverlay = null;
 
 function synthesizeKey(iframe, type, code, key, keyCode) {
+  // Primary: same-origin dispatch
   try {
     const doc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!doc) return;
-    const event = new KeyboardEvent(type, { key, code, keyCode, which: keyCode, bubbles: true, cancelable: true });
-    doc.dispatchEvent(event);
-    const active = doc.activeElement;
-    if (active && active !== doc.body) active.dispatchEvent(event);
+    if (doc) {
+      const event = new KeyboardEvent(type, { key, code, keyCode, which: keyCode, bubbles: true, cancelable: true });
+      doc.dispatchEvent(event);
+      const active = doc.activeElement;
+      if (active && active !== doc.body) active.dispatchEvent(event);
+      return;
+    }
+  } catch (_) { /* cross-origin — fall through to postMessage */ }
+  // Fallback: postMessage for cross-origin iframes
+  try {
+    iframe.contentWindow?.postMessage(
+      { type: 'flux_key', eventType: type, key, code, keyCode },
+      '*'
+    );
   } catch (e) {
-    console.warn("Could not dispatch key event to iframe", e);
+    console.warn('synthesizeKey: could not send key event', e);
   }
 }
 
@@ -2695,3 +2708,70 @@ if (document.readyState === 'loading') {
 } else {
   initTouchControlsToggle();
 }
+
+/* ===================== SUPPORT POPUP ===================== */
+
+const SUPPORT_POP_KEY = 'flux_support_popup_last';
+const SUPPORT_POP_COOLDOWN = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+window.showSupportPopup = function() {
+  document.getElementById('flux-support-popup')?.remove();
+  const modal = document.createElement('div');
+  modal.id = 'flux-support-popup';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);padding:20px;box-sizing:border-box;font-family:inherit;animation:supportFadeIn 0.3s ease;';
+
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes supportFadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes supportCardIn { from { opacity:0; transform:translateY(24px) scale(0.96); } to { opacity:1; transform:translateY(0) scale(1); } }
+    #flux-support-popup .sp-card { animation: supportCardIn 0.35s cubic-bezier(0.18,0.89,0.32,1.1); }
+    #flux-support-popup .sp-github-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.3); }
+    #flux-support-popup .sp-donate-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(255,184,18,0.5); }
+    #flux-support-popup .sp-github-btn, #flux-support-popup .sp-donate-btn { transition:all 0.15s; }
+  `;
+  document.head.appendChild(style);
+
+  modal.innerHTML = `
+    <div class="sp-card" style="background:var(--panel,#fff);border-radius:24px;max-width:400px;width:100%;box-shadow:0 40px 100px rgba(0,0,0,0.35);overflow:hidden;">
+      <div style="background:linear-gradient(135deg,#1e1b4b,#3730a3,#4f46e5);padding:28px 24px 22px;text-align:center;">
+        <div style="font-size:44px;margin-bottom:10px;">💙</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;color:white;letter-spacing:1px;margin-bottom:6px;">Love Flux?</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.78);line-height:1.55;">We're a small team building this for free. A star or a small donation keeps the lights on and helps us add more games! 🎮</div>
+      </div>
+      <div style="padding:22px 24px;display:flex;flex-direction:column;gap:12px;">
+        <a href="https://github.com/nxtcoreee3/Flux" target="_blank" rel="noopener" class="sp-github-btn" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:#111827;color:white;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          ⭐ Star us on GitHub
+        </a>
+        <a href="https://ko-fi.com/nxtcoreee3" target="_blank" rel="noopener" class="sp-donate-btn" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 20px;background:linear-gradient(135deg,#ffb812,#ff9500);color:#1a0a00;border-radius:14px;font-size:15px;font-weight:700;text-decoration:none;">
+          ☕ Donate on Ko-fi
+        </a>
+        <button id="sp-later-btn" style="padding:10px;background:none;border:1px solid var(--glass-border,rgba(0,0,0,0.1));border-radius:12px;font-size:13px;cursor:pointer;color:var(--muted,#6b7280);font-family:inherit;">Maybe later</button>
+        <button id="sp-nodont-btn" style="background:none;border:none;padding:4px;font-size:11px;color:var(--muted,#9ca3af);cursor:pointer;font-family:inherit;">Don't show again</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const close = (permanent) => {
+    if (permanent) localStorage.setItem(SUPPORT_POP_KEY, 'never');
+    else localStorage.setItem(SUPPORT_POP_KEY, Date.now().toString());
+    modal.style.animation = 'supportFadeIn 0.2s ease reverse';
+    setTimeout(() => modal.remove(), 200);
+  };
+  document.getElementById('sp-later-btn').addEventListener('click', () => close(false));
+  document.getElementById('sp-nodont-btn').addEventListener('click', () => close(true));
+  modal.addEventListener('click', e => { if (e.target === modal) close(false); });
+};
+
+// Randomly show the popup on page load — 30% chance, cooldown 7 days
+(function maybeShowSupportPopup() {
+  try {
+    const last = localStorage.getItem(SUPPORT_POP_KEY);
+    if (last === 'never') return;
+    if (last && Date.now() - parseInt(last) < SUPPORT_POP_COOLDOWN) return;
+    if (Math.random() > 0.30) return;
+    // Delay so the page loads first
+    setTimeout(() => window.showSupportPopup?.(), 8000);
+  } catch {}
+})();

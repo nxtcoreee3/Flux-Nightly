@@ -1636,6 +1636,9 @@ export async function initAuthUI(onUserChange) {
       <button id="redeem-code-btn" style="width:100%;padding:10px 16px;background:none;border:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));text-align:left;cursor:pointer;font-size:13px;color:var(--text,#111827);display:flex;align-items:center;gap:10px;">
         <span>🎟️</span> Redeem Code
       </button>
+      <button id="touch-controls-dd-btn" style="width:100%;padding:10px 16px;background:none;border:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));text-align:left;cursor:pointer;font-size:13px;color:var(--text,#111827);display:flex;align-items:center;gap:10px;">
+        <span>🎮</span> Touch Controls <span id="touch-dd-state" style="margin-left:auto;font-size:10px;font-weight:900;padding:2px 8px;border-radius:999px;background:rgba(58,125,255,0.12);color:var(--accent,#3a7dff);border:1px solid rgba(58,125,255,0.18);">OFF</span>
+      </button>
       <a href="settings.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;font-size:13px;color:var(--text,#111827);text-decoration:none;border-bottom:1px solid var(--glass-border,rgba(0,0,0,0.06));">
         <span>⚙️</span> Settings
       </a>
@@ -1768,6 +1771,51 @@ export async function initAuthUI(onUserChange) {
     e.stopPropagation();
     document.getElementById('profile-dropdown').style.display = 'none';
     if (typeof window.openRedeemCode === 'function') window.openRedeemCode();
+  });
+
+  // Touch controls toggle in dropdown
+  const touchDdBtn = document.getElementById('touch-controls-dd-btn');
+  const touchDdState = document.getElementById('touch-dd-state');
+  const applyTouchDdState = () => {
+    try {
+      const cfg = JSON.parse(localStorage.getItem('flux_touch_controls') || '{}');
+      const on = cfg.enabled === true;
+      if (touchDdState) {
+        touchDdState.textContent = on ? 'ON' : 'OFF';
+        touchDdState.style.background = on ? 'rgba(34,197,94,0.14)' : 'rgba(58,125,255,0.12)';
+        touchDdState.style.borderColor = on ? 'rgba(34,197,94,0.22)' : 'rgba(58,125,255,0.18)';
+        touchDdState.style.color = on ? '#16a34a' : 'var(--accent,#3a7dff)';
+      }
+    } catch {}
+  };
+  applyTouchDdState();
+  touchDdBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('profile-dropdown').style.display = 'none';
+    // Toggle via the global function if available, otherwise directly
+    try {
+      const raw = localStorage.getItem('flux_touch_controls');
+      const cfg = raw ? JSON.parse(raw) : {};
+      cfg.enabled = !cfg.enabled;
+      localStorage.setItem('flux_touch_controls', JSON.stringify(cfg));
+      applyTouchDdState();
+      // Sync the nav bar toggle button if present
+      document.querySelectorAll('.flux-touch-toggle-btn').forEach(b => {
+        b.style.background = cfg.enabled ? 'linear-gradient(135deg,#3a7dff,#60a5fa)' : 'var(--bg)';
+        b.style.color = cfg.enabled ? 'white' : 'var(--text)';
+        b.style.borderColor = cfg.enabled ? 'transparent' : 'var(--glass-border)';
+        const lbl = b.querySelector('.touch-btn-text');
+        if (lbl) lbl.textContent = cfg.enabled ? 'Touch ON' : 'Touch OFF';
+      });
+      // Create/remove overlay if a game is open
+      if (cfg.enabled && typeof window.createTouchControlsOverlay === 'function') {
+        document.querySelectorAll('#game-iframe,#game-iframe-2,#fs-iframe').forEach(ifr => {
+          window.createTouchControlsOverlay(ifr.parentElement, ifr);
+        });
+      } else if (!cfg.enabled && window.activeTouchOverlay) {
+        window.activeTouchOverlay.remove(); window.activeTouchOverlay = null;
+      }
+    } catch {}
   });
 
   // Fast boot toggle
@@ -2044,6 +2092,7 @@ export async function initAuthUI(onUserChange) {
         <button id="mod-jumpscare-btn" style="padding:10px 8px;border:2px solid #e5e7eb;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:#111827;">😱 Jumpscare</button>
         <button class="abuse-btn" data-effect="forceiframe" style="padding:10px 8px;border:2px solid #e5e7eb;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:#111827;grid-column:span 1;">🔒 Force Iframe</button>
         <button id="mod-abuse-stop" style="padding:10px 8px;border:2px solid #ef4444;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:700;color:#ef4444;">🛑 Stop All</button>
+        <button id="mod-support-popup-btn" style="padding:10px 8px;border:2px solid #4f46e5;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;color:#4f46e5;grid-column:span 2;">💙 Trigger Support Popup</button>
       </div>
 
       <hr style="border:none;border-top:1px solid rgba(0,0,0,0.07);margin:16px 0;">
@@ -2383,6 +2432,19 @@ export async function initAuthUI(onUserChange) {
       msg.style.color = '#22c55e'; msg.textContent = '😱 Jumpscare sent!'; msg.style.display = 'block';
       setTimeout(() => { msg.style.display = 'none'; }, 2000);
     } catch (e) { console.warn('Jumpscare failed', e); }
+  });
+
+  // Support popup trigger (mod panel)
+  document.getElementById('mod-support-popup-btn')?.addEventListener('click', () => {
+    modModal.style.display = 'none';
+    if (typeof window.showSupportPopup === 'function') {
+      window.showSupportPopup();
+    } else {
+      // Fallback: show a simple alert if script.js hasn't loaded yet
+      alert('Support popup function not loaded yet. Make sure script.js is included on this page.');
+    }
+    const msg = document.getElementById('mod-msg');
+    if (msg) { msg.style.color = '#4f46e5'; msg.textContent = '💙 Support popup triggered!'; msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 2000); }
   });
 
   // Open mod modal
